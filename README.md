@@ -1,79 +1,94 @@
 # IMMOONITY
 
-Оценка иммунного риска в космическом полёте: сайт с демо и API двух моделей — предполётной
-(физическая подготовка) и полётной (биомаркеры).
+[![tests](https://github.com/Svyatoslav000/immoonity/actions/workflows/tests.yml/badge.svg)](https://github.com/Svyatoslav000/immoonity/actions/workflows/tests.yml)
 
-| Папка / файл | Что это |
+English | [Русский](README.ru.md)
+
+Immune risk assessment for spaceflight: a website with an interactive demo and an API for two models —
+pre-flight (physical fitness) and in-flight (biomarkers).
+
+| Folder / file | Contents |
 |---|---|
-| `immoonity-site/` | сайт (одна страница, блок Demo обращается к API) |
-| `immoonity-app/` | API, модели, обучение, данные, тесты |
-| `wsgi.py`, `gunicorn.conf.py` | сайт и API одним сервисом |
-| `render.yaml`, `Dockerfile`, `Procfile`, `.python-version` | деплой |
-| `MODEL.md` | обоснование моделей и источники |
-| `CHANGES.md` | список изменений |
+| `immoonity-site/` | website (single page; the Demo section calls the API) |
+| `immoonity-app/` | API, models, training, data, tests |
+| `wsgi.py`, `gunicorn.conf.py` | site and API as one service |
+| `render.yaml`, `Dockerfile`, `Procfile`, `.python-version` | deployment |
+| `MODEL.md` | model rationale and sources (in Russian) |
+| `CHANGES.md` | changelog (in Russian) |
 
-## Запуск в PyCharm
+## Models
 
-1. **File → Open** → папка `immoonity`.
-2. Интерпретатор: **Add Interpreter → Virtualenv**, Python 3.13 (подойдёт 3.10+). На предложение установить
-   зависимости из `requirements-dev.txt` — согласиться (или в терминале `pip install -r requirements-dev.txt`).
-3. Конфигурация **«1. Сайт + API»** → **Run**. Откроется http://localhost:8000/#demo
+| | Earth (pre-flight) | In-flight |
+|---|---|---|
+| Outcome | reactivation of a latent herpesvirus (EBV, VZV, CMV) during a ~6-month mission | multi-system immune dysregulation (≥2 of 4 subsystems) by the end of the mission |
+| Inputs | sex, VO₂max, push-ups, pull-ups | IL-6, NLR, cortisol (before and in flight), EBV DNA in saliva, mission length |
+| Parameters | Bayesian logistic regression on 22 ISS crew members (Agha et al., 2020) | derived from published studies |
+| Checks | leave-one-out AUC 0.65, Brier 0.18 | NASA OSDR data of the Inspiration4 crew (OSD-569, OSD-575) |
 
-| Конфигурация | Что делает |
-|---|---|
-| 1. Сайт + API | сайт с демо и API на порту 8000 |
-| 2. Сайт + API (консультант на русском) | то же, интерпретация на русском |
-| 3. Только API (app.py) | API на порту 5000 |
-| 4. Тесты (pytest) | тесты API и моделей |
-| 5. Переобучить модели | пересчёт `models/*.json` после правок в `training/config.py` |
+Research demonstrator, not a medical device.
 
-Без PyCharm: `pip install -r requirements-dev.txt`, затем `python run_local.py`.
+## Run locally
 
-## Публикация на GitHub
-
-В PyCharm: **Git → GitHub → Share Project on GitHub**. Или в терминале (репозиторий создать заранее на github.com):
+Python 3.10+ (3.13 recommended):
 
 ```bash
-git init -b main
-git add .
-git commit -m "IMMOONITY MVP"
-git remote add origin https://github.com/<аккаунт>/immoonity.git
-git push -u origin main
+pip install -r requirements-dev.txt
 ```
 
-GitHub Actions на каждый push запускает тесты и проверяет запуск сервера (`.github/workflows/tests.yml`).
+```bash
+python run_local.py
+```
 
-## Деплой
+The demo opens at http://localhost:8000/#demo (`--lang ru` for the consultant in Russian, `--port` for another port).
+Tests: `python -m pytest` in `immoonity-app`.
 
-### Render (бесплатно)
+### PyCharm
 
-1. render.com → **New → Blueprint** → выбрать репозиторий → **Apply**.
-2. Всё берётся из `render.yaml`: Python из `.python-version`, сборка `pip install -r requirements.txt`,
-   запуск `gunicorn wsgi:app`, проверка `/api/health`, регион Frankfurt.
-3. Через несколько минут сайт открывается по адресу `https://immoonity.onrender.com`
-   (если имя занято — с суффиксом). Каждый push в `main` обновляет сайт.
+1. **File → Open** → the `immoonity` folder.
+2. **Add Interpreter → Virtualenv**, then install `requirements-dev.txt` when PyCharm offers it.
+3. Run configuration **«1. Сайт + API»** (site + API).
 
-Бесплатный сервис засыпает после 15 минут без запросов; первое открытие после паузы — до минуты.
-Чтобы не засыпал — тариф Starter.
+| Run configuration | What it does |
+|---|---|
+| 1. Сайт + API | site with the demo and API on port 8000 |
+| 2. Сайт + API (консультант на русском) | the same, interpretation in Russian |
+| 3. Только API (app.py) | API only, port 5000 |
+| 4. Тесты (pytest) | API and model tests |
+| 5. Переобучить модели | rebuild `models/*.json` after editing `training/config.py` |
 
-### Другие площадки
+## Deploy
 
-- Docker (Railway, Fly.io, Koyeb, Google Cloud Run, Yandex Cloud и др.):
-  `docker build -t immoonity .`, затем `docker run -p 8000:8000 immoonity`. Порт берётся из переменной `PORT`.
-- Procfile (Heroku и совместимые): `web: gunicorn wsgi:app`.
-- Только сайт на статическом хостинге (GitHub Pages и т.п.): содержимое `immoonity-site`. Если API на
-  том же адресе нет, демо обращается к `https://immoonity-api.onrender.com` (константа `RENDER_API` в
-  `index.html`) или к адресу из параметра `?api=https://...`.
+### Render (free)
+
+1. render.com → **New → Blueprint** → select this repository → **Apply**.
+2. Everything comes from `render.yaml`: Python from `.python-version`, build `pip install -r requirements.txt`,
+   start `gunicorn wsgi:app`, health check `/api/health`, region Frankfurt.
+3. Every push to `main` redeploys the site.
+
+A free instance sleeps after 15 minutes without traffic; the first request after that takes up to a minute.
+
+### Other hosts
+
+- Docker (Railway, Fly.io, Koyeb, Google Cloud Run, Yandex Cloud, etc.): `docker build -t immoonity .`, then
+  `docker run -p 8000:8000 immoonity`. The port is taken from `PORT`.
+- Procfile (Heroku and compatible): `web: gunicorn wsgi:app`.
+- Static site only (GitHub Pages, etc.): the `immoonity-site` folder. Without an API at the same address the demo
+  calls `https://immoonity-api.onrender.com` (`RENDER_API` in `index.html`) or the address from `?api=https://...`.
 
 ## API
 
-| Метод | Путь | |
+| Method | Path | |
 |---|---|---|
-| GET | `/api/health` | проверка доступности и версии |
-| GET | `/api/models` | модели: входы, пороги, веса, проверка, источники |
-| POST | `/predict` | риск, 90% интервал, уровень, факторы, интерпретация (`?lang=ru` или `en`) |
-| POST | `/api/consultant/prompt` | запрос для LLM-консультанта |
+| GET | `/api/health` | availability and version |
+| GET | `/api/models` | model cards: inputs, thresholds, weights, checks, sources |
+| POST | `/predict` | risk, 90% interval, level, factors, interpretation (`?lang=en` or `ru`) |
+| POST | `/api/consultant/prompt` | request for an LLM consultant |
 
-Поля запроса — в `immoonity-app/README.md`.
+Request fields:
 
-Демонстрационная исследовательская модель, не медицинское изделие.
+- earth model — `sex` (M/F), `vo2max`, `pullups`, `pushups`;
+- in-flight model — `il6_a`, `nlr_a`, `ebv`, `corta`, `days`; optional baselines `il6_b`, `nlr_b`, `cortb`.
+
+```bash
+curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"sex": "M", "vo2max": 48, "pullups": 15, "pushups": 60}'
+```
