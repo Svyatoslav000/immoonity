@@ -1,0 +1,256 @@
+{
+  "model": "earth",
+  "version": "3.1.0",
+  "created": "2026-11-14",
+  "outcome": {
+    "code": "latent_virus_reactivation",
+    "ru": "Риск реактивации латентных герпесвирусов (ВЭБ, VZV, ЦМВ) в ходе ~6-месячного полёта",
+    "en": "Risk of latent herpesvirus reactivation (EBV, VZV, CMV) during a ~6-month mission",
+    "definition_ru": "Реактивация хотя бы одного из трёх вирусов (ebv/vzv/cmv_reactivation = 1)."
+  },
+  "inputs": {
+    "sex": {
+      "type": "sex",
+      "required": true,
+      "label": {
+        "ru": "Пол",
+        "en": "Sex"
+      }
+    },
+    "vo2max": {
+      "type": "number",
+      "required": true,
+      "unit": "ml/kg/min",
+      "min": 5,
+      "max": 100,
+      "plausible": [
+        15,
+        85
+      ],
+      "label": {
+        "ru": "VO₂max",
+        "en": "VO₂max"
+      }
+    },
+    "pullups": {
+      "type": "number",
+      "required": true,
+      "unit": "reps",
+      "min": 0,
+      "max": 150,
+      "plausible": [
+        0,
+        60
+      ],
+      "label": {
+        "ru": "Подтягивания",
+        "en": "Pull-ups"
+      }
+    },
+    "pushups": {
+      "type": "number",
+      "required": true,
+      "unit": "reps",
+      "min": 0,
+      "max": 500,
+      "plausible": [
+        0,
+        150
+      ],
+      "label": {
+        "ru": "Отжимания",
+        "en": "Push-ups"
+      }
+    }
+  },
+  "terms": [
+    "intercept",
+    "fitness_index",
+    "sex_male"
+  ],
+  "coefficients": [
+    1.8691722331256881,
+    -1.6512173469469424,
+    0.2568167848712976
+  ],
+  "covariance": [
+    [
+      0.7504632901061429,
+      -0.6277883483231881,
+      -0.1296956180295138
+    ],
+    [
+      -0.627788348323188,
+      1.0501473930276657,
+      -0.038641251683149545
+    ],
+    [
+      -0.12969561802951382,
+      -0.03864125168314949,
+      0.21183290258601295
+    ]
+  ],
+  "coefficient_summary": {
+    "intercept": {
+      "mean": 1.8692,
+      "sd": 0.8663,
+      "ci95": [
+        0.1713,
+        3.5671
+      ],
+      "odds_ratio": 6.4829,
+      "prior": {
+        "mean": 0.0,
+        "sd": 2.5
+      }
+    },
+    "fitness_index": {
+      "mean": -1.6512,
+      "sd": 1.0248,
+      "ci95": [
+        -3.6597,
+        0.3573
+      ],
+      "odds_ratio": 0.1918,
+      "prior": {
+        "mean": 0.0,
+        "sd": 2.5
+      }
+    },
+    "sex_male": {
+      "mean": 0.2568,
+      "sd": 0.4603,
+      "ci95": [
+        -0.6453,
+        1.1589
+      ],
+      "odds_ratio": 1.2928,
+      "prior": {
+        "mean": 0.0,
+        "sd": 0.5
+      }
+    }
+  },
+  "interval_level": 0.9,
+  "risk_levels": [
+    {
+      "code": "low",
+      "below": 65.0,
+      "color": "#00ff88"
+    },
+    {
+      "code": "moderate",
+      "below": 80.0,
+      "color": "#ffcc00"
+    },
+    {
+      "code": "elevated",
+      "below": 86.0,
+      "color": "#ff9500"
+    },
+    {
+      "code": "high",
+      "below": 101.0,
+      "color": "#ff3300"
+    }
+  ],
+  "priors": {
+    "intercept": {
+      "mean": 0.0,
+      "sd": 2.5,
+      "why": "Слабоинформативное априорное распределение (Gelman et al., 2008): базовый риск не задаём заранее.",
+      "refs": [
+        "gelman2008"
+      ]
+    },
+    "fitness_index": {
+      "mean": 0.0,
+      "sd": 2.5,
+      "why": "Слабоинформативное (Gelman et al., 2008): знак и силу эффекта определяют данные астронавтов. Опубликованные эффекты Agha 2020 (−29%/−39%) задают веса внутри индекса и служат проверкой согласованности, но в априорное распределение не входят — это то же исследование, что и датасет (двойной учёт). Данные общей популяции (Chastin 2021: HR 0.69) подтверждают направление, но не переносимы по величине; оба варианта — в анализе чувствительности.",
+      "refs": [
+        "gelman2008",
+        "agha2020",
+        "chastin2021"
+      ]
+    },
+    "sex_male": {
+      "mean": 0.0,
+      "sd": 0.5,
+      "why": "Скептическое: данные противоречивы — у Stowe et al. (2000) реактивация ВЭБ чаще у женщин (60% vs 35%), в датасете команды — чаще у мужчин; половые различия иммунного ответа существуют (Klein & Flanagan, 2016), но их направление для реактивации в полёте не установлено.",
+      "refs": [
+        "stowe2000",
+        "klein2016"
+      ]
+    }
+  },
+  "method": "Байесовская логистическая регрессия: MAP-оценка, интервалы по аппроксимации Лапласа.",
+  "components": {
+    "vo2max": {
+      "weight": 0.4,
+      "threshold": {
+        "M": 43.0,
+        "F": 36.0
+      },
+      "softness": {
+        "M": 2.0,
+        "F": 2.0
+      }
+    },
+    "pushups": {
+      "weight": 0.3,
+      "threshold": {
+        "M": 45.0,
+        "F": 20.0
+      },
+      "softness": {
+        "M": 4.0,
+        "F": 3.0
+      }
+    },
+    "pullups": {
+      "weight": 0.3,
+      "threshold": {
+        "M": 10.0,
+        "F": 3.0
+      },
+      "softness": {
+        "M": 1.5,
+        "F": 1.0
+      }
+    }
+  },
+  "references": {
+    "agha2020": {
+      "citation": "Agha NH, Mehta SK, Rooney BV, et al. Exercise as a countermeasure for latent viral reactivation during long duration space flight. FASEB J. 2020;34(2):2869-2881.",
+      "url": "https://doi.org/10.1096/fj.201902327R"
+    },
+    "chastin2021": {
+      "citation": "Chastin SFM, et al. Effects of regular physical activity on the immune system, vaccination and risk of community-acquired infectious disease in the general population: systematic review and meta-analysis. Sports Med. 2021;51:1673-1686.",
+      "url": "https://napier-repository.worktribe.com/output/2899155"
+    },
+    "gelman2008": {
+      "citation": "Gelman A, Jakulin A, Pittau MG, Su YS. A weakly informative default prior distribution for logistic and other regression models. Ann Appl Stat. 2008;2(4):1360-1383.",
+      "url": "https://doi.org/10.1214/08-AOAS191"
+    },
+    "klein2016": {
+      "citation": "Klein SL, Flanagan KL. Sex differences in immune responses. Nat Rev Immunol. 2016;16(10):626-638.",
+      "url": "https://doi.org/10.1038/nri.2016.90"
+    },
+    "stowe2000": {
+      "citation": "Stowe RP, et al. Stress-induced reactivation of Epstein-Barr virus in astronauts. Neuroimmunomodulation. 2000;8(2).",
+      "url": "https://researchexperts.utmb.edu/en/publications/stress-induced-reactivation-of-epstein-barr-virus-in-astronauts/"
+    }
+  },
+  "training": {
+    "data_file": "data/pierson_data.csv",
+    "n": 22,
+    "events": 17,
+    "source": "Agha et al. 2020 (doi 10.1096/fj.201902327R), 22 ISS crew members"
+  },
+  "validation": {
+    "scheme": "leave-one-out (22 folds)",
+    "auc": 0.6471,
+    "brier": 0.18,
+    "logloss": 0.5203
+  }
+}

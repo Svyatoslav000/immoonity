@@ -1,0 +1,24 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version-file: .python-version
+      - run: pip install -r requirements.txt pytest
+      - run: python -m pytest -q
+        working-directory: immoonity-app
+      - name: Smoke test
+        run: |
+          gunicorn wsgi:app --daemon --pid gunicorn.pid
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8000/api/health && break; sleep 0.5; done
+          curl -fsS http://127.0.0.1:8000/ | grep -q IMMOONITY
+          kill "$(cat gunicorn.pid)"

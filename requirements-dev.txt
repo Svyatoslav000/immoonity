@@ -1,0 +1,8 @@
+-r requirements.txt
+
+# Тесты
+pytest>=8
+
+# Переобучение моделей
+numpy>=2.0
+matplotlib>=3.8

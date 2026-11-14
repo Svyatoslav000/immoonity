@@ -1,0 +1,465 @@
+{
+  "model": "flight",
+  "version": "3.1.0",
+  "created": "2026-11-14",
+  "outcome": {
+    "code": "multisystem_dysregulation",
+    "ru": "Риск многосистемной иммунной дисрегуляции (≥2 подсистем) к концу миссии",
+    "en": "Risk of multi-system immune dysregulation (≥2 subsystems) by the end of the mission",
+    "definition_ru": "Вовлечены две и более из четырёх подсистем: воспаление, сдвиг лейкоцитов, реактивация ВЭБ, стресс-ось. Градация исследований: 0 — нет изменений, 1 — одна подсистема, 2 — две подсистемы или клиническое проявление, 3 — системная дисрегуляция."
+  },
+  "inputs": {
+    "il6_b": {
+      "type": "number",
+      "required": false,
+      "unit": "pg/mL",
+      "min": 0,
+      "max": 10000,
+      "plausible": [
+        0,
+        100
+      ],
+      "label": {
+        "ru": "IL-6 до полёта",
+        "en": "IL-6 before"
+      }
+    },
+    "il6_a": {
+      "type": "number",
+      "required": true,
+      "unit": "pg/mL",
+      "min": 0,
+      "max": 10000,
+      "plausible": [
+        0,
+        100
+      ],
+      "label": {
+        "ru": "IL-6 в полёте",
+        "en": "IL-6 in flight"
+      }
+    },
+    "nlr_b": {
+      "type": "number",
+      "required": false,
+      "unit": "",
+      "min": 0,
+      "max": 100,
+      "plausible": [
+        0.3,
+        20
+      ],
+      "label": {
+        "ru": "NLR до полёта",
+        "en": "NLR before"
+      }
+    },
+    "nlr_a": {
+      "type": "number",
+      "required": true,
+      "unit": "",
+      "min": 0,
+      "max": 100,
+      "plausible": [
+        0.3,
+        20
+      ],
+      "label": {
+        "ru": "NLR в полёте",
+        "en": "NLR in flight"
+      }
+    },
+    "ebv": {
+      "type": "number",
+      "required": true,
+      "unit": "copies/mL",
+      "min": 0,
+      "max": 1000000000.0,
+      "plausible": [
+        0,
+        10000000.0
+      ],
+      "label": {
+        "ru": "ДНК ВЭБ (слюна)",
+        "en": "EBV DNA (saliva)"
+      }
+    },
+    "cortb": {
+      "type": "number",
+      "required": false,
+      "unit": "nmol/L",
+      "min": 0,
+      "max": 5000,
+      "plausible": [
+        30,
+        1500
+      ],
+      "label": {
+        "ru": "Кортизол до полёта",
+        "en": "Cortisol before"
+      }
+    },
+    "corta": {
+      "type": "number",
+      "required": true,
+      "unit": "nmol/L",
+      "min": 0,
+      "max": 5000,
+      "plausible": [
+        30,
+        1500
+      ],
+      "label": {
+        "ru": "Кортизол в полёте",
+        "en": "Cortisol in flight"
+      }
+    },
+    "days": {
+      "type": "number",
+      "required": true,
+      "unit": "days",
+      "min": 1,
+      "max": 3000,
+      "plausible": [
+        1,
+        3000
+      ],
+      "label": {
+        "ru": "Длительность миссии",
+        "en": "Mission days"
+      }
+    }
+  },
+  "terms": [
+    "intercept",
+    "dysregulation_score",
+    "duration_log2"
+  ],
+  "coefficients": [
+    -2.267487664983784,
+    2.1464454283914605,
+    0.21
+  ],
+  "covariance": [
+    [
+      0.9346725605040173,
+      -0.4671451808121222,
+      0.0
+    ],
+    [
+      -0.4671451808121222,
+      0.30438702110785487,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0121
+    ]
+  ],
+  "coefficient_summary": {
+    "intercept": {
+      "mean": -2.2675,
+      "sd": 0.9668,
+      "ci95": [
+        -4.1624,
+        -0.3726
+      ],
+      "odds_ratio": 0.1036
+    },
+    "dysregulation_score": {
+      "mean": 2.1464,
+      "sd": 0.5517,
+      "ci95": [
+        1.0651,
+        3.2278
+      ],
+      "odds_ratio": 8.5544
+    },
+    "duration_log2": {
+      "mean": 0.21,
+      "sd": 0.11,
+      "ci95": [
+        -0.0056,
+        0.4256
+      ],
+      "odds_ratio": 1.2337
+    }
+  },
+  "interval_level": 0.9,
+  "risk_levels": [
+    {
+      "code": "low",
+      "below": 20.0,
+      "color": "#00ff88"
+    },
+    {
+      "code": "moderate",
+      "below": 50.0,
+      "color": "#ffcc00"
+    },
+    {
+      "code": "elevated",
+      "below": 80.0,
+      "color": "#ff9500"
+    },
+    {
+      "code": "high",
+      "below": 101.0,
+      "color": "#ff3300"
+    }
+  ],
+  "priors": {
+    "intercept": {
+      "mean": -2.2675,
+      "sd": 0.9668,
+      "why": "Не обучен. Выведен из допущения q = 0.15 (0.07–0.3): доля подсистем, которые у стабильного в начале полёта человека вовлекаются к 6-му месяцу. Для двух из четырёх подсистем это ~11% (90%: ~3–35%). Сдвиги обычно возникают в первые недели и сохраняются (Crucian 2014, 2015), поэтому стабильные маркеры — благоприятный признак; но поздние изменения возможны: в изоляции на 1 год реакции усиливались после 3–4 месяцев (Feuerecker 2019).",
+      "refs": [
+        "crucian2014",
+        "crucian2015",
+        "feuerecker2019",
+        "rooney2019"
+      ]
+    },
+    "dysregulation_score": {
+      "mean": 2.1464,
+      "sd": 0.5517,
+      "why": "Не обучен. Следует из определения исхода: при 1 вовлечённой подсистеме нужна ещё одна (~39% при q = 0.15), при 2 исход уже достигнут (90%, поправка на выброс единичного измерения). Наклон — прямая через эти три точки.",
+      "refs": []
+    },
+    "duration_log2": {
+      "mean": 0.21,
+      "sd": 0.11,
+      "why": "Не обучен. Rooney 2019: выделение вирусов в коротких полётах (10–16 сут) и на МКС (≥180 сут) — любые герпесвирусы 53→61%, VZV 41→65%, ВЭБ 82→96%, ЦМВ 47→61%. На удвоение длительности логарифм шансов растёт на 0.09, 0.27, 0.45, 0.15; взята медиана 0.21. Риск растёт с длительностью, но всё медленнее: основная часть сдвигов возникает в начале полёта.",
+      "refs": [
+        "rooney2019",
+        "mehta2017",
+        "crucian2015"
+      ]
+    }
+  },
+  "method": "Модель на опубликованных данных: параметры заданы по литературе и явным допущениям (training/config.py), без обучения; интервал отражает неопределённость этих допущений, за пределами самого длинного полёта он дополнительно расширяется.",
+  "markers": {
+    "cytokine": {
+      "weight": 1.0,
+      "criteria": [
+        {
+          "kind": "relative",
+          "before": "il6_b",
+          "after": "il6_a",
+          "threshold": 0.708,
+          "softness": 0.142
+        },
+        {
+          "kind": "absolute",
+          "field": "il6_a",
+          "threshold": 7.0,
+          "softness": 0.75
+        }
+      ],
+      "refs": [
+        "elecsys_il6",
+        "il6_bv",
+        "fraser2001",
+        "crucian2014",
+        "kim2024"
+      ],
+      "why": "Системное воспаление. После полёта IL-6 растёт вместе с IL-10, CRP и MCP-1 — так же, как у астронавтов после длительных миссий (Kim 2024); сдвиги цитокинов сохраняются весь полёт (Crucian 2014). Абсолютный порог 7 пг/мл — 95-й перцентиль у 817 здоровых (Elecsys IL-6). Относительный порог +71% = критическая разница (RCV) при внутрииндивидуальной вариабельности IL-6 30–48%; у экипажа Inspiration4 по трём анализам до полёта — 27% (NASA OSDR, OSD-575)."
+    },
+    "immune_shift": {
+      "weight": 0.75,
+      "criteria": [
+        {
+          "kind": "relative",
+          "before": "nlr_b",
+          "after": "nlr_a",
+          "threshold": 0.462,
+          "softness": 0.092
+        },
+        {
+          "kind": "absolute",
+          "field": "nlr_a",
+          "threshold": 3.5,
+          "softness": 0.25
+        }
+      ],
+      "refs": [
+        "forget2017",
+        "paul2020",
+        "leuko_bv",
+        "fraser2001",
+        "kim2024"
+      ],
+      "why": "NLR растёт в полёте (Paul 2020), но маркер неспецифичен (острый стресс, время забора); верхняя граница нормы 3.53 (Forget 2017). Относительный порог +46% (RCV): заложенная вариабельность NLR ≈20% совпала с измеренной у экипажа Inspiration4 по трём предполётным анализам (training/checks.py). Пониженный вес: во всех исследованиях с изолированным сдвигом лейкоцитов исход был лёгким."
+    },
+    "viral": {
+      "weight": 1.25,
+      "criteria": [
+        {
+          "kind": "log10",
+          "field": "ebv",
+          "threshold": 129.2,
+          "softness": 0.15
+        }
+      ],
+      "refs": [
+        "pierson2005",
+        "mehta2017",
+        "rooney2019",
+        "crucian2018"
+      ],
+      "why": "Прямой признак потери Т-клеточного контроля над латентными вирусами — ближайшее к клиническим событиям звено (Mehta 2017; Crucian 2018). Порог ≈129 копий/мл — геометрическая середина между уровнем до полёта (40) и средним в полёте (417) по данным Pierson 2005 (32 астронавта, 1398 образцов слюны)."
+    },
+    "neuroendocrine": {
+      "weight": 1.0,
+      "criteria": [
+        {
+          "kind": "relative",
+          "before": "cortb",
+          "after": "corta",
+          "threshold": 0.39,
+          "softness": 0.078
+        },
+        {
+          "kind": "absolute",
+          "field": "corta",
+          "threshold": 550.0,
+          "softness": 25.0
+        }
+      ],
+      "refs": [
+        "stowe2000",
+        "stowe2001",
+        "mehta2017",
+        "cortisol_bv",
+        "fraser2001"
+      ],
+      "why": "Стресс-гормоны — пусковое звено реактивации ВЭБ: кортизол (Stowe 2000), катехоламины (Stowe 2001); реактивация на МКС совпадала со сдвигом суточного ритма кортизола (Mehta 2017). Относительный порог +39% = RCV при CVi кортизола 16% (в разных версиях базы EFLM 15–21%, порог тогда +37…+50%). Абсолютный порог 550 нмоль/л — ориентир команды (около верхней границы утреннего референсного интервала, зависит от метода)."
+    }
+  },
+  "duration": {
+    "field": "days",
+    "reference_days": 180,
+    "transform": "log2((days + 1) / (180 + 1))"
+  },
+  "evidence": {
+    "well_studied_days": 200,
+    "longest_flight_days": 437,
+    "extrapolation_sd_per_doubling": 0.21,
+    "refs": [
+      "manzey1998",
+      "garrett2019"
+    ]
+  },
+  "radiation": {
+    "leo_msv_per_day": [
+      0.2,
+      0.5
+    ],
+    "deep_space_msv_per_day": 1.8,
+    "career_limit_msv": 600,
+    "refs": [
+      "nasa_std3001",
+      "zeitlin2013"
+    ]
+  },
+  "references": {
+    "cortisol_bv": {
+      "citation": "EFLM Biological Variation Database, cortisol (serum, morning): median CVi ≈ 16%; в версиях базы Ricós/Westgard — 15.2% и 20.9%.",
+      "url": "https://biologicalvariation.eu/meta_by_analyte/492"
+    },
+    "crucian2014": {
+      "citation": "Crucian BE, et al. Plasma cytokine concentrations indicate that in vivo hormonal regulation of immunity is altered during long-duration spaceflight. J Interferon Cytokine Res. 2014;34(10):778-786.",
+      "url": "https://doi.org/10.1089/jir.2013.0129"
+    },
+    "crucian2015": {
+      "citation": "Crucian B, et al. Alterations in adaptive immunity persist during long-duration spaceflight. NPJ Microgravity. 2015;1:15013.",
+      "url": "https://doi.org/10.1038/npjmgrav.2015.13"
+    },
+    "crucian2018": {
+      "citation": "Crucian BE, et al. Immune system dysregulation during spaceflight: potential countermeasures for deep space exploration missions. Front Immunol. 2018;9:1437.",
+      "url": "https://doi.org/10.3389/fimmu.2018.01437"
+    },
+    "elecsys_il6": {
+      "citation": "Roche Diagnostics. Elecsys IL-6: upper reference limit 7 pg/mL (95th percentile, 817 apparently healthy individuals), method sheet.",
+      "url": "https://www.labcorp.com/test-menu/29791/interleukin-6-serum"
+    },
+    "feuerecker2019": {
+      "citation": "Feuerecker M, et al. Immune sensitization during 1 year in the Antarctic high-altitude Concordia environment. Allergy. 2019;74(1):64-77.",
+      "url": "https://doi.org/10.1111/all.13545"
+    },
+    "forget2017": {
+      "citation": "Forget P, et al. What is the normal value of the neutrophil-to-lymphocyte ratio? BMC Res Notes. 2017;10:12.",
+      "url": "https://doi.org/10.1186/s13104-016-2335-5"
+    },
+    "fraser2001": {
+      "citation": "Fraser CG. Biological Variation: From Principles to Practice. Washington, DC: AACC Press; 2001 (reference change value, RCV = √2·z·√(CVa² + CVi²)).",
+      "url": "https://www.westgard.com/biodatabase1.htm"
+    },
+    "garrett2019": {
+      "citation": "Garrett-Bakelman FE, et al. The NASA Twins Study: a multidimensional analysis of a year-long human spaceflight. Science. 2019;364(6436):eaau8650.",
+      "url": "https://doi.org/10.1126/science.aau8650"
+    },
+    "il6_bv": {
+      "citation": "Cava F, et al. Biological variation of interleukin 6 (IL-6) and soluble interleukin 2 receptor (sIL2R) in serum of healthy individuals (2000): CVi ≈ 48%; Dugué B, Leppänen E.: CVi ≈ 30% — внутрииндивидуальная вариабельность IL-6 у здоровых 30–48%.",
+      "url": "https://data.zhenzhi.com/details/1/908769401"
+    },
+    "kim2024": {
+      "citation": "Kim J, et al. Single-cell multi-ome and immune profiles of the Inspiration4 crew reveal conserved, cell-type, and sex-specific responses to spaceflight. Nat Commun. 2024;15:4954. Анализы экипажа — NASA OSDR: OSD-569 (общий анализ крови), OSD-575 (цитокины сыворотки).",
+      "url": "https://doi.org/10.1038/s41467-024-49211-2"
+    },
+    "leuko_bv": {
+      "citation": "Delanghe JR, et al. (editorial on leukocyte-ratio biomarkers): CVi neutrophils 16.1%, lymphocytes 10.4%; CV of a ratio ≈ √(CV₁² + CV₂²).",
+      "url": "https://core.ac.uk/download/333623231.pdf"
+    },
+    "manzey1998": {
+      "citation": "Manzey D, Lorenz B, Poljakov V. Mental performance in extreme environments: results from a performance monitoring study during a 438-day spaceflight. Ergonomics. 1998;41(4):537-559.",
+      "url": "https://doi.org/10.1080/001401398186991"
+    },
+    "mehta2017": {
+      "citation": "Mehta SK, et al. Latent virus reactivation in astronauts on the International Space Station. NPJ Microgravity. 2017;3:11.",
+      "url": "https://doi.org/10.1038/s41526-017-0015-y"
+    },
+    "nasa_std3001": {
+      "citation": "NASA OCHMO. Radiation protection technical brief (NASA-STD-3001): career limit 600 mSv effective dose. Дозы на МКС ~0.2–0.5 мЗв/сут — Simonsen L., NASA NTRS 20250006168.",
+      "url": "https://www.nasa.gov/wp-content/uploads/2023/03/radiation-protection-technical-brief-ochmo.pdf"
+    },
+    "paul2020": {
+      "citation": "Paul AM, et al. Neutrophil-to-lymphocyte ratio: a biomarker to monitor the immune status of astronauts. Front Immunol. 2020;11:564950.",
+      "url": "https://doi.org/10.3389/fimmu.2020.564950"
+    },
+    "pierson2005": {
+      "citation": "Pierson DL, Stowe RP, Phillips TM, Lugg DJ, Mehta SK. Epstein-Barr virus shedding by astronauts during space flight. Brain Behav Immun. 2005;19(3):235-242.",
+      "url": "https://doi.org/10.1016/j.bbi.2004.08.001"
+    },
+    "rooney2019": {
+      "citation": "Rooney BV, Crucian BE, Pierson DL, Laudenslager ML, Mehta SK. Herpes virus reactivation in astronauts during spaceflight and its application on Earth. Front Microbiol. 2019;10:16.",
+      "url": "https://doi.org/10.3389/fmicb.2019.00016"
+    },
+    "stowe2000": {
+      "citation": "Stowe RP, et al. Stress-induced reactivation of Epstein-Barr virus in astronauts. Neuroimmunomodulation. 2000;8(2).",
+      "url": "https://researchexperts.utmb.edu/en/publications/stress-induced-reactivation-of-epstein-barr-virus-in-astronauts/"
+    },
+    "stowe2001": {
+      "citation": "Stowe RP, Pierson DL, Barrett AD. Elevated stress hormone levels relate to Epstein-Barr virus reactivation in astronauts. Psychosom Med. 2001;63(6):891-895.",
+      "url": "https://researchexperts.utmb.edu/en/publications/elevated-stress-hormone-levels-relate-to-epstein-barr-virus-react/"
+    },
+    "zeitlin2013": {
+      "citation": "Zeitlin C, et al. Measurements of energetic particle radiation in transit to Mars on the Mars Science Laboratory. Science. 2013;340(6136):1080-1084.",
+      "url": "https://doi.org/10.1126/science.1235989"
+    }
+  },
+  "training": {
+    "method": "без обучения",
+    "check_files": [
+      "data/aggregated_dataset.csv",
+      "data/inspiration4_cbc.csv",
+      "data/inspiration4_il6.csv"
+    ]
+  },
+  "validation": {
+    "scheme": "не применимо: независимых данных об исходе нет",
+    "reason": "В aggregated_dataset.csv исход совпадает с суммой флагов-входов в 37 из 41 строк (утечка целевой переменной); метрики качества на нём не информативны.",
+    "checks": "reports/metrics.json -> flight_checks"
+  }
+}

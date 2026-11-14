@@ -1,0 +1,11 @@
+# Render Blueprint: сайт и API одним веб-сервисом (render.com -> New -> Blueprint).
+# Версия Python берётся из .python-version.
+services:
+  - type: web
+    name: immoonity
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app
+    healthCheckPath: /api/health

@@ -1,0 +1,1094 @@
+{
+  "version": "3.1.0",
+  "created": "2026-11-14",
+  "posterior": {
+    "earth": {
+      "intercept": {
+        "mean": 1.8691722331256881,
+        "sd": 0.8662928431576373,
+        "prior_mean": 0.0,
+        "prior_sd": 2.5
+      },
+      "fitness_index": {
+        "mean": -1.6512173469469424,
+        "sd": 1.0247669945054172,
+        "prior_mean": 0.0,
+        "prior_sd": 2.5
+      },
+      "sex_male": {
+        "mean": 0.2568167848712976,
+        "sd": 0.4602530853628392,
+        "prior_mean": 0.0,
+        "prior_sd": 0.5
+      }
+    }
+  },
+  "flight_parameters": {
+    "coefficients": {
+      "intercept": -2.267487664983784,
+      "dysregulation_score": 2.1464454283914605,
+      "duration_log2": 0.21
+    },
+    "sd": {
+      "intercept": 0.9667846505318634,
+      "dysregulation_score": 0.5517128067281517,
+      "duration_log2": 0.11
+    },
+    "assumptions": {
+      "q_late": {
+        "central": 0.15,
+        "low": 0.07,
+        "high": 0.3
+      },
+      "p_met": {
+        "central": 0.9,
+        "low": 0.8,
+        "high": 0.97
+      },
+      "duration_effects_per_doubling": {
+        "any": 0.089,
+        "VZV": 0.266,
+        "EBV": 0.45,
+        "CMV": 0.154
+      }
+    }
+  },
+  "validation": {
+    "earth": {
+      "scheme": "leave-one-out (22 folds)",
+      "cv": {
+        "auc": 0.6470588235294118,
+        "auc_ci95": [
+          0.41000000000000003,
+          0.875
+        ],
+        "brier": 0.17997192612442148,
+        "brier_ci95": [
+          0.10125326046760642,
+          0.26885220605806726
+        ],
+        "logloss": 0.5203190485902112,
+        "calibration_in_the_large": -0.016038537364380323
+      },
+      "apparent": {
+        "auc": 0.7352941176470589,
+        "auc_ci95": [
+          0.5341666666666667,
+          0.9122807017543859
+        ],
+        "brier": 0.1479842881513019,
+        "brier_ci95": [
+          0.08326355030514117,
+          0.22290896380668884
+        ],
+        "logloss": 0.4439658783351286,
+        "calibration_in_the_large": -0.013593979877277618
+      }
+    },
+    "flight": {
+      "scheme": "не применимо: независимых данных об исходе нет",
+      "reason": "В aggregated_dataset.csv исход совпадает с суммой флагов-входов в 37 из 41 строк (утечка целевой переменной); метрики качества на нём не информативны.",
+      "checks": "reports/metrics.json -> flight_checks"
+    }
+  },
+  "flight_checks": {
+    "leakage": {
+      "rows": 41,
+      "score_equals_flag_sum": 37,
+      "share": 0.902
+    },
+    "duration": {
+      "groups": 22,
+      "weighted_n": 19.0,
+      "model_value": {
+        "mean": 0.21,
+        "sd": 0.11
+      },
+      "multisystem": {
+        "slope_per_doubling": 0.214,
+        "sd": 0.226,
+        "model_within_90": true
+      },
+      "viral": {
+        "slope_per_doubling": 0.322,
+        "sd": 0.264,
+        "model_within_90": true
+      }
+    },
+    "variability": {
+      "nlr": {
+        "subjects": 4,
+        "draws_per_subject": 3,
+        "observed_within_person_cv": 0.208,
+        "assumed_total_cv": 0.198,
+        "per_subject_cv": [
+          0.212,
+          0.156,
+          0.3,
+          0.114
+        ]
+      },
+      "il6": {
+        "subjects": 4,
+        "draws_per_subject": 3,
+        "observed_within_person_cv": 0.272,
+        "assumed_total_cv": 0.304,
+        "per_subject_cv": [
+          0.49,
+          0.042,
+          0.038,
+          0.227
+        ]
+      }
+    },
+    "inspiration4": {
+      "nlr": {
+        "mission_days": 3,
+        "threshold_pct": 46.2,
+        "crew": [
+          {
+            "subject": "I4_C001",
+            "before": 1.333,
+            "r1": 1.637,
+            "change_pct": 22.8,
+            "membership": 0.073
+          },
+          {
+            "subject": "I4_C002",
+            "before": 1.495,
+            "r1": 2.161,
+            "change_pct": 44.5,
+            "membership": 0.454
+          },
+          {
+            "subject": "I4_C003",
+            "before": 2.777,
+            "r1": 1.96,
+            "change_pct": -29.4,
+            "membership": 0.002
+          },
+          {
+            "subject": "I4_C004",
+            "before": 2.369,
+            "r1": 2.101,
+            "change_pct": -11.3,
+            "membership": 0.004
+          }
+        ],
+        "flagged": 0,
+        "flagged_with_baseline_L-3": 1
+      },
+      "il6": {
+        "mission_days": 3,
+        "threshold_pct": 70.8,
+        "crew": [
+          {
+            "subject": "I4_C001",
+            "before": 3.797,
+            "r1": 6.86,
+            "change_pct": 80.7,
+            "membership": 0.667
+          },
+          {
+            "subject": "I4_C002",
+            "before": 4.403,
+            "r1": 5.76,
+            "change_pct": 30.8,
+            "membership": 0.161
+          },
+          {
+            "subject": "I4_C003",
+            "before": 2.623,
+            "r1": 7.6,
+            "change_pct": 189.7,
+            "membership": 1.0
+          },
+          {
+            "subject": "I4_C004",
+            "before": 3.987,
+            "r1": 6.34,
+            "change_pct": 59.0,
+            "membership": 0.304
+          }
+        ],
+        "flagged": 2,
+        "flagged_with_baseline_L-3": 1
+      }
+    }
+  },
+  "laplace_check": {
+    "earth": {
+      "ess": 24071.76200186883,
+      "n_draws": 40000,
+      "coef_mean_is": [
+        2.0718852171754074,
+        -1.7982110603366055,
+        0.26517531441461634
+      ],
+      "coef_q025_q50_q975": [
+        [
+          0.44463635886514496,
+          2.0166475775051174,
+          3.996218162322731
+        ],
+        [
+          -4.008878282985401,
+          -1.7658676439064955,
+          0.230372386672135
+        ],
+        [
+          -0.6507520192313239,
+          0.26699699291191403,
+          1.1645494913789995
+        ]
+      ],
+      "profiles": {
+        "M_fit": {
+          "laplace": [
+            0.384925846373281,
+            0.6349055473640466,
+            0.8285424593954328
+          ],
+          "exact_is": [
+            0.39610939424795405,
+            0.6477255034577287,
+            0.8489225770080966
+          ]
+        },
+        "M_aerobic": {
+          "laplace": [
+            0.6296629910841165,
+            0.818078090113527,
+            0.9224413391813697
+          ],
+          "exact_is": [
+            0.6674797834362585,
+            0.8352840885962225,
+            0.9394228571349721
+          ]
+        },
+        "M_strength": {
+          "laplace": [
+            0.5603286022211793,
+            0.7527997303436764,
+            0.8791818302520503
+          ],
+          "exact_is": [
+            0.5871202393048595,
+            0.7717432659933642,
+            0.8986110523734421
+          ]
+        },
+        "M_at": {
+          "laplace": [
+            0.598913810911645,
+            0.7858989874439808,
+            0.900233285407292
+          ],
+          "exact_is": [
+            0.630863833167269,
+            0.8042491919158266,
+            0.9188900610002512
+          ]
+        },
+        "M_unfit": {
+          "laplace": [
+            0.6777114762046405,
+            0.8917304666110724,
+            0.9699332043282044
+          ],
+          "exact_is": [
+            0.7316379634088302,
+            0.9049004869960927,
+            0.9792014734718553
+          ]
+        },
+        "F_fit": {
+          "laplace": [
+            0.2921188434447786,
+            0.5719557706972116,
+            0.8122635552759112
+          ],
+          "exact_is": [
+            0.29909952041825133,
+            0.5856825957058468,
+            0.831867851214609
+          ]
+        },
+        "F_unfit": {
+          "laplace": [
+            0.6042671324252481,
+            0.8578189703498337,
+            0.9597401162797088
+          ],
+          "exact_is": [
+            0.6574004290560804,
+            0.8747969444940699,
+            0.9709140036851828
+          ]
+        }
+      }
+    }
+  },
+  "profiles": {
+    "earth": {
+      "M_fit": {
+        "inputs": {
+          "sex": "M",
+          "vo2max": 48,
+          "pullups": 15,
+          "pushups": 60
+        },
+        "risk": 63.5,
+        "risk_interval": {
+          "low": 38.5,
+          "high": 82.9,
+          "level": 0.9
+        },
+        "level": {
+          "code": "low",
+          "color": "#00ff88"
+        }
+      },
+      "M_aerobic": {
+        "inputs": {
+          "sex": "M",
+          "vo2max": 48,
+          "pullups": 4,
+          "pushups": 25
+        },
+        "risk": 81.8,
+        "risk_interval": {
+          "low": 63.0,
+          "high": 92.2,
+          "level": 0.9
+        },
+        "level": {
+          "code": "elevated",
+          "color": "#ff9500"
+        }
+      },
+      "M_strength": {
+        "inputs": {
+          "sex": "M",
+          "vo2max": 38,
+          "pullups": 15,
+          "pushups": 60
+        },
+        "risk": 75.3,
+        "risk_interval": {
+          "low": 56.0,
+          "high": 87.9,
+          "level": 0.9
+        },
+        "level": {
+          "code": "moderate",
+          "color": "#ffcc00"
+        }
+      },
+      "M_at": {
+        "inputs": {
+          "sex": "M",
+          "vo2max": 43,
+          "pullups": 10,
+          "pushups": 45
+        },
+        "risk": 78.6,
+        "risk_interval": {
+          "low": 59.9,
+          "high": 90.0,
+          "level": 0.9
+        },
+        "level": {
+          "code": "moderate",
+          "color": "#ffcc00"
+        }
+      },
+      "M_unfit": {
+        "inputs": {
+          "sex": "M",
+          "vo2max": 35,
+          "pullups": 3,
+          "pushups": 20
+        },
+        "risk": 89.2,
+        "risk_interval": {
+          "low": 67.8,
+          "high": 97.0,
+          "level": 0.9
+        },
+        "level": {
+          "code": "high",
+          "color": "#ff3300"
+        }
+      },
+      "F_fit": {
+        "inputs": {
+          "sex": "F",
+          "vo2max": 42,
+          "pullups": 6,
+          "pushups": 30
+        },
+        "risk": 57.2,
+        "risk_interval": {
+          "low": 29.2,
+          "high": 81.2,
+          "level": 0.9
+        },
+        "level": {
+          "code": "low",
+          "color": "#00ff88"
+        }
+      },
+      "F_unfit": {
+        "inputs": {
+          "sex": "F",
+          "vo2max": 30,
+          "pullups": 0,
+          "pushups": 10
+        },
+        "risk": 85.8,
+        "risk_interval": {
+          "low": 60.4,
+          "high": 96.0,
+          "level": 0.9
+        },
+        "level": {
+          "code": "elevated",
+          "color": "#ff9500"
+        }
+      }
+    },
+    "flight": {
+      "stable": {
+        "inputs": {
+          "il6_b": 2.0,
+          "il6_a": 2.2,
+          "nlr_b": 1.8,
+          "nlr_a": 2.0,
+          "ebv": 40.0,
+          "cortb": 400.0,
+          "corta": 420.0,
+          "days": 180.0
+        },
+        "risk": 11.1,
+        "risk_interval": {
+          "low": 2.6,
+          "high": 36.3,
+          "level": 0.9
+        },
+        "level": {
+          "code": "low",
+          "color": "#00ff88"
+        }
+      },
+      "stable_437": {
+        "inputs": {
+          "il6_b": 2.0,
+          "il6_a": 2.2,
+          "nlr_b": 1.8,
+          "nlr_a": 2.0,
+          "ebv": 40.0,
+          "cortb": 400.0,
+          "corta": 420.0,
+          "days": 437.0
+        },
+        "risk": 14.0,
+        "risk_interval": {
+          "low": 3.4,
+          "high": 43.1,
+          "level": 0.9
+        },
+        "level": {
+          "code": "low",
+          "color": "#00ff88"
+        }
+      },
+      "stable_2000": {
+        "inputs": {
+          "il6_b": 2.0,
+          "il6_a": 2.2,
+          "nlr_b": 1.8,
+          "nlr_a": 2.0,
+          "ebv": 40.0,
+          "cortb": 400.0,
+          "corta": 420.0,
+          "days": 2000.0
+        },
+        "risk": 20.5,
+        "risk_interval": {
+          "low": 4.0,
+          "high": 61.2,
+          "level": 0.9
+        },
+        "level": {
+          "code": "moderate",
+          "color": "#ffcc00"
+        }
+      },
+      "neuro": {
+        "inputs": {
+          "il6_b": 2.0,
+          "il6_a": 2.2,
+          "nlr_b": 1.8,
+          "nlr_a": 2.0,
+          "ebv": 40.0,
+          "cortb": 400.0,
+          "corta": 600.0,
+          "days": 180.0
+        },
+        "risk": 44.5,
+        "risk_interval": {
+          "low": 24.0,
+          "high": 67.0,
+          "level": 0.9
+        },
+        "level": {
+          "code": "moderate",
+          "color": "#ffcc00"
+        }
+      },
+      "immune": {
+        "inputs": {
+          "il6_b": 2.0,
+          "il6_a": 2.2,
+          "nlr_b": 1.8,
+          "nlr_a": 4.0,
+          "ebv": 40.0,
+          "cortb": 400.0,
+          "corta": 420.0,
+          "days": 180.0
+        },
+        "risk": 37.5,
+        "risk_interval": {
+          "low": 18.0,
+          "high": 62.1,
+          "level": 0.9
+        },
+        "level": {
+          "code": "moderate",
+          "color": "#ffcc00"
+        }
+      },
+      "cyto": {
+        "inputs": {
+          "il6_b": 2.0,
+          "il6_a": 9.0,
+          "nlr_b": 1.8,
+          "nlr_a": 2.0,
+          "ebv": 40.0,
+          "cortb": 400.0,
+          "corta": 420.0,
+          "days": 180.0
+        },
+        "risk": 50.8,
+        "risk_interval": {
+          "low": 30.1,
+          "high": 71.2,
+          "level": 0.9
+        },
+        "level": {
+          "code": "elevated",
+          "color": "#ff9500"
+        }
+      },
+      "viral417": {
+        "inputs": {
+          "il6_b": 2.0,
+          "il6_a": 2.2,
+          "nlr_b": 1.8,
+          "nlr_a": 2.0,
+          "ebv": 417.0,
+          "cortb": 400.0,
+          "corta": 420.0,
+          "days": 180.0
+        },
+        "risk": 60.3,
+        "risk_interval": {
+          "low": 40.3,
+          "high": 77.3,
+          "level": 0.9
+        },
+        "level": {
+          "code": "elevated",
+          "color": "#ff9500"
+        }
+      },
+      "neuro_2000": {
+        "inputs": {
+          "il6_b": 2.0,
+          "il6_a": 2.2,
+          "nlr_b": 1.8,
+          "nlr_a": 2.0,
+          "ebv": 40.0,
+          "cortb": 400.0,
+          "corta": 600.0,
+          "days": 2000.0
+        },
+        "risk": 62.4,
+        "risk_interval": {
+          "low": 30.0,
+          "high": 86.5,
+          "level": 0.9
+        },
+        "level": {
+          "code": "elevated",
+          "color": "#ff9500"
+        }
+      },
+      "neuro_viral": {
+        "inputs": {
+          "il6_b": 2.0,
+          "il6_a": 2.2,
+          "nlr_b": 1.8,
+          "nlr_a": 2.0,
+          "ebv": 417.0,
+          "cortb": 400.0,
+          "corta": 600.0,
+          "days": 180.0
+        },
+        "risk": 90.7,
+        "risk_interval": {
+          "low": 79.4,
+          "high": 96.1,
+          "level": 0.9
+        },
+        "level": {
+          "code": "high",
+          "color": "#ff3300"
+        }
+      },
+      "cyto_immune": {
+        "inputs": {
+          "il6_b": 2.0,
+          "il6_a": 9.0,
+          "nlr_b": 1.8,
+          "nlr_a": 4.0,
+          "ebv": 40.0,
+          "cortb": 400.0,
+          "corta": 420.0,
+          "days": 180.0
+        },
+        "risk": 83.3,
+        "risk_interval": {
+          "low": 69.0,
+          "high": 91.8,
+          "level": 0.9
+        },
+        "level": {
+          "code": "high",
+          "color": "#ff3300"
+        }
+      },
+      "all": {
+        "inputs": {
+          "il6_b": 2.0,
+          "il6_a": 9.0,
+          "nlr_b": 1.8,
+          "nlr_a": 4.0,
+          "ebv": 1000.0,
+          "cortb": 400.0,
+          "corta": 650.0,
+          "days": 180.0
+        },
+        "risk": 99.8,
+        "risk_interval": {
+          "low": 98.1,
+          "high": 100.0,
+          "level": 0.9
+        },
+        "level": {
+          "code": "high",
+          "color": "#ff3300"
+        }
+      },
+      "neuro_14": {
+        "inputs": {
+          "il6_b": 2.0,
+          "il6_a": 2.2,
+          "nlr_b": 1.8,
+          "nlr_a": 2.0,
+          "ebv": 40.0,
+          "cortb": 400.0,
+          "corta": 600.0,
+          "days": 14.0
+        },
+        "risk": 27.4,
+        "risk_interval": {
+          "low": 10.8,
+          "high": 54.0,
+          "level": 0.9
+        },
+        "level": {
+          "code": "moderate",
+          "color": "#ffcc00"
+        }
+      }
+    }
+  },
+  "sensitivity": {
+    "earth": {
+      "main": {
+        "coef": [
+          1.869,
+          -1.651,
+          0.257
+        ],
+        "sd": [
+          0.866,
+          1.025,
+          0.46
+        ],
+        "profiles": {
+          "M_fit": 63.5,
+          "M_aerobic": 81.8,
+          "M_strength": 75.3,
+          "M_at": 78.6,
+          "M_unfit": 89.2,
+          "F_fit": 57.2,
+          "F_unfit": 85.8
+        }
+      },
+      "fitness_prior_chastin": {
+        "coef": [
+          1.592,
+          -1.167,
+          0.24
+        ],
+        "sd": [
+          0.724,
+          0.731,
+          0.458
+        ],
+        "profiles": {
+          "M_fit": 67.3,
+          "M_aerobic": 80.1,
+          "M_strength": 75.3,
+          "M_at": 77.7,
+          "M_unfit": 86.1,
+          "F_fit": 61.7,
+          "F_unfit": 82.4
+        }
+      },
+      "fitness_prior_agha": {
+        "coef": [
+          1.907,
+          -1.714,
+          0.259
+        ],
+        "sd": [
+          0.763,
+          0.749,
+          0.46
+        ],
+        "profiles": {
+          "M_fit": 63.0,
+          "M_aerobic": 82.1,
+          "M_strength": 75.3,
+          "M_at": 78.7,
+          "M_unfit": 89.6,
+          "F_fit": 56.6,
+          "F_unfit": 86.2
+        }
+      },
+      "fitness_prior_wide": {
+        "coef": [
+          2.066,
+          -1.972,
+          0.269
+        ],
+        "sd": [
+          0.959,
+          1.163,
+          0.462
+        ],
+        "profiles": {
+          "M_fit": 61.2,
+          "M_aerobic": 83.1,
+          "M_strength": 75.5,
+          "M_at": 79.4,
+          "M_unfit": 91.0,
+          "F_fit": 54.5,
+          "F_unfit": 87.9
+        }
+      },
+      "sex_prior_weak": {
+        "coef": [
+          1.278,
+          -1.927,
+          1.367
+        ],
+        "sd": [
+          0.995,
+          1.13,
+          1.075
+        ],
+        "profiles": {
+          "M_fit": 69.2,
+          "M_aerobic": 87.2,
+          "M_strength": 81.2,
+          "M_at": 84.3,
+          "M_unfit": 93.2,
+          "F_fit": 36.2,
+          "F_unfit": 76.8
+        }
+      },
+      "all_priors_x0.5": {
+        "coef": [
+          1.376,
+          -0.872,
+          0.095
+        ],
+        "sd": [
+          0.599,
+          0.758,
+          0.242
+        ],
+        "profiles": {
+          "M_fit": 65.5,
+          "M_aerobic": 75.8,
+          "M_strength": 71.8,
+          "M_at": 73.8,
+          "M_unfit": 81.2,
+          "F_fit": 63.2,
+          "F_unfit": 79.2
+        }
+      },
+      "all_priors_x2": {
+        "coef": [
+          2.021,
+          -2.225,
+          0.666
+        ],
+        "sd": [
+          1.131,
+          1.273,
+          0.785
+        ],
+        "profiles": {
+          "M_fit": 63.8,
+          "M_aerobic": 86.4,
+          "M_strength": 79.0,
+          "M_at": 82.8,
+          "M_unfit": 93.5,
+          "F_fit": 47.3,
+          "F_unfit": 87.3
+        }
+      },
+      "weights_equal": {
+        "coef": [
+          1.81,
+          -1.571,
+          0.258
+        ],
+        "sd": [
+          0.85,
+          1.014,
+          0.46
+        ],
+        "profiles": {
+          "M_fit": 63.8,
+          "M_aerobic": 82.8,
+          "M_strength": 73.3,
+          "M_at": 78.3,
+          "M_unfit": 88.6,
+          "F_fit": 57.6,
+          "F_unfit": 85.1
+        }
+      },
+      "weights_vo2_dominant": {
+        "coef": [
+          2.056,
+          -1.887,
+          0.248
+        ],
+        "sd": [
+          0.92,
+          1.059,
+          0.46
+        ],
+        "profiles": {
+          "M_fit": 62.8,
+          "M_aerobic": 77.7,
+          "M_strength": 81.5,
+          "M_at": 79.6,
+          "M_unfit": 90.7,
+          "F_fit": 56.3,
+          "F_unfit": 87.8
+        }
+      },
+      "weights_vo2_only": {
+        "coef": [
+          2.438,
+          -2.275,
+          0.213
+        ],
+        "sd": [
+          1.038,
+          1.11,
+          0.459
+        ],
+        "profiles": {
+          "M_fit": 63.4,
+          "M_aerobic": 63.4,
+          "M_strength": 92.3,
+          "M_at": 82.0,
+          "M_unfit": 93.1,
+          "F_fit": 56.7,
+          "F_unfit": 91.1
+        }
+      }
+    }
+  },
+  "scenarios": {
+    "flight": {
+      "main": {
+        "coef": [
+          -2.267,
+          2.146,
+          0.21
+        ],
+        "profiles": {
+          "stable": 11.1,
+          "stable_437": 14.0,
+          "stable_2000": 20.5,
+          "neuro": 44.5,
+          "immune": 37.5,
+          "cyto": 50.8,
+          "viral417": 60.3,
+          "neuro_2000": 62.4,
+          "neuro_viral": 90.7,
+          "cyto_immune": 83.3,
+          "all": 99.8,
+          "neuro_14": 27.4
+        }
+      },
+      "q_low": {
+        "coef": [
+          -3.833,
+          2.896,
+          0.21
+        ],
+        "profiles": {
+          "stable": 2.7,
+          "stable_437": 3.5,
+          "stable_2000": 5.4,
+          "neuro": 25.5,
+          "immune": 18.8,
+          "cyto": 32.5,
+          "viral417": 44.8,
+          "neuro_2000": 41.5,
+          "neuro_viral": 90.9,
+          "cyto_immune": 80.1,
+          "all": 100.0,
+          "neuro_14": 13.9
+        }
+      },
+      "q_high": {
+        "coef": [
+          -0.672,
+          1.412,
+          0.21
+        ],
+        "profiles": {
+          "stable": 36.5,
+          "stable_437": 42.9,
+          "stable_2000": 54.4,
+          "neuro": 66.2,
+          "immune": 61.9,
+          "cyto": 69.9,
+          "viral417": 74.9,
+          "neuro_2000": 80.3,
+          "neuro_viral": 91.1,
+          "cyto_immune": 86.7,
+          "all": 99.3,
+          "neuro_14": 48.0
+        }
+      },
+      "p_met_low": {
+        "coef": [
+          -2.132,
+          1.741,
+          0.21
+        ],
+        "profiles": {
+          "stable": 12.1,
+          "stable_437": 15.2,
+          "stable_2000": 22.2,
+          "neuro": 38.4,
+          "immune": 33.0,
+          "cyto": 43.4,
+          "viral417": 51.1,
+          "neuro_2000": 56.3,
+          "neuro_viral": 82.6,
+          "cyto_immune": 73.3,
+          "all": 99.2,
+          "neuro_14": 22.7
+        }
+      },
+      "duration_low": {
+        "coef": [
+          -2.267,
+          2.146,
+          0.089
+        ],
+        "profiles": {
+          "stable": 11.1,
+          "stable_437": 12.2,
+          "stable_2000": 14.5,
+          "neuro": 44.5,
+          "immune": 37.5,
+          "cyto": 50.8,
+          "viral417": 60.3,
+          "neuro_2000": 52.2,
+          "neuro_viral": 90.7,
+          "cyto_immune": 83.3,
+          "all": 99.8,
+          "neuro_14": 36.8
+        }
+      },
+      "duration_high": {
+        "coef": [
+          -2.267,
+          2.146,
+          0.45
+        ],
+        "profiles": {
+          "stable": 11.1,
+          "stable_437": 18.1,
+          "stable_2000": 37.2,
+          "neuro": 44.5,
+          "immune": 37.5,
+          "cyto": 50.8,
+          "viral417": 60.3,
+          "neuro_2000": 79.2,
+          "neuro_viral": 90.7,
+          "cyto_immune": 83.3,
+          "all": 99.8,
+          "neuro_14": 13.7
+        }
+      },
+      "weights_equal": {
+        "coef": [
+          -2.267,
+          2.146,
+          0.21
+        ],
+        "profiles": {
+          "stable": 11.0,
+          "stable_437": 13.9,
+          "stable_2000": 20.4,
+          "neuro": 44.3,
+          "immune": 50.2,
+          "cyto": 50.6,
+          "viral417": 47.8,
+          "neuro_2000": 62.2,
+          "neuro_viral": 85.5,
+          "cyto_immune": 89.3,
+          "all": 99.8,
+          "neuro_14": 27.2
+        }
+      }
+    }
+  }
+}

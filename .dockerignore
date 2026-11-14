@@ -1,0 +1,11 @@
+.git
+.github
+.idea
+.venv
+venv
+**/__pycache__
+**/.pytest_cache
+immoonity-app/data
+immoonity-app/reports
+immoonity-app/tests
+immoonity-app/training
