@@ -11,7 +11,7 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <!-- без GSAP первый экран остаётся видимым -->
+    <!-- the first screen stays visible without GSAP -->
     <script>if (!window.gsap) { document.documentElement.classList.add('no-gsap'); }</script>
     <style>
         .no-gsap .hero-logo-text, .no-gsap .hero-subtitle, .no-gsap .btn-explore,
@@ -49,7 +49,7 @@
             overflow-y: scroll;
         }
 
-        /* Кастомный скроллбар */
+        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -65,7 +65,7 @@
             background: var(--accent-gold);
         }
 
-        /* Глобальный холст для звезд (остается на фоне всегда) */
+        /* Global star canvas (always in the background) */
         #space-canvas {
             position: fixed;
             top: 0;
@@ -94,7 +94,7 @@
         .logo-container {
             display: flex;
             align-items: center;
-            height: 75px; /* Занимает всю высоту хедера */
+            height: 75px; /* Full header height */
         }
 
        .logo-img {
@@ -104,11 +104,11 @@
            padding: 5px 0;
            filter: drop-shadow(0 0 15px rgba(255, 214, 10, 0.4));
        }
-       /* Скрываем бургер на больших экранах */
+       /* Hide the burger menu on large screens */
        .menu-toggle { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
        .menu-toggle span { width: 25px; height: 3px; background: var(--accent-gold); border-radius: 2px; }
        
-       /* Адаптация под мобильные */
+       /* Mobile layout */
         @media (max-width: 768px) {
             header { padding: 5px 4% !important; height: 60px !important; }
             .menu-toggle { display: flex; margin-right: 65px; } 
@@ -122,26 +122,26 @@
             }
             .nav-links.active { transform: translateY(0); }
 
-            /* Исправляем Hero Section */
+            /* Hero section fixes */
             .hero-section {
                 flex-direction: column;
                 height: auto !important;
                 padding-top: 100px !important;
                 text-align: center;
                 min-height: 100vh;
-                overflow: visible; /* Чтобы ничего не обрезалось */
+                overflow: visible; /* Nothing gets clipped */
             }
 
             .hero-logo-text { font-size: 1.8rem !important; margin-top: 10px; }
             .typing-container { font-size: 1rem !important; margin-bottom: 20px; min-height: auto; }
             .btn-explore { padding: 12px 25px; font-size: 0.7rem; }
 
-            /* Графика: космонавт и фон */
+            /* Graphics: astronaut and background */
             .hero-right { width: 100%; height: 280px; margin-top: 20px; order: 2; display: flex; justify-content: center; }
             .hero-black-hole-bg { width: 150vw !important; height: 150vw !important; right: -25% !important; background-size: cover !important; }
             .astronaut-container { width: 200px; height: 200px; }
             
-            /* Маркеры поменьше */
+            /* Smaller markers */
             .biomarker { width: 40px !important; height: 40px !important; font-size: 0.5rem !important; }
             .hero-left { padding-top: 20px; }
         }
@@ -185,7 +185,7 @@
             width: 100%;
         }
 
-        /* --- 1. HERO SECTION (ГЛАВНЫЙ ЭКРАН) --- */
+        /* --- 1. HERO SECTION (MAIN SCREEN) --- */
         .hero-section {
             position: relative;
             width: 100%;
@@ -278,12 +278,12 @@
             align-items: center;
         }
 
-        /* Фон */
+        /* Background */
         .hero-black-hole-bg {
             position: absolute;
             width: 220vh; 
             height: 220vh;
-            right: -30%; /* Смещено к правому боку */
+            right: -30%; /* Shifted to the right */
             background: url('main.png') center center no-repeat;
             background-size: contain;
             z-index: 1;
@@ -372,7 +372,7 @@
         }
 
 
-        /* --- 2. NEW SECTION: THE PAIN (ПРОБЛЕМА) !!!!!!!!!!!!!!!!!!!!!!!!!!!!--- */
+        /* --- 2. THE PAIN SECTION --- */
         .pain-section {
             position: relative;
             width: 100%;
@@ -381,25 +381,25 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center; /* Центрируем всё содержимое по горизонтали */
+            align-items: center; /* Center all content horizontally */
             z-index: 10;
             background-color: transparent;
             
-            /* Настройки фонового изображения: отдаляем и центрируем */
+            /* Background image: zoomed out and centered */
             background-image: url('The_pain_back.png');
             background-position: center center;
             background-repeat: no-repeat;
-            background-size: 100% auto; /* Отдалили картинку, чтобы её края не обрезались экраном */
+            background-size: 100% auto; /* Zoomed out so the edges are not clipped */
             
-            /* Плавное движение для эффекта мыши */
+            /* Smooth movement for the mouse effect */
             transition: background-position 0.1s ease-out;
         }
 
-        /* Заголовок секции — уменьшен и отцентрован */
+        /* Section title: smaller and centered */
         .section-header {
             max-width: 800px;
             width: 100%;
-            text-align: center; /* Текст строго по центру */
+            text-align: center; /* Centered text */
             margin-bottom: 60px;
             z-index: 3;
         }
@@ -417,7 +417,7 @@
 
         .section-title {
             font-family: var(--font-tech);
-            font-size: 1.8rem; /* Уменьшили размер для лаконичности */
+            font-size: 1.8rem; /* Smaller size for a cleaner look */
             font-weight: 700;
             letter-spacing: 0px;
             line-height: 1.3;
@@ -425,13 +425,13 @@
             text-transform: uppercase;
         }
 
-        /* Адаптивная сетка карточек */
+        /* Responsive card grid */
         .pain-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 30px;
             width: 100%;
-            max-width: 1200px; /* Ограничение ширины для больших мониторов */
+            max-width: 1200px; /* Width limit for large monitors */
             margin: 0 auto 60px auto;
             z-index: 3;
         }
@@ -456,7 +456,7 @@
             box-shadow: 0 15px 35px rgba(0, 8, 20, 0.6), 0 0 25px rgba(255, 195, 0, 0.03);
         }
 
-        /* Специальные стили для второй (оранжевой) карточки при ховере */
+        /* Hover styles for the second (orange) card */
         .pain-card.orange-accent:hover {
             border-color: rgba(232, 93, 4, 0.4);
             box-shadow: 0 15px 35px rgba(0, 8, 20, 0.6), 0 0 25px rgba(232, 93, 4, 0.05);
@@ -473,7 +473,7 @@
         .cc-tl { top: 0; left: 0; border-width: 1px 0 0 1px; }
         .cc-br { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
 
-        /* Уголки для оранжевой карточки */
+        /* Corners of the orange card */
         .orange-accent .card-corner {
             border-color: #e85d04;
         }
@@ -486,7 +486,7 @@
             filter: drop-shadow(0 0 8px rgba(255, 214, 10, 0.3));
         }
 
-        /* Иконка солнца в оранжевом цвете */
+        /* Orange sun icon */
         .orange-accent .card-icon {
             color: #e85d04;
             filter: drop-shadow(0 0 8px rgba(232, 93, 4, 0.4));
@@ -509,7 +509,7 @@
             text-shadow: 0 0 20px rgba(255, 214, 10, 0.4);
         }
 
-        /* Эффект свечения для оранжевой цифры */
+        /* Glow for the orange number */
         .pain-card.orange-accent.active-glow .counter-box {
             color: #e85d04;
             text-shadow: 0 0 20px rgba(232, 93, 4, 0.5);
@@ -522,19 +522,19 @@
             line-height: 1.6;
         }
 
-        /* Премиальный блок NASA GAP — отцентрован и оформлен как виджет */
+        /* NASA GAP block: centered, styled as a widget */
         .nasa-notice {
             display: flex;
             align-items: center;
             gap: 25px;
             background: linear-gradient(90deg, rgba(0, 29, 61, 0.4), rgba(0, 8, 20, 0.6));
             border: 1px solid rgba(255, 214, 10, 0.15);
-            border-left: 3px solid var(--accent-gold); /* Мощный акцент слева */
+            border-left: 3px solid var(--accent-gold); /* Strong accent on the left */
             padding: 25px 35px;
             border-radius: 4px;
             max-width: 900px;
             width: 100%;
-            margin: 0 auto; /* Центрирование самого блока на странице */
+            margin: 0 auto; /* Center the block on the page */
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             opacity: 0;
@@ -569,10 +569,10 @@
             font-weight: 600;
         }
 
-        /* Полная адаптивность под любые устройства (Планшеты и Мобильные) */
+        /* Responsive layout (tablets and phones) */
         @media (max-width: 1024px) {
             .pain-grid {
-                grid-template-columns: repeat(2, 1fr); /* 2 колонки на планшетах */
+                grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
                 gap: 20px;
             }
         }
@@ -581,10 +581,10 @@
             .pain-section { padding: 80px 5%; }
             .section-title { font-size: 1.5rem; }
             .pain-grid {
-                grid-template-columns: 1fr; /* 1 колонка на смартфонах */
+                grid-template-columns: 1fr; /* 1 column on phones */
             }
             .nasa-notice {
-                flex-direction: column; /* Элементы NASA встают друг под друга на мобилках */
+                flex-direction: column; /* NASA items stack on phones */
                 align-items: flex-start;
                 gap: 15px;
                 padding: 20px 25px;
@@ -658,14 +658,14 @@
             const nav = document.querySelector('.nav-links');
             nav.classList.toggle('active');
         }
-    // Закрытие меню при клике на ссылку (чтобы не перекрывало контент)
+    // Close the menu on link click so it does not cover the content
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', () => {
                 document.querySelector('.nav-links').classList.remove('active');
             });
         });
     </script>
-<!-- --- 2. THE PAIN SECTION (ОБНОВЛЕННЫЙ БЛОК) --- -->
+<!-- --- 2. THE PAIN SECTION --- -->
     <section class="pain-section" id="pain">
         <div class="section-header">
             <span class="section-tag">The Threat</span>
@@ -673,7 +673,7 @@
         </div>
 
         <div class="pain-grid">
-            <!-- Карточка 1: Финансовые потери -->
+            <!-- Card 1: financial losses -->
             <div class="pain-card">
                 <div class="card-corner cc-tl"></div><div class="card-corner cc-br"></div>
                 <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -684,7 +684,7 @@
                 <p class="counter-desc">Hourly cost of critical space mission operations, where medical emergencies pose catastrophic financial risks.</p>
             </div>
 
-            <!-- Карточка 2: Вирусная реактивация -->
+            <!-- Card 2: viral reactivation -->
             <div class="pain-card orange-accent">
                 <div class="card-corner cc-tl"></div><div class="card-corner cc-br"></div>
                 <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -695,7 +695,7 @@
                 <p class="counter-desc">Of astronauts experience latent virus reactivation (EBV, VZV) during long-duration spaceflights due to stress and cosmic radiation.</p>
             </div>
 
-            <!-- Карточка 3: Частота событий -->
+            <!-- Card 3: event frequency -->
             <div class="pain-card">
                 <div class="card-corner cc-tl"></div><div class="card-corner cc-br"></div>
                 <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -707,7 +707,7 @@
             </div>
         </div>
 
-        <!-- Премиальный виджет инсайта NASA -->
+        <!-- NASA insight widget -->
         <div class="nasa-notice">
             <div class="nasa-tag">NASA Risk Gap</div>
             <p class="nasa-text">Officially recognized under <strong>Gap IM-501</strong>: Current space medicine infrastructure lacks advanced tools for predictive, real-time immune tracking before clinical symptoms manifest.</p>
@@ -715,10 +715,10 @@
     </section>
 
     <script>
-        // Регистрация плагина ScrollTrigger в GSAP
+        // Register the GSAP ScrollTrigger plugin
         gsap.registerPlugin(ScrollTrigger);
 
-        // --- Насыщенный интерактивный космос (350 звезд) ---
+        // --- Interactive starfield (350 stars) ---
         const canvas = document.getElementById('space-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -771,33 +771,33 @@
         }
         animateCanvas();
 
-        // --- Мышиный Параллакс эффект для элементов первого экрана и блока Pain ---
+        // --- Mouse parallax for the first screen and the Pain section ---
         const spaceCanvas = document.getElementById('space-canvas');
         const astroBox = document.getElementById('astro-box');
         const heroBH = document.getElementById('hero-bh');
-        const painSection = document.getElementById('pain'); // Находим секцию Pain
+        const painSection = document.getElementById('pain'); // Pain section
 
         window.addEventListener('mousemove', (e) => {
-            // Расчет смещения относительно центра экрана
+            // Offset from the screen center
             const moveX = (e.clientX - window.innerWidth / 2) * 0.03;
             const moveY = (e.clientY - window.innerHeight / 2) * 0.03;
 
-            // Элементы первого экрана
+            // First screen elements
             if(astroBox) astroBox.style.transform = `translate(${moveX * 1.2}px, ${moveY * 1.2}px)`;
             if(heroBH) heroBH.style.transform = `translate(${-moveX * 0.4}px, ${-moveY * 0.4}px)`;
             spaceCanvas.style.transform = `translate(${-moveX * 0.2}px, ${-moveY * 0.2}px)`;
 
-            // Интерактивный параллакс для фона блока Pain
+            // Parallax for the Pain section background
             if(painSection) {
-                // Сдвигаем бэкграунд в зависимости от положения мыши (эффект глубины)
-                // Исходная позиция center (50%), к ней добавляем/вычитаем пиксели
+                // Move the background with the mouse (depth effect)
+                // Start at center (50%) and add or subtract pixels
                 const bgX = 50 + (moveX * 0.5);
                 const bgY = 50 + (moveY * 0.5);
                 painSection.style.backgroundPosition = `${bgX}% ${bgY}%`;
             }
         });
 
-        // --- Анимация появления первого экрана (GSAP) ---
+        // --- First screen entrance animation (GSAP) ---
         window.addEventListener('DOMContentLoaded', () => {
             const tl = gsap.timeline();
             tl.to('.hero-logo-text', { opacity: 1, duration: 1.2, ease: 'power3.out', delay: 0.2 })
@@ -805,7 +805,7 @@
               .to('.btn-explore', { opacity: 1, duration: 0.8, onComplete: startTyping }, '-=0.4');
         });
 
-        // --- Эффект печатной машинки слогана ---
+        // --- Typewriter effect for the slogan ---
         const slogan = "Predict immune failure before symptoms appear";
         const sloganContainer = document.getElementById('slogan-text');
         let index = 0;
@@ -826,24 +826,24 @@
         });
 
 
-        // --- СЛОЖНАЯ АНИМАЦИЯ СКРОЛЛА: БЛОК THE PAIN ---
+        // --- Scroll animation: THE PAIN section ---
         
-        // 1. Плавный вылет карточек с эффектом 3D разворота (докручивания)
+        // 1. Cards fly in with a 3D turn
         gsap.to(".pain-card", {
             scrollTrigger: {
                 trigger: ".pain-grid",
-                start: "top 80%", // Запуск, когда сетка заходит на 80% снизу экрана
+                start: "top 80%", // Starts when the grid reaches 80% of the viewport
                 toggleActions: "play none none none"
             },
             opacity: 1,
             y: 0,
             rotateX: 0,
             duration: 1.2,
-            stagger: 0.25, // Карточки вылетают по очереди одна за другой
+            stagger: 0.25, // Cards appear one after another
             ease: "power4.out"
         });
 
-        // 2. Анимация «загорания» и подсчета числовых значений (Counter)
+        // 2. Glow and number counter animation
         gsap.utils.toArray(".pain-card").forEach((card) => {
             const numElement = card.querySelector(".count-num");
             const targetVal = parseFloat(numElement.getAttribute("data-target"));
@@ -855,10 +855,10 @@
                 scrollTrigger: {
                     trigger: card,
                     start: "top 80%",
-                    onEnter: () => card.classList.add("active-glow") // Добавляем золотое неоновое свечение цифрам
+                    onEnter: () => card.classList.add("active-glow") // Gold neon glow for the numbers
                 },
                 value: targetVal,
-                duration: 2.5, // Приятная, не слишком быстрая скорость прокрутки чисел
+                duration: 2.5, // Moderate counting speed
                 ease: "power2.out",
                 onUpdate: () => {
                     numElement.textContent = obj.value.toLocaleString('en-US', {
@@ -869,7 +869,7 @@
             });
         });
 
-        // 3. Плавное появление NASA риск-заметки чуть позже карточек
+        // 3. The NASA risk note fades in after the cards
         gsap.to(".nasa-notice", {
             scrollTrigger: {
                 trigger: ".nasa-notice",
@@ -888,9 +888,9 @@
         width: 100%;
         min-height: 100vh;
         padding: 90px 8%;
-        /* Добавляем фоновую картинку */
+        /* Background image */
         background-image: url('block3.png');
-        background-size: contain; /* Чтобы не обрезало края */
+        background-size: contain; /* Keep the edges visible */
         background-position: center;
         background-repeat: no-repeat;
         background-color: transparent;
@@ -900,10 +900,10 @@
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        transition: background-position 0.1s ease-out; /* Для плавности параллакса */
+        transition: background-position 0.1s ease-out; /* Smooth parallax */
     }
 
-    /* Сетка заголовков */
+    /* Header grid */
     .wh-header-container {
         text-align: center;
         max-width: 750px;
@@ -929,7 +929,7 @@
         line-height: 1.5;
     }
 
-    /* Главный интерактивный контейнер схемы */
+    /* Main interactive diagram container */
     .wh-interactive-scheme {
         position: relative;
         width: 100%;
@@ -941,7 +941,7 @@
         margin-bottom: 35px;
     }
 
-    /* Левая сторона: Блоки изменений */
+    /* Left side: change blocks */
     .wh-cards-container {
         flex: 0.85;
         display: flex;
@@ -951,7 +951,7 @@
         z-index: 5;
     }
 
-    /* Полупрозрачные стеклянные карточки */
+    /* Translucent glass cards */
     .wh-card {
         background: rgba(0, 29, 61, 0.15);
         border: 1px solid rgba(255, 214, 10, 0.12);
@@ -1002,7 +1002,7 @@
         color: var(--text-main);
     }
 
-    /* Правая сторона: Контейнер с космонавтом (СДЕЛАЛИ БОЛЬШЕ + АНИМАЦИЯ ПАРЕНИЯ) */
+    /* Right side: astronaut container (larger, floating animation) */
     .wh-visual-container {
         flex: 1.25;
         height: 100%;
@@ -1011,7 +1011,7 @@
         justify-content: center;
         align-items: center;
         z-index: 4;
-        animation: floatWhatHappens 6s infinite ease-in-out; /* Плавное парение */
+        animation: floatWhatHappens 6s infinite ease-in-out; /* Gentle floating */
     }
 
     @keyframes floatWhatHappens {
@@ -1022,14 +1022,14 @@
 
     .wh-astronaut-wrapper {
         position: relative;
-        width: 440px; /* Увеличили ширину */
-        height: 540px; /* Увеличили высоту */
+        width: 440px; /* Wider */
+        height: 540px; /* Taller */
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    /* Изображение astronaut2.png высокого качества */
+    /* High-resolution astronaut2.png */
     .wh-astronaut-img {
         width: 100%;
         height: 100%;
@@ -1037,7 +1037,7 @@
         filter: drop-shadow(0 10px 30px rgba(0, 8, 20, 0.7));
     }
 
-    /* КЛАСТЕР НАЗВАНИЙ И ШЕСТИУГОЛЬНЫХ ЗВЕЗД ВОКРУГ ТЕЛА */
+    /* Labels and hexagonal stars around the body */
     .wh-marker-wrapper {
         position: absolute;
         display: flex;
@@ -1047,7 +1047,7 @@
         cursor: pointer;
     }
 
-    /* Шестиугольная геометрия звезды */
+    /* Hexagonal star shape */
     .wh-star-node {
         width: 14px;
         height: 14px;
@@ -1057,7 +1057,7 @@
         transition: transform 0.3s ease, background-color 0.3s ease;
     }
 
-    /* Ореол пульсации */
+    /* Pulsing halo */
     .wh-star-pulse {
         position: absolute;
         width: 30px;
@@ -1076,7 +1076,7 @@
         100% { transform: scale(1.3); opacity: 0; }
     }
 
-    /* Текстовая подпись */
+    /* Text label */
     .wh-node-label {
         font-family: var(--font-tech);
         font-size: 0.7rem;
@@ -1091,18 +1091,18 @@
         pointer-events: none;
     }
 
-    /* ВЫНЕСЛИ ЗВЕЗДОЧКИ В ПРОСТРАНСТВО ВОКРУГ КОСМОНАВТА */
-    #marker-ebv { top: 18%; left: -5%; flex-direction: row-reverse; } /* Слева сверху от шлема */
-    #marker-il6 { top: 40%; left: -12%; flex-direction: row-reverse; } /* Слева на уровне плеча/груди */
-    #marker-cortisol { top: 55%; right: -10%; } /* Справа на уровне пояса */
+    /* Stars placed in the space around the astronaut */
+    #marker-ebv { top: 18%; left: -5%; flex-direction: row-reverse; } /* Top left of the helmet */
+    #marker-il6 { top: 40%; left: -12%; flex-direction: row-reverse; } /* Left, at shoulder and chest level */
+    #marker-cortisol { top: 55%; right: -10%; } /* Right, at waist level */
 
-    /* Наведение на маркер */
+    /* Marker hover */
     .wh-marker-wrapper:hover .wh-star-node {
         transform: scale(1.3) rotate(45deg);
         background-color: #ffffff;
     }
 
-    /* Подсказки Tooltip */
+    /* Tooltips */
     .wh-tooltip {
         position: absolute;
         background: rgba(0, 8, 20, 0.95);
@@ -1134,7 +1134,7 @@
         color: var(--text-main);
     }
 
-    /* Тонкие направляющие линии SVG */
+    /* Thin SVG guide lines */
     .wh-svg-connections {
         position: absolute;
         top: 0;
@@ -1159,7 +1159,7 @@
         stroke-width: 1.5px;
     }
 
-    /* Финальный вывод */
+    /* Conclusion */
     .wh-footer-conclusion {
         width: 100%;
         max-width: 850px;
@@ -1189,54 +1189,54 @@
         opacity: 1 !important;
         transform: translate(0) !important;
     }
-    /* Адаптив для маленьких экранов */
+    /* Small screens */
     @media (max-width: 900px) {
         .what-happens-section {
-            padding: 60px 5%; /* Немного уменьшаем отступы для мобилок */
+            padding: 60px 5%; /* Smaller padding on phones */
         }
 
         .wh-interactive-scheme {
-            flex-direction: column; /* Ставим элементы друг под друга */
-            height: auto; /* Убираем фиксированную высоту */
+            flex-direction: column; /* Stack the items */
+            height: auto; /* No fixed height */
             margin-bottom: 20px;
         }
 
         .wh-cards-container {
             max-width: 100%;
             width: 100%;
-            order: 1; /* Карточки будут первыми */
+            order: 1; /* Cards first */
         }
 
         .wh-visual-container {
             width: 100%;
             margin-top: 30px;
-            order: 2; /* Космонавт будет вторым */
+            order: 2; /* Astronaut second */
             min-height: 450px;
         }
 
         .wh-astronaut-wrapper {
-            width: 100%; /* Делаем космонавта резиновым */
+            width: 100%; /* Fluid astronaut width */
             max-width: 320px;
             height: auto;
             aspect-ratio: 440/540;
         }
 
-    /* Исправляем позиции маркеров для мобильного вида */
+    /* Marker positions on phones */
         #marker-ebv { top: 15%; left: 10%; }
         #marker-il6 { top: 45%; left: 5%; }
         #marker-cortisol { top: 60%; right: 10%; }
 
-    /* Делаем подсказки (тултипы) безопасными для экрана */
+    /* Keep tooltips inside the screen */
         .wh-tooltip {
-            width: 80vw; /* Ширина 80% от экрана */
+            width: 80vw; /* 80% of the screen width */
             max-width: 300px;
             white-space: normal;
         }
-        .what-happens-section { background-image: none; } /* Убираем фон с секции */
+        .what-happens-section { background-image: none; } /* No section background */
     
         .wh-visual-container {
             background-image: url('block3.png');
-            background-size: cover; /* Чтобы картинка заполнила контейнер */
+            background-size: cover; /* The image fills the container */
             background-position: center;
             border-radius: 20px;
             padding: 20px;
@@ -1339,25 +1339,25 @@
             marker.addEventListener('mouseenter', () => {
                 tooltip.style.opacity = '1';
     
-    // Получаем координаты того места, где находится звездочка
+    // Coordinates of the star
                 const rect = marker.getBoundingClientRect();
     
                 if (window.innerWidth <= 900) {
-        // МОБИЛЬНЫЙ: жестко фиксируем по центру экрана
+        // Phones: fixed in the screen center
                     tooltip.style.position = 'fixed';
                     tooltip.style.left = '5%';
                     tooltip.style.right = '5%';
-                    tooltip.style.top = (rect.top + 5) + 'px'; // Чуть ниже точки
+                    tooltip.style.top = (rect.top + 5) + 'px'; // Slightly below the point
                     tooltip.style.marginTop = '-30px';
                     tooltip.style.width = '80%';
                     tooltip.style.transform = 'none';
                 } else {
-        // ПК: оставляем как было (относительно родителя)
+        // Desktop: relative to the parent
                     tooltip.style.position = 'absolute';
                     const containerRect = marker.parentElement.getBoundingClientRect();
                     tooltip.style.left = (rect.left - containerRect.left + 35) + 'px';
                     tooltip.style.top = (rect.top - containerRect.top - 15) + 'px';
-                    tooltip.style.width = '260px'; // Возвращаем ширину ПК
+                    tooltip.style.width = '260px'; // Desktop width
                 }
 
                 if(associatedCard) associatedCard.classList.add('active-card');
@@ -1394,7 +1394,7 @@
             });
         });
 
-        // Отрисовка S-линий к точкам в пространстве вокруг космонавта
+        // Draw S-curves to the points around the astronaut
         function drawConnectionLines() {
             const canvas = document.getElementById('wh-svg-canvas');
             if(!canvas) return;
@@ -1430,17 +1430,17 @@
         setTimeout(drawConnectionLines, 300);
         window.addEventListener('resize', drawConnectionLines);
 
-        // УДАЛИТЕ СТАРЫЙ ОБЗЕРВЕР И ВСТАВЬТЕ ЭТОТ:
+        // Cards appear when the section scrolls into view
         const whObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if(entry.isIntersecting) {
                     const whCards = entry.target.querySelectorAll('.wh-card');
                     whCards.forEach((card, index) => {
-                        // Добавляем плавный вылет
+                        // Smooth fly-in
                         setTimeout(() => {
                             card.style.opacity = '1';
                             card.style.transform = 'translateX(0)';
-                        }, index * 200); // 200мс задержка между карточками
+                        }, index * 200); // 200 ms between cards
                     });
 
                     const conclusion = entry.target.querySelector('#wh-conclusion');
@@ -1461,22 +1461,22 @@
     });
 </script>
 <script>
-    // 1. Эффект движения фона при движении мыши
+    // 1. The background follows the mouse
     const section = document.querySelector('.what-happens-section');
     document.addEventListener('mousemove', (e) => {
-        const x = (e.clientX / window.innerWidth - 0.5) * 20; // смещение на 20px
+        const x = (e.clientX / window.innerWidth - 0.5) * 20; // up to 20px offset
         const y = (e.clientY / window.innerHeight - 0.5) * 20;
         section.style.backgroundPosition = `calc(50% + ${x}px) calc(50% + ${y}px)`;
     });
 
-    // 2. Принудительная плавная прокрутка для всех ссылок
+    // 2. Smooth scrolling for all links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
             const targetId = this.getAttribute('href');
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
-                // Магия плавной прокрутки
+                // Smooth scroll
                 window.scrollTo({
                     top: targetElement.offsetTop,
                     behavior: 'smooth'
@@ -1488,13 +1488,13 @@
 
 
 <style>
-    /* Слой для фоновой картинки БЛОКА 4!!!!!!!!!!!!!!!!!!!!!!!! */
+    /* Background image layer of section 4 */
     .solution-section {
         position: relative;
         padding: 100px 8%;
         color: var(--text-main);
         z-index: 10;
-        /* Добавляем фото на фон */
+        /* Background photo */
         background-image: url('block4b.png'), url('block4.png');
         background-position: center bottom, center -5%;
         background-size: 100% auto, 94% auto;
@@ -1506,7 +1506,7 @@
     .sol-title { font-family: var(--font-tech); font-size: 2 rem; color: var(--accent-gold); margin-bottom: 20px; }
     .sol-subtitle { max-width: 700px; margin: 0 auto; font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary); }
 
-    /* Карточки-решения */
+    /* Solution cards */
     .sol-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 80px; }
     .sol-card {
         background: rgba(0, 29, 61, 0.05); border: 1px solid rgba(255, 214, 10, 0.2);
@@ -1517,12 +1517,12 @@
     .sol-card.animate { opacity: 1; transform: translateY(0); }
     .sol-card h3 { color: var(--accent-gold); margin: 20px 0; font-family: var(--font-tech); }
 
-    /* Метрики */
+    /* Metrics */
     .sol-metrics { display: flex; gap: 40px; justify-content: center; margin-bottom: 50px; flex-wrap: wrap; }
     .metric-item { background: rgba(0, 0, 0, 0.5); padding: 25px; border-left: 3px solid var(--accent-gold); }
     .metric-val { font-size: 1.5rem; font-weight: 700; color: #fff; display: block; }
 
-    /* AI блок */
+    /* AI block */
     .ai-box { max-width: 900px; margin: 0 auto; text-align: center; padding: 50px; background: rgba(0,13,15,0.8); border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 15px; }
     .btn-demo { 
         margin-top: 30px; padding: 15px 40px; background: transparent; border: 1px solid var(--accent-gold); 
@@ -1531,39 +1531,39 @@
     
     .btn-demo:hover { background: var(--accent-gold); color: #000; box-shadow: 0 0 20px var(--accent-gold); }
    
-    /* Специальные стили ТОЛЬКО для больших компьютерных мониторов (от 1500px и выше) */
+    /* Large monitors only (1500px and wider) */
 @media (min-width: 1500px) {
     .solution-section {
-        /* Ограничиваем картинки по ширине, чтобы они не растягивались на весь гигантский экран */
+        /* Limit image width on very wide screens */
         background-size: 1400px auto, 1300px auto !important;
         background-position: center bottom, center 0px !important;
     }
 
-    /* Делаем карточки Predict, Prevent, Protect темными и непрозрачными */
+    /* Dark, opaque Predict / Prevent / Protect cards */
     .sol-card {
-        background: rgba(0, 10, 20, 0.96) !important; /* Плотный темный цвет */
-        border: 1px solid rgba(255, 165, 0, 0.4) !important; /* Чуть ярче рамка для контраста */
+        background: rgba(0, 10, 20, 0.96) !important; /* Solid dark color */
+        border: 1px solid rgba(255, 165, 0, 0.4) !important; /* Slightly brighter border for contrast */
         backdrop-filter: blur(15px) !important;
     }
 
-    /* Делаем плашки с метриками (Earth Model / In-Flight Model) четкими */
+    /* Crisp metric badges (Earth Model / In-Flight Model) */
     .metric-item {
         background: rgba(0, 10, 20, 0.96) !important; 
         border: 1px solid rgba(255, 165, 0, 0.3) !important;
         border-left: 4px solid var(--accent-gold) !important; 
     }
 
-    /* Блок с AI ассистентом внизу делаем полностью глухим */
+    /* Fully opaque AI assistant block */
     .ai-box {
         background: rgba(0, 5, 10, 0.98) !important;
         border: 1px solid rgba(255, 165, 0, 0.5) !important;
     }
 }
 
-/* Экстра-защита для сверхбольших мониторов (2K и 4K) */
+/* Very large monitors (2K and 4K) */
 @media (min-width: 2000px) {
     .solution-section {
-        /* На 4К мониторах фоны останутся аккуратными по центру и не превратятся в кашу */
+        /* Backgrounds stay centered and sharp on 4K monitors */
         background-size: 1600px auto, 1500px auto !important;
     }
 }
@@ -1628,13 +1628,13 @@
         padding: 100px 8%;
         position: relative;
         z-index: 5;
-        /* Фон добавляем сюда */
+        /* Background */
         background-image: url('block5.png');
         background-size: 100% auto; 
         background-position: center 0px; 
         background-repeat: no-repeat;
         background-color: transparent;
-        transition: background-position 0.5s ease-out; /* Плавность движения */
+        transition: background-position 0.5s ease-out; /* Smooth movement */
         will-change: background-position;
         background-attachment: scroll;
     }
@@ -1695,7 +1695,7 @@
     .calc-btn:hover {
         background: linear-gradient(45deg, #ff9500, #ffcc00);
         color: #000;
-        border: 2px solid transparent; /* Убираем рамку при наведении */
+        border: 2px solid transparent; /* No border on hover */
     }
     .gender-selector { display: flex; gap: 10px; margin-bottom: 10px; }
     .gender-btn {
@@ -1713,7 +1713,7 @@
         color: #000;
         border: none;
     }
-    /* Удаляем стандартные стрелочки браузера */
+    /* Hide the browser's number spinners */
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
         -webkit-appearance: none;
@@ -1731,9 +1731,9 @@
         text-align: center;
         color: var(--accent-gold);
         font-size: 0.95rem;
-        display: none; /* Скрыто до момента расчета */
+        display: none; /* Hidden until calculated */
     }
-    /* Анимация пульсации */
+    /* Pulse animation */
     @keyframes pulse {
         0% { border-color: rgba(255, 165, 0, 0.3); box-shadow: 0 0 5px rgba(255, 165, 0, 0.2); }
         50% { border-color: rgba(255, 165, 0, 1); box-shadow: 0 0 20px rgba(255, 165, 0, 0.6); }
@@ -1744,7 +1744,7 @@
         animation: pulse 2s infinite;
     }
 
-    /* Спидометр */
+    /* Gauge */
     .meter-bg { width: 100%; height: 10px; background: #222; border-radius: 5px; margin-top: 15px; overflow: hidden; }
     .meter-fill { height: 100%; width: 0%; transition: width 1s ease, background 1s ease; }
     
@@ -1753,20 +1753,20 @@
             display: grid !important; 
             grid-template-areas: 
                 "d"
-                "i"; /* d = desc (верх), i = inputs (низ) */
+                "i"; /* d = desc (top), i = inputs (bottom) */
             grid-template-columns: 1fr;
         }
 
         .form-content .desc {
-            grid-area: d; /* Ставим desc наверх */
+            grid-area: d; /* desc on top */
             margin-bottom: 20px;
         }
 
         .form-content .inputs {
-            grid-area: i; /* Ставим inputs вниз */
+            grid-area: i; /* inputs below */
         }
     }
-    /* Стиль для кнопки-ссылки PDF */
+    /* PDF link button */
     .pdf-download-btn {
         display: inline-flex;
         align-items: center;
@@ -1797,13 +1797,13 @@
     .pdf-icon {
         flex-shrink: 0;
     }
-    /* стили для заголовка на космическом фоне */
+    /* Title on the space background */
     .demo-header {
         display: flex;
         flex-direction: column;
-        align-items: center; /* Железное выравнивание по центру внутри блока */
-        text-align: center;  /* Выравнивание самого текста по центру */
-        margin-bottom: 35px; /* Немного уменьшили отступ, чтобы не разрывать экран */
+        align-items: center; /* Centered inside the block */
+        text-align: center;  /* Centered text */
+        margin-bottom: 35px; /* Slightly smaller margin */
         padding: 0 20px;
         width: 100%;
         box-sizing: border-box;
@@ -1811,25 +1811,25 @@
     
     .demo-main-title {
         font-family: 'Montserrat', 'Century Gothic', AppleGothic, sans-serif;
-        /* Уменьшили размер заголовка */
+        /* Smaller title */
         font-size: clamp(1.5rem, 3vw, 2.2rem); 
         color: var(--accent-gold); 
-        margin: 0 auto 10px auto; /* Центрируем сам блок и задаем отступ вниз */
+        margin: 0 auto 10px auto; /* Center the block, bottom margin */
         line-height: 1.3;
         font-weight: 600;
-        max-width: 800px; /* Чтобы текст красиво разбивался на строки на широких экранах */
+        max-width: 800px; /* Nicer line breaks on wide screens */
     }
     
     .demo-subtitle {
         font-family: 'Montserrat', 'Century Gothic', AppleGothic, sans-serif;
-        /* Уменьшили размер подзаголовка */
+        /* Smaller subtitle */
         font-size: clamp(0.85rem, 1.5vw, 1rem);
-        color: #aaa; /* Мягкий серый цвет, чтобы не спорил с белым заголовком */
+        color: #aaa; /* Soft gray so it does not compete with the white title */
         max-width: 650px;
-        margin: 0 auto; /* Центрируем подзаголовок на странице */
+        margin: 0 auto; /* Center the subtitle */
         line-height: 1.5;
     }
-    /* Результат расчёта, сообщения формы, панель консультанта */
+    /* Result, form messages, consultant panel */
     .risk-outcome { font-size: 0.78rem; color: #bdbdbd; line-height: 1.35; }
     .risk-number { font-size: 2.2rem; font-weight: 700; margin-top: 6px; line-height: 1.1; }
     .risk-number .risk-val { color: #ff9500; }
@@ -1982,8 +1982,8 @@
 <script>
 (function () {
     'use strict';
-    // Демо в своей области видимости: имя section уже занято блоком «What happens»
-    // API: ?api=..., иначе рядом со страницей, иначе Render
+    // The demo runs in its own scope: the name section is already used by "What happens"
+    // API: ?api=..., otherwise next to the page, otherwise Render
     const RENDER_API = 'https://immoonity-api.onrender.com';
     let apiBasePromise = null;
     function resolveApiBase() {
@@ -2002,7 +2002,7 @@
         return apiBasePromise;
     }
     resolveApiBase();
-    // Язык ответов консультанта: ?lang=ru
+    // Consultant language: ?lang=ru
     const UI_LANG = (new URLSearchParams(location.search).get('lang') || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en';
 
     const UI = {
@@ -2030,7 +2030,7 @@
         document.querySelectorAll('#demo .calc-btn').forEach(b => { b.textContent = T.calc[b.closest('form').id]; });
     }
 
-    // 1. Переключение вкладок
+    // 1. Tabs
     function showTab(tab, btn) {
         document.querySelectorAll('.form-content').forEach(f => f.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -2038,14 +2038,14 @@
         btn.classList.add('active');
     }
 
-    // 2. Выбор пола (по умолчанию M)
+    // 2. Sex selection (M by default)
     function selectGender(gender, btn) {
         document.getElementById('sex').value = gender;
         document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     }
 
-    // 3. Валидация: без отрицательных чисел
+    // 3. Validation: no negative numbers
     document.querySelectorAll('#demo input[type="number"]').forEach(input => {
         input.setAttribute('min', '0');
         input.addEventListener('input', function () {
@@ -2054,7 +2054,7 @@
         });
     });
 
-    // 4. Вывод результата
+    // 4. Result
     function el(tag, cls, text) {
         const node = document.createElement(tag);
         if (cls) node.className = cls;
@@ -2181,7 +2181,7 @@
         return { data, missing };
     }
 
-    // 5. Отправка данных
+    // 5. Request
     async function calculateRisk(formId) {
         const form = document.getElementById(formId);
         const btn = form.querySelector('.calc-btn');
@@ -2200,7 +2200,7 @@
         btn.textContent = T.processing;
         btn.disabled = true;
         const controller = new AbortController();
-        const slowTimer = setTimeout(() => { btn.textContent = T.waking; }, 4000);  // бесплатный Render просыпается до минуты
+        const slowTimer = setTimeout(() => { btn.textContent = T.waking; }, 4000);  // a free Render instance takes up to a minute to wake up
         const killTimer = setTimeout(() => controller.abort(), 90000);
         try {
             const apiBase = await resolveApiBase();
@@ -2233,7 +2233,7 @@
         }
     }
 
-    // 6. Анимация фона
+    // 6. Background animation
     document.addEventListener('mousemove', (e) => {
         const demoSection = document.querySelector('.demo-wrapper');
         const x = (window.innerWidth / 2 - e.pageX) / 50;
@@ -2241,14 +2241,14 @@
         demoSection.style.backgroundPosition = `calc(50% + ${x}px) calc(100% + ${y}px)`;
     });
 
-    // для onclick в разметке
+    // used by onclick in the markup
     window.showTab = showTab;
     window.selectGender = selectGender;
     window.calculateRisk = calculateRisk;
 })();
 </script>
 
-<!-- НАЧАЛО БЛОКА МОНЕТИЗАЦИИ И СВЯЗИ -->
+<!-- PRICING AND CONTACT SECTION -->
 <style>
     .pricing-cta-section {
         padding: 60px 8%;
@@ -2268,7 +2268,7 @@
 
     .pricing-card {
         background: rgba(0, 10, 20, 0.7);
-        border: 1px solid rgba(255, 165, 0, 0.2); /* Единая цельная рамка для всех */
+        border: 1px solid rgba(255, 165, 0, 0.2); /* One border for all cards */
         backdrop-filter: blur(15px);
         padding: 35px;
         border-radius: 16px;
@@ -2348,7 +2348,7 @@
         box-shadow: 0 0 15px rgba(255, 149, 0, 0.4);
     }
 
-    /* Адаптивность для телефонов */
+    /* Phones */
     @media (max-width: 768px) {
         .pricing-cta-section {
             padding: 40px 4%;
@@ -2366,7 +2366,7 @@
 <section class="pricing-cta-section">
     <div class="pricing-container">
         
-        <!-- Карточка 1: Про цены (Коммерческая лицензия) -->
+        <!-- Card 1: pricing (commercial license) -->
         <div class="pricing-card">
             <div>
                 <div class="pr-title">Commercial Licensing</div>
@@ -2381,7 +2381,7 @@
             <a href="https://forms.gle/i6DPAjufZMioNLGD6" target="_blank" class="pr-btn">Request B2B Quote</a>
         </div>
 
-        <!-- Карточка 2: Про контакт и Google Форму (Оставьте данные) -->
+        <!-- Card 2: contact and Google Form -->
         <div class="pricing-card">
             <div>
                 <div class="pr-title">Get Full Access</div>
@@ -2397,22 +2397,22 @@
 
     </div>
 </section>
-<!-- КОНЕЦ БЛОКА МОНЕТИЗАЦИИ И СВЯЗИ -->
+<!-- END OF PRICING AND CONTACT SECTION -->
 
 
 
 <style>
-    /* Звездный фон только тонкие звезды */
+    /* Starry background, thin stars only */
     .star-background {
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
-        background-color: var(--bg-ink-black); /* Твой основной цвет */
-        background-image: url('team-bg.png'); /* Путь к картинке */
+        background-color: var(--bg-ink-black); /* Main color */
+        background-image: url('team-bg.png'); /* Image path */
         background-position: center;
-        background-size: cover; /* Растягивает на весь блок */
+        background-size: cover; /* Covers the whole block */
         background-repeat: no-repeat;
         z-index: 1;
-        opacity: 0.5; /* Сделай прозрачность 0.3-0.5, если надо сделать фон бледнее */
+        opacity: 0.5; /* 0.3–0.5 makes the background paler */
     }
 
     #team { padding: 80px 5%; position: relative; color: #fff; text-align: center; overflow: hidden; }
@@ -2420,7 +2420,7 @@
     .team-title { font-size: 1.8rem; color: #ff9500; margin-bottom: 10px; }
     .team-desc { color: #aaa; margin-bottom: 40px; font-size: 0.9rem; max-width: 600px; margin: 0 auto; }
     
-    /* Фотка: убрана рамка, увеличена ширина до 90% */
+    /* Photo: no border, wider */
     .team-photo-wrapper { max-width: 900px; margin: 0 auto; }
     .team-photo { width: 100%; height: auto; border-radius: 0; border: none; }
 
@@ -2429,7 +2429,7 @@
     .star-icon { color: #ff9500; font-size: 1.2rem; animation: flicker 1.5s infinite; }
     @keyframes flicker { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
     
-    /* Имена и роли с адаптивным размером */
+    /* Names and roles, responsive size */
     .member-name { 
         font-weight: bold; 
         font-size: clamp(0.7rem, 2vw, 1rem); 
@@ -2439,13 +2439,13 @@
         color: #aaa; 
         line-height: 1.2; 
     }
-    /* Добавляем этот класс, чтобы они не переносились на мобилках */
+    /* Keep members on one row on phones */
     .team-members-row { 
         display: flex; 
         justify-content: center; 
         gap: 15px; 
         margin-top: -5px; 
-        flex-wrap: nowrap; /* Запрещаем перенос на новую строку */
+        flex-wrap: nowrap; /* No wrapping */
     }
 
     .details {
@@ -2455,6 +2455,7 @@
         text-align: left; z-index: 10; font-size: 0.8rem; pointer-events: none;
     }
     .member-box:hover .details { opacity: 1; visibility: visible; }
+    .team-dev { display: flex; justify-content: center; margin-top: 25px; }
 </style>
 
 <section id="team">
@@ -2485,6 +2486,14 @@
                 <div class="member-name">Henry</div>
                 <div class="member-role">Medical Specialist</div>
                 <div class="details"><strong>Igor Mizin</strong><br>Collecting and structuring clinical data, bridging the gap between medicine and machine learning.</div>
+            </div>
+        </div>
+
+        <div class="team-dev">
+            <div class="member-box">
+                <div class="star-icon">★</div>
+                <div class="member-name">Svyatoslav</div>
+                <div class="member-role">Lead Developer</div>
             </div>
         </div>
     </div>

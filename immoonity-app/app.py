@@ -1,11 +1,11 @@
 """API IMMOONITY.
 
-    GET  /, /api/health          проверка доступности
-    GET  /api/models             карточки моделей: входы, пороги, веса, проверка, источники
-    POST /predict, /api/predict  прогноз и интерпретация
-    POST /api/consultant/prompt  запрос для LLM-консультанта
+    GET  /, /api/health          health check
+    GET  /api/models             model cards: inputs, thresholds, weights, checks, sources
+    POST /predict, /api/predict  prediction and interpretation
+    POST /api/consultant/prompt  request for the LLM consultant
 
-Локально: python app.py. На Render: gunicorn app:app.
+Locally: python app.py. API only on a host: gunicorn app:app.
 """
 
 from __future__ import annotations
@@ -124,7 +124,7 @@ def create_app(site_dir: str | Path | None = None) -> Flask:
     if site:
         @app.get("/<path:filename>")
         def static_site(filename: str):
-            # при локальном запуске (run_local.py) API и сайт отдаются с одного порта
+            # with run_local.py or wsgi.py the site and the API share one address
             if filename.startswith("api/"):
                 abort(404)
             return send_from_directory(site, filename)

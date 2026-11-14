@@ -1,8 +1,8 @@
 -r requirements.txt
 
-# Тесты
+# Tests
 pytest>=8
 
-# Переобучение моделей
+# Model training
 numpy>=2.0
 matplotlib>=3.8

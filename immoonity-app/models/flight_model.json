@@ -6,7 +6,7 @@
     "code": "multisystem_dysregulation",
     "ru": "Риск многосистемной иммунной дисрегуляции (≥2 подсистем) к концу миссии",
     "en": "Risk of multi-system immune dysregulation (≥2 subsystems) by the end of the mission",
-    "definition_ru": "Вовлечены две и более из четырёх подсистем: воспаление, сдвиг лейкоцитов, реактивация ВЭБ, стресс-ось. Градация исследований: 0 — нет изменений, 1 — одна подсистема, 2 — две подсистемы или клиническое проявление, 3 — системная дисрегуляция."
+    "definition": "Two or more of four subsystems involved: inflammation, leukocyte shift, EBV reactivation, stress axis. Study grading: 0 — no changes, 1 — one subsystem, 2 — two subsystems or a clinical manifestation, 3 — systemic dysregulation."
   },
   "inputs": {
     "il6_b": {
@@ -213,7 +213,7 @@
     "intercept": {
       "mean": -2.2675,
       "sd": 0.9668,
-      "why": "Не обучен. Выведен из допущения q = 0.15 (0.07–0.3): доля подсистем, которые у стабильного в начале полёта человека вовлекаются к 6-му месяцу. Для двух из четырёх подсистем это ~11% (90%: ~3–35%). Сдвиги обычно возникают в первые недели и сохраняются (Crucian 2014, 2015), поэтому стабильные маркеры — благоприятный признак; но поздние изменения возможны: в изоляции на 1 год реакции усиливались после 3–4 месяцев (Feuerecker 2019).",
+      "why": "Not fitted. Derived from the assumption q = 0.15 (0.07–0.3): the share of subsystems that become involved by month 6 in a person who is stable early in flight. For two of four subsystems this gives ~11% (90%: ~3–35%). Shifts usually appear in the first weeks and persist (Crucian 2014, 2015), so stable markers are a good sign; late changes are still possible: in a year of isolation immune responses intensified after 3–4 months (Feuerecker 2019).",
       "refs": [
         "crucian2014",
         "crucian2015",
@@ -224,13 +224,13 @@
     "dysregulation_score": {
       "mean": 2.1464,
       "sd": 0.5517,
-      "why": "Не обучен. Следует из определения исхода: при 1 вовлечённой подсистеме нужна ещё одна (~39% при q = 0.15), при 2 исход уже достигнут (90%, поправка на выброс единичного измерения). Наклон — прямая через эти три точки.",
+      "why": "Not fitted. Follows from the outcome definition: with 1 involved subsystem one more is needed (~39% at q = 0.15); with 2 the outcome is already met (90%, allowing for a one-off outlier). The slope is the line through these three points.",
       "refs": []
     },
     "duration_log2": {
       "mean": 0.21,
       "sd": 0.11,
-      "why": "Не обучен. Rooney 2019: выделение вирусов в коротких полётах (10–16 сут) и на МКС (≥180 сут) — любые герпесвирусы 53→61%, VZV 41→65%, ВЭБ 82→96%, ЦМВ 47→61%. На удвоение длительности логарифм шансов растёт на 0.09, 0.27, 0.45, 0.15; взята медиана 0.21. Риск растёт с длительностью, но всё медленнее: основная часть сдвигов возникает в начале полёта.",
+      "why": "Not fitted. Rooney 2019: viral shedding on short flights (10–16 days) vs the ISS (≥180 days): any herpesvirus 53→61%, VZV 41→65%, EBV 82→96%, CMV 47→61%. Per doubling of mission length the log-odds rise by 0.09, 0.27, 0.45, 0.15; the median 0.21 is used. The risk grows with mission length, but ever more slowly: most shifts appear early in flight.",
       "refs": [
         "rooney2019",
         "mehta2017",
@@ -238,7 +238,7 @@
       ]
     }
   },
-  "method": "Модель на опубликованных данных: параметры заданы по литературе и явным допущениям (training/config.py), без обучения; интервал отражает неопределённость этих допущений, за пределами самого длинного полёта он дополнительно расширяется.",
+  "method": "Knowledge-based model: parameters come from published studies and explicit assumptions (training/config.py), no fitting; the interval reflects the uncertainty of these assumptions and widens further beyond the longest spaceflight.",
   "markers": {
     "cytokine": {
       "weight": 1.0,
@@ -264,7 +264,7 @@
         "crucian2014",
         "kim2024"
       ],
-      "why": "Системное воспаление. После полёта IL-6 растёт вместе с IL-10, CRP и MCP-1 — так же, как у астронавтов после длительных миссий (Kim 2024); сдвиги цитокинов сохраняются весь полёт (Crucian 2014). Абсолютный порог 7 пг/мл — 95-й перцентиль у 817 здоровых (Elecsys IL-6). Относительный порог +71% = критическая разница (RCV) при внутрииндивидуальной вариабельности IL-6 30–48%; у экипажа Inspiration4 по трём анализам до полёта — 27% (NASA OSDR, OSD-575)."
+      "why": "Systemic inflammation. After flight IL-6 rises together with IL-10, CRP and MCP-1, as in astronauts after long missions (Kim 2024); cytokine shifts persist throughout flight (Crucian 2014). Absolute threshold 7 pg/mL: 95th percentile of 817 healthy adults (Elecsys IL-6). Relative threshold +71% = reference change value (RCV) for a within-person IL-6 variability of 30–48%; 27% in the Inspiration4 crew over three pre-flight draws (NASA OSDR, OSD-575)."
     },
     "immune_shift": {
       "weight": 0.75,
@@ -290,7 +290,7 @@
         "fraser2001",
         "kim2024"
       ],
-      "why": "NLR растёт в полёте (Paul 2020), но маркер неспецифичен (острый стресс, время забора); верхняя граница нормы 3.53 (Forget 2017). Относительный порог +46% (RCV): заложенная вариабельность NLR ≈20% совпала с измеренной у экипажа Inspiration4 по трём предполётным анализам (training/checks.py). Пониженный вес: во всех исследованиях с изолированным сдвигом лейкоцитов исход был лёгким."
+      "why": "NLR rises in flight (Paul 2020), but the marker is non-specific (acute stress, sampling time); upper reference limit 3.53 (Forget 2017). Relative threshold +46% (RCV): the assumed NLR variability of ≈20% matched the one measured in the Inspiration4 crew over three pre-flight draws (training/checks.py). Lower weight: in all studies with an isolated leukocyte shift the outcome was mild."
     },
     "viral": {
       "weight": 1.25,
@@ -308,7 +308,7 @@
         "rooney2019",
         "crucian2018"
       ],
-      "why": "Прямой признак потери Т-клеточного контроля над латентными вирусами — ближайшее к клиническим событиям звено (Mehta 2017; Crucian 2018). Порог ≈129 копий/мл — геометрическая середина между уровнем до полёта (40) и средним в полёте (417) по данным Pierson 2005 (32 астронавта, 1398 образцов слюны)."
+      "why": "A direct sign of lost T-cell control over latent viruses, the link closest to clinical events (Mehta 2017; Crucian 2018). Threshold ≈129 copies/mL: geometric midpoint between the pre-flight level (40) and the in-flight mean (417) in Pierson 2005 (32 astronauts, 1398 saliva samples)."
     },
     "neuroendocrine": {
       "weight": 1.0,
@@ -334,7 +334,7 @@
         "cortisol_bv",
         "fraser2001"
       ],
-      "why": "Стресс-гормоны — пусковое звено реактивации ВЭБ: кортизол (Stowe 2000), катехоламины (Stowe 2001); реактивация на МКС совпадала со сдвигом суточного ритма кортизола (Mehta 2017). Относительный порог +39% = RCV при CVi кортизола 16% (в разных версиях базы EFLM 15–21%, порог тогда +37…+50%). Абсолютный порог 550 нмоль/л — ориентир команды (около верхней границы утреннего референсного интервала, зависит от метода)."
+      "why": "Stress hormones trigger EBV reactivation: cortisol (Stowe 2000), catecholamines (Stowe 2001); on the ISS reactivation coincided with a shift in the daily cortisol rhythm (Mehta 2017). Relative threshold +39% = RCV for a cortisol CVi of 16% (15–21% across EFLM database versions, giving +37…+50%). Absolute threshold 550 nmol/L is the team's benchmark (near the upper limit of the morning reference interval; method-dependent)."
     }
   },
   "duration": {
@@ -365,7 +365,7 @@
   },
   "references": {
     "cortisol_bv": {
-      "citation": "EFLM Biological Variation Database, cortisol (serum, morning): median CVi ≈ 16%; в версиях базы Ricós/Westgard — 15.2% и 20.9%.",
+      "citation": "EFLM Biological Variation Database, cortisol (serum, morning): median CVi ≈ 16%; 15.2% and 20.9% in versions of the Ricós/Westgard database.",
       "url": "https://biologicalvariation.eu/meta_by_analyte/492"
     },
     "crucian2014": {
@@ -401,11 +401,11 @@
       "url": "https://doi.org/10.1126/science.aau8650"
     },
     "il6_bv": {
-      "citation": "Cava F, et al. Biological variation of interleukin 6 (IL-6) and soluble interleukin 2 receptor (sIL2R) in serum of healthy individuals (2000): CVi ≈ 48%; Dugué B, Leppänen E.: CVi ≈ 30% — внутрииндивидуальная вариабельность IL-6 у здоровых 30–48%.",
+      "citation": "Cava F, et al. Biological variation of interleukin 6 (IL-6) and soluble interleukin 2 receptor (sIL2R) in serum of healthy individuals (2000): CVi ≈ 48%; Dugué B, Leppänen E.: CVi ≈ 30%; within-person variability of IL-6 in healthy people is 30–48%.",
       "url": "https://data.zhenzhi.com/details/1/908769401"
     },
     "kim2024": {
-      "citation": "Kim J, et al. Single-cell multi-ome and immune profiles of the Inspiration4 crew reveal conserved, cell-type, and sex-specific responses to spaceflight. Nat Commun. 2024;15:4954. Анализы экипажа — NASA OSDR: OSD-569 (общий анализ крови), OSD-575 (цитокины сыворотки).",
+      "citation": "Kim J, et al. Single-cell multi-ome and immune profiles of the Inspiration4 crew reveal conserved, cell-type, and sex-specific responses to spaceflight. Nat Commun. 2024;15:4954. Crew tests: NASA OSDR OSD-569 (complete blood count), OSD-575 (serum cytokines).",
       "url": "https://doi.org/10.1038/s41467-024-49211-2"
     },
     "leuko_bv": {
@@ -421,7 +421,7 @@
       "url": "https://doi.org/10.1038/s41526-017-0015-y"
     },
     "nasa_std3001": {
-      "citation": "NASA OCHMO. Radiation protection technical brief (NASA-STD-3001): career limit 600 mSv effective dose. Дозы на МКС ~0.2–0.5 мЗв/сут — Simonsen L., NASA NTRS 20250006168.",
+      "citation": "NASA OCHMO. Radiation protection technical brief (NASA-STD-3001): career limit 600 mSv effective dose. ISS dose rate ~0.2–0.5 mSv/day: Simonsen L., NASA NTRS 20250006168.",
       "url": "https://www.nasa.gov/wp-content/uploads/2023/03/radiation-protection-technical-brief-ochmo.pdf"
     },
     "paul2020": {
@@ -450,7 +450,7 @@
     }
   },
   "training": {
-    "method": "без обучения",
+    "method": "not fitted",
     "check_files": [
       "data/aggregated_dataset.csv",
       "data/inspiration4_cbc.csv",
@@ -458,8 +458,8 @@
     ]
   },
   "validation": {
-    "scheme": "не применимо: независимых данных об исходе нет",
-    "reason": "В aggregated_dataset.csv исход совпадает с суммой флагов-входов в 37 из 41 строк (утечка целевой переменной); метрики качества на нём не информативны.",
+    "scheme": "not applicable: no independent outcome data",
+    "reason": "In aggregated_dataset.csv the outcome equals the sum of the input flags in 37 of 41 rows (target leakage), so accuracy metrics on it are not informative.",
     "checks": "reports/metrics.json -> flight_checks"
   }
 }

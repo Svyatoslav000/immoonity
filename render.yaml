@@ -1,5 +1,5 @@
-# Render Blueprint: сайт и API одним веб-сервисом (render.com -> New -> Blueprint).
-# Версия Python берётся из .python-version.
+# Render Blueprint: the site and the API as one web service (render.com -> New -> Blueprint).
+# The Python version comes from .python-version.
 services:
   - type: web
     name: immoonity

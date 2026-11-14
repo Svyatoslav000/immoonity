@@ -6,7 +6,7 @@
     "code": "latent_virus_reactivation",
     "ru": "Риск реактивации латентных герпесвирусов (ВЭБ, VZV, ЦМВ) в ходе ~6-месячного полёта",
     "en": "Risk of latent herpesvirus reactivation (EBV, VZV, CMV) during a ~6-month mission",
-    "definition_ru": "Реактивация хотя бы одного из трёх вирусов (ebv/vzv/cmv_reactivation = 1)."
+    "definition": "Reactivation of at least one of three viruses (ebv/vzv/cmv_reactivation = 1)."
   },
   "inputs": {
     "sex": {
@@ -158,7 +158,7 @@
     "intercept": {
       "mean": 0.0,
       "sd": 2.5,
-      "why": "Слабоинформативное априорное распределение (Gelman et al., 2008): базовый риск не задаём заранее.",
+      "why": "Weakly informative prior (Gelman et al., 2008): the baseline risk is not set in advance.",
       "refs": [
         "gelman2008"
       ]
@@ -166,7 +166,7 @@
     "fitness_index": {
       "mean": 0.0,
       "sd": 2.5,
-      "why": "Слабоинформативное (Gelman et al., 2008): знак и силу эффекта определяют данные астронавтов. Опубликованные эффекты Agha 2020 (−29%/−39%) задают веса внутри индекса и служат проверкой согласованности, но в априорное распределение не входят — это то же исследование, что и датасет (двойной учёт). Данные общей популяции (Chastin 2021: HR 0.69) подтверждают направление, но не переносимы по величине; оба варианта — в анализе чувствительности.",
+      "why": "Weakly informative (Gelman et al., 2008): the sign and size of the effect come from the astronaut data. The published effects of Agha 2020 (−29%/−39%) set the weights inside the index and serve as a consistency check, but are not used in the prior because they come from the same study as the dataset (double counting). General-population data (Chastin 2021: HR 0.69) support the direction but do not transfer in size; both variants are in the sensitivity analysis.",
       "refs": [
         "gelman2008",
         "agha2020",
@@ -176,14 +176,14 @@
     "sex_male": {
       "mean": 0.0,
       "sd": 0.5,
-      "why": "Скептическое: данные противоречивы — у Stowe et al. (2000) реактивация ВЭБ чаще у женщин (60% vs 35%), в датасете команды — чаще у мужчин; половые различия иммунного ответа существуют (Klein & Flanagan, 2016), но их направление для реактивации в полёте не установлено.",
+      "why": "Skeptical: the evidence conflicts. In Stowe et al. (2000) EBV reactivation was more frequent in women (60% vs 35%), in the team's dataset in men. Sex differences in immune responses exist (Klein & Flanagan, 2016), but their direction for in-flight reactivation is not established.",
       "refs": [
         "stowe2000",
         "klein2016"
       ]
     }
   },
-  "method": "Байесовская логистическая регрессия: MAP-оценка, интервалы по аппроксимации Лапласа.",
+  "method": "Bayesian logistic regression: MAP estimate, Laplace-approximation intervals.",
   "components": {
     "vo2max": {
       "weight": 0.4,

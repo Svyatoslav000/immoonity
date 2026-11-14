@@ -1,4 +1,4 @@
-"""Загрузка исходных данных и матрицы признаков для обучения."""
+"""Source data loading and design matrices for training."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ def read_csv(path: str | Path) -> list[dict]:
 
 
 def earth_table(rows: list[dict], cfg: dict, weights: dict | None = None):
-    """Признаки [1, индекс подготовки, мужской пол]; исход — реактивация хотя бы одного вируса."""
+    """Features [1, fitness index, male]; outcome: reactivation of at least one virus."""
     w = weights or {k: c["weight"] for k, c in cfg["components"].items()}
     cols = cfg["component_columns"]
     X, y = [], []

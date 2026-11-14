@@ -1,11 +1,11 @@
-"""Разбор и проверка входных данных по описанию полей в models/*.json."""
+"""Parsing and validation of inputs against the field specs in models/*.json."""
 
 from __future__ import annotations
 
 import math
 from typing import Any
 
-EARTH_KEYS = ("vo2max", "pullups", "pushups")  # одного поля sex недостаточно для выбора модели
+EARTH_KEYS = ("vo2max", "pullups", "pushups")  # sex alone is not enough to pick a model
 FLIGHT_KEYS = ("il6_b", "il6_a", "nlr_b", "nlr_a", "ebv", "cortb", "corta", "days")
 
 SEX_ALIASES = {
@@ -61,7 +61,7 @@ def is_blank(raw: Any) -> bool:
 
 
 def parse_number(raw: Any) -> float:
-    """Число или строка с числом; допускаются запятая и пробелы: "4,5", "1 200"."""
+    """A number or a numeric string; a decimal comma and spaces are allowed: "4,5", "1 200"."""
     if isinstance(raw, bool):
         raise ValueError("boolean")
     if isinstance(raw, (int, float)):
@@ -88,7 +88,7 @@ def detect_models(payload: dict[str, Any]) -> list[str]:
 
 
 def validate(inputs_spec: dict[str, Any], payload: dict[str, Any], lang: str):
-    """Возвращает (values, errors, warnings); пустые необязательные поля в values не попадают."""
+    """Returns (values, errors, warnings); empty optional fields are left out of values."""
     values: dict[str, Any] = {}
     errors: list[dict[str, str]] = []
     warnings: list[dict[str, str]] = []

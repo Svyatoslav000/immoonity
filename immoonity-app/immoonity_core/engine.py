@@ -1,4 +1,4 @@
-"""Расчёт риска по моделям из models/*.json."""
+"""Risk calculation with the models from models/*.json."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from typing import Any
 
 MODELS_DIR = Path(__file__).resolve().parent.parent / "models"
 
-# z для двусторонних интервалов
+# z for two-sided intervals
 _Z = {0.8: 1.2815515655446004, 0.9: 1.6448536269514722, 0.95: 1.959963984540054}
 
 BORDERLINE_LOW = 0.25
@@ -24,7 +24,7 @@ def sigmoid(z: float) -> float:
 
 
 def soft_step(value: float, threshold: float, softness: float) -> float:
-    """Мягкий порог: 0.5 на пороге, 0 и 1 вдали от него."""
+    """Soft threshold: 0.5 at the threshold, 0 and 1 far from it."""
     return sigmoid((value - threshold) / softness)
 
 
@@ -41,7 +41,7 @@ def status_of(membership: float) -> str:
 
 
 class RiskModel:
-    """Логистическая модель: риск = sigmoid(beta·x), интервал по ковариации коэффициентов."""
+    """Logistic model: risk = sigmoid(beta·x), interval from the coefficient covariance."""
 
     kind = "base"
 
@@ -91,7 +91,7 @@ class RiskModel:
         raise NotImplementedError
 
     def predict(self, values: dict[str, Any]) -> dict[str, Any]:
-        """values — уже проверенные данные (validation.validate)."""
+        """values are already validated (validation.validate)."""
         x, details, warnings = self.featurize(values)
         risk = self.risk_of(x)
         low, high = self.interval_of(x)
@@ -116,7 +116,7 @@ class RiskModel:
 
 
 class EarthModel(RiskModel):
-    """Предполётная модель: физическая подготовка -> риск реактивации латентных вирусов."""
+    """Pre-flight model: physical fitness -> risk of latent virus reactivation."""
 
     kind = "earth"
 
@@ -150,7 +150,7 @@ class EarthModel(RiskModel):
                 "weight": comp["weight"],
                 "membership": round(memberships[name], 4),
                 "status": status_of(memberships[name]),
-                # цель для рекомендаций: порог + 2 ширины перехода
+                # target for recommendations: threshold + 2 transition widths
                 "target": round(soft_step_inverse(0.88, thr, soft), 1),
             }
         details["fitness_index"] = round(x[self.terms.index("fitness_index")], 4)
@@ -192,7 +192,7 @@ class EarthModel(RiskModel):
 
 
 class FlightModel(RiskModel):
-    """Полётная модель: сдвиги четырёх подсистем и длительность миссии -> риск дисрегуляции."""
+    """In-flight model: shifts of four subsystems and mission length -> risk of dysregulation."""
 
     kind = "flight"
 
@@ -204,7 +204,7 @@ class FlightModel(RiskModel):
         self.radiation: dict[str, Any] | None = spec.get("radiation")
 
     def _eta_sd(self, x: list[float]) -> float:
-        """Дольше самого длинного полёта интервал расширяется."""
+        """The interval widens beyond the longest spaceflight."""
         base = super()._eta_sd(x)
         longest = self.evidence.get("longest_flight_days")
         sd = self.evidence.get("extrapolation_sd_per_doubling", 0.0)
@@ -265,7 +265,7 @@ class FlightModel(RiskModel):
         for name, mk in self.markers.items():
             crits = [self._criterion(c, values) for c in mk["criteria"]]
             usable = [c for c in crits if c["computable"]]
-            # подсистема вовлечена, если сработал любой из критериев
+            # a subsystem is involved if any of its criteria is met
             m = max(c["membership"] for c in usable) if usable else 0.0
             states[name] = {"membership": m, "criteria": crits}
         return states

@@ -23,7 +23,7 @@ def test_model_cards_are_public_and_complete(client):
 
 
 def test_string_values_are_accepted(client):
-    """Сайт отправляет значения строками и читает поле risk."""
+    """The site sends values as strings and reads the risk field."""
     for payload in (EARTH_OK, FLIGHT_OK):
         r = client.post("/predict", json=payload)
         assert r.status_code == 200
@@ -66,9 +66,9 @@ def test_decimal_comma_is_accepted(client):
 
 
 def test_implausible_values_warn_but_work(client):
-    r = client.post("/predict", json=dict(EARTH_OK, vo2max="105"))  # больше максимума (100)
+    r = client.post("/predict", json=dict(EARTH_OK, vo2max="105"))  # above the maximum (100)
     assert r.status_code == 400 and r.get_json()["details"][0]["code"] == "above_max"
-    r = client.post("/predict", json=dict(EARTH_OK, vo2max="88"))  # допустимо, но вне обычных 15–85
+    r = client.post("/predict", json=dict(EARTH_OK, vo2max="88"))  # allowed, but outside the usual 15–85
     assert r.status_code == 200
     assert r.get_json()["input_warnings"][0]["code"] == "implausible"
 
@@ -86,7 +86,7 @@ def test_bad_bodies(client):
     assert client.post("/predict", json=[1, 2]).status_code == 400
     r = client.post("/predict", json={})
     assert r.status_code == 400 and r.get_json()["error"] == "no_inputs"
-    r = client.post("/predict", json={"sex": "M"})  # пустая земная форма
+    r = client.post("/predict", json={"sex": "M"})  # empty earth form
     assert r.status_code == 400
     assert client.post("/predict", json=dict(EARTH_OK, model="mars")).status_code == 400
 
@@ -123,7 +123,7 @@ def test_unknown_route_and_method_are_json(client):
 REPO = Path(__file__).resolve().parents[2]
 
 
-@pytest.mark.skipif(not (REPO / "wsgi.py").exists(), reason="сайт и API в отдельных репозиториях")
+@pytest.mark.skipif(not (REPO / "wsgi.py").exists(), reason="site and API live in separate repositories")
 def test_site_and_api_on_one_address():
     spec = importlib.util.spec_from_file_location("wsgi", REPO / "wsgi.py")
     wsgi = importlib.util.module_from_spec(spec)
@@ -137,9 +137,9 @@ def test_site_and_api_on_one_address():
     assert c.post("/predict", json={"sex": "M", "vo2max": 48, "pullups": 15, "pushups": 60}).status_code == 200
 
 
-@pytest.mark.skipif(not (REPO / "immoonity-site" / "index.html").exists(), reason="сайт в отдельном репозитории")
+@pytest.mark.skipif(not (REPO / "immoonity-site" / "index.html").exists(), reason="the site lives in a separate repository")
 def test_site_assets_exist_and_have_latin_names():
-    """Кириллица в именах файлов ломается при распаковке архива в Windows."""
+    """Cyrillic file names break when an archive is extracted on Windows."""
     site = REPO / "immoonity-site"
     html = (site / "index.html").read_text(encoding="utf-8")
     refs = re.findall(r"""(?:src|href)\s*=\s*["']([^"'#?]+)["']|url\(\s*["']?([^"')]+)["']?\s*\)""", html)

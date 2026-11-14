@@ -1,6 +1,6 @@
-"""Параметры моделей: пороги, веса, априорные распределения и их обоснование.
+"""Model parameters: thresholds, weights, priors and their rationale.
 
-Всё отсюда попадает в models/*.json при обучении (training/train_models.py).
+Everything here goes into models/*.json when the models are built (training/train_models.py).
 """
 
 import math
@@ -9,7 +9,7 @@ MODEL_VERSION = "3.1.0"
 INTERVAL_LEVEL = 0.90
 RANDOM_SEED = 20261109
 
-# Источники
+# References
 REFERENCES = {
     "agha2020": {
         "citation": "Agha NH, Mehta SK, Rooney BV, et al. Exercise as a countermeasure for latent viral "
@@ -95,12 +95,12 @@ REFERENCES = {
     "il6_bv": {
         "citation": "Cava F, et al. Biological variation of interleukin 6 (IL-6) and soluble interleukin 2 "
                     "receptor (sIL2R) in serum of healthy individuals (2000): CVi ≈ 48%; Dugué B, Leppänen E.: "
-                    "CVi ≈ 30% — внутрииндивидуальная вариабельность IL-6 у здоровых 30–48%.",
+                    "CVi ≈ 30%; within-person variability of IL-6 in healthy people is 30–48%.",
         "url": "https://data.zhenzhi.com/details/1/908769401",
     },
     "cortisol_bv": {
         "citation": "EFLM Biological Variation Database, cortisol (serum, morning): median CVi ≈ 16%; "
-                    "в версиях базы Ricós/Westgard — 15.2% и 20.9%.",
+                    "15.2% and 20.9% in versions of the Ricós/Westgard database.",
         "url": "https://biologicalvariation.eu/meta_by_analyte/492",
     },
     "leuko_bv": {
@@ -152,7 +152,7 @@ REFERENCES = {
     "kim2024": {
         "citation": "Kim J, et al. Single-cell multi-ome and immune profiles of the Inspiration4 crew reveal "
                     "conserved, cell-type, and sex-specific responses to spaceflight. Nat Commun. 2024;15:4954. "
-                    "Анализы экипажа — NASA OSDR: OSD-569 (общий анализ крови), OSD-575 (цитокины сыворотки).",
+                    "Crew tests: NASA OSDR OSD-569 (complete blood count), OSD-575 (serum cytokines).",
         "url": "https://doi.org/10.1038/s41467-024-49211-2",
     },
     "manzey1998": {
@@ -167,7 +167,7 @@ REFERENCES = {
     },
     "nasa_std3001": {
         "citation": "NASA OCHMO. Radiation protection technical brief (NASA-STD-3001): career limit 600 mSv "
-                    "effective dose. Дозы на МКС ~0.2–0.5 мЗв/сут — Simonsen L., NASA NTRS 20250006168.",
+                    "effective dose. ISS dose rate ~0.2–0.5 mSv/day: Simonsen L., NASA NTRS 20250006168.",
         "url": "https://www.nasa.gov/wp-content/uploads/2023/03/radiation-protection-technical-brief-ochmo.pdf",
     },
     "tripod2015": {
@@ -177,17 +177,17 @@ REFERENCES = {
     },
 }
 
-# Цвета уровней риска (как на шкале сайта)
+# Risk level colors (as on the site's gauge)
 GREEN, YELLOW, ORANGE, RED = "#00ff88", "#ffcc00", "#ff9500", "#ff3300"
 
-# Земная (предполётная) модель
+# Earth (pre-flight) model
 EARTH = {
     "data_file": "pierson_data.csv",
     "outcome": {
         "code": "latent_virus_reactivation",
         "ru": "Риск реактивации латентных герпесвирусов (ВЭБ, VZV, ЦМВ) в ходе ~6-месячного полёта",
         "en": "Risk of latent herpesvirus reactivation (EBV, VZV, CMV) during a ~6-month mission",
-        "definition_ru": "Реактивация хотя бы одного из трёх вирусов (ebv/vzv/cmv_reactivation = 1).",
+        "definition": "Reactivation of at least one of three viruses (ebv/vzv/cmv_reactivation = 1).",
     },
     "inputs": {
         "sex": {"type": "sex", "required": True,
@@ -199,9 +199,9 @@ EARTH = {
         "pushups": {"type": "number", "required": True, "unit": "reps", "min": 0, "max": 500,
                     "plausible": [0, 150], "label": {"ru": "Отжимания", "en": "Push-ups"}},
     },
-    # Индекс подготовки F = sum(w_k * m_k). Веса пропорциональны |ln RR| из Agha et al. 2020:
-    # выносливость (VO2max) -29% -> 0.34, верхний плечевой пояс -39% -> 0.49; 0.34 : 0.49 = 0.4 : 0.6,
-    # вторая доля поровну на отжимания и подтягивания.
+    # Fitness index F = sum(w_k * m_k). Weights are proportional to |ln RR| from Agha et al. 2020:
+    # aerobic fitness (VO2max) -29% -> 0.34, upper-body endurance -39% -> 0.49; 0.34 : 0.49 = 0.4 : 0.6,
+    # the second share split equally between push-ups and pull-ups.
     "components": {
         "vo2max": {"weight": 0.4,
                    "threshold": {"M": 43.0, "F": 36.0}, "softness": {"M": 2.0, "F": 2.0}},
@@ -215,25 +215,24 @@ EARTH = {
     "terms": ["intercept", "fitness_index", "sex_male"],
     "priors": {
         "intercept": {"mean": 0.0, "sd": 2.5,
-                      "why": "Слабоинформативное априорное распределение (Gelman et al., 2008): "
-                             "базовый риск не задаём заранее.", "refs": ["gelman2008"]},
+                      "why": "Weakly informative prior (Gelman et al., 2008): the baseline risk is not set "
+                             "in advance.", "refs": ["gelman2008"]},
         "fitness_index": {"mean": 0.0, "sd": 2.5,
-                          "why": "Слабоинформативное (Gelman et al., 2008): знак и силу эффекта определяют "
-                                 "данные астронавтов. Опубликованные эффекты Agha 2020 (−29%/−39%) задают веса "
-                                 "внутри индекса и служат проверкой согласованности, но в априорное "
-                                 "распределение не входят — это то же исследование, что и датасет (двойной "
-                                 "учёт). Данные общей популяции (Chastin 2021: HR 0.69) подтверждают "
-                                 "направление, но не переносимы по величине; оба варианта — в анализе "
-                                 "чувствительности.",
+                          "why": "Weakly informative (Gelman et al., 2008): the sign and size of the effect come "
+                                 "from the astronaut data. The published effects of Agha 2020 (−29%/−39%) set the "
+                                 "weights inside the index and serve as a consistency check, but are not used in "
+                                 "the prior because they come from the same study as the dataset (double counting). "
+                                 "General-population data (Chastin 2021: HR 0.69) support the direction but do not "
+                                 "transfer in size; both variants are in the sensitivity analysis.",
                           "refs": ["gelman2008", "agha2020", "chastin2021"]},
         "sex_male": {"mean": 0.0, "sd": 0.5,
-                     "why": "Скептическое: данные противоречивы — у Stowe et al. (2000) реактивация ВЭБ "
-                            "чаще у женщин (60% vs 35%), в датасете команды — чаще у мужчин; "
-                            "половые различия иммунного ответа существуют (Klein & Flanagan, 2016), "
-                            "но их направление для реактивации в полёте не установлено.",
+                     "why": "Skeptical: the evidence conflicts. In Stowe et al. (2000) EBV reactivation was "
+                            "more frequent in women (60% vs 35%), in the team's dataset in men. Sex differences "
+                            "in immune responses exist (Klein & Flanagan, 2016), but their direction for "
+                            "in-flight reactivation is not established.",
                      "refs": ["stowe2000", "klein2016"]},
     },
-    # Границы уровней в пределах диапазона модели (~53-90%); в исходной когорте реактивация у 77%.
+    # Level boundaries within the model's range (~53-90%); 77% of the source cohort reactivated.
     "risk_levels": [
         {"code": "low", "below": 65.0, "color": GREEN},
         {"code": "moderate", "below": 80.0, "color": YELLOW},
@@ -253,21 +252,21 @@ EARTH = {
     },
 }
 
-# Полётная модель
-# Порог ВЭБ: геометрическая середина между контролем (40 копий/мл) и средним в полёте (417),
-# данные agha_data.csv (Pierson et al. 2005).
+# In-flight model
+# EBV threshold: geometric midpoint between the control level (40 copies/mL) and the in-flight mean (417),
+# data in agha_data.csv (Pierson et al. 2005).
 EBV_CONTROL, EBV_FLIGHT = 40.0, 417.0
 EBV_THRESHOLD = round((EBV_CONTROL * EBV_FLIGHT) ** 0.5, 1)
 
-# Относительный рост «до -> после» значим, если превышает критическую разницу (RCV):
-# RCV = sqrt(2) * z * sqrt(CVa^2 + CVi^2), z = 1.645 (односторонний 95%).
+# A "before -> after" rise is significant when it exceeds the reference change value (RCV):
+# RCV = sqrt(2) * z * sqrt(CVa^2 + CVi^2), z = 1.645 (one-sided 95%).
 RCV_Z = 1.645
-ASSAY_CV = 0.05  # аналитическая вариабельность
+ASSAY_CV = 0.05  # analytical variability
 BIOVAR = {
-    "il6": {"cvi": 0.30, "note": "нижняя граница диапазона 30–48% (чувствительнее)", "ref": "il6_bv"},
-    "cortisol": {"cvi": 0.16, "note": "EFLM, утренний кортизол сыворотки; в разных версиях базы 15–21%", "ref": "cortisol_bv"},
+    "il6": {"cvi": 0.30, "note": "lower end of the 30–48% range (more sensitive)", "ref": "il6_bv"},
+    "cortisol": {"cvi": 0.16, "note": "EFLM, morning serum cortisol; 15–21% across database versions", "ref": "cortisol_bv"},
     "nlr": {"cvi": round(math.sqrt(0.161 ** 2 + 0.104 ** 2), 3),
-            "note": "из CVi нейтрофилов 16.1% и лимфоцитов 10.4% (дельта-метод)", "ref": "leuko_bv"},
+            "note": "from CVi of neutrophils 16.1% and lymphocytes 10.4% (delta method)", "ref": "leuko_bv"},
 }
 
 
@@ -277,38 +276,38 @@ def rcv(cvi: float, cva: float = ASSAY_CV, z: float = RCV_Z) -> float:
 
 RCV = {k: round(rcv(v["cvi"]), 3) for k, v in BIOVAR.items()}
 
-# Полётная модель не обучается: в aggregated_dataset.csv исход совпадает с суммой входов
-# (37 из 41 строки). Датасет используется только в training/checks.py.
+# The in-flight model is not fitted: in aggregated_dataset.csv the outcome equals the sum of the inputs
+# (37 of 41 rows). The dataset is used only in training/checks.py.
 
 
 def _logit(p: float) -> float:
     return math.log(p / (1.0 - p))
 
 
-# Длительность: доля астронавтов с выделением вирусов, «Шаттл» 10–16 сут против МКС ≥180 сут (Rooney 2019).
+# Mission length: share of astronauts shedding viruses, Shuttle 10–16 days vs ISS ≥180 days (Rooney 2019).
 SHEDDING_SHORT_LONG = {"any": (0.53, 0.61), "VZV": (0.41, 0.65), "EBV": (0.82, 0.96), "CMV": (0.47, 0.61)}
 SHORT_DAYS, LONG_DAYS = 13, 180
 _DOUBLINGS = math.log2((LONG_DAYS + 1) / (SHORT_DAYS + 1))
 DURATION_EFFECTS = {k: round((_logit(b) - _logit(a)) / _DOUBLINGS, 3) for k, (a, b) in SHEDDING_SHORT_LONG.items()}
 _EFF = sorted(DURATION_EFFECTS.values())
-DURATION_MEAN = round((_EFF[1] + _EFF[2]) / 2, 3)          # медиана четырёх оценок
-DURATION_SD = round((_EFF[-1] - _EFF[0]) / (2 * 1.645), 3)  # 90%-диапазон — от меньшей оценки до большей
+DURATION_MEAN = round((_EFF[1] + _EFF[2]) / 2, 3)          # median of the four estimates
+DURATION_SD = round((_EFF[-1] - _EFF[0]) / (2 * 1.645), 3)  # the 90% range spans the smallest to the largest estimate
 
-# Q_LATE — вероятность, что стабильная в начале полёта подсистема вовлечётся к 180-м суткам (экспертная оценка).
+# Q_LATE: probability that a subsystem stable early in flight becomes involved by day 180 (expert estimate).
 Q_LATE = {"central": 0.15, "low": 0.07, "high": 0.30}
-# При ≥2 вовлечённых подсистемах исход достигнут; меньше 1 — на случайный выброс измерения.
+# With ≥2 involved subsystems the outcome is met; below 1 to allow for a one-off outlier.
 P_MET = {"central": 0.90, "low": 0.80, "high": 0.97}
 
 
 def state_anchors(q: float, p_met: float) -> list[float]:
-    """Логит вероятности исхода к 180 сут при 0, 1 и 2 вовлечённых подсистемах из 4."""
-    p0 = 1 - (1 - q) ** 4 - 4 * q * (1 - q) ** 3   # нужны ещё две подсистемы
-    p1 = 1 - (1 - q) ** 3                           # нужна ещё одна
+    """Logit of the outcome probability by day 180 with 0, 1 and 2 of 4 subsystems involved."""
+    p0 = 1 - (1 - q) ** 4 - 4 * q * (1 - q) ** 3   # two more subsystems needed
+    p1 = 1 - (1 - q) ** 3                           # one more needed
     return [_logit(p0), _logit(p1), _logit(p_met)]
 
 
 def state_line(q: float, p_met: float) -> tuple[float, float]:
-    """Свободный член и наклон по баллу подсистем: прямая МНК через три опорные точки."""
+    """Intercept and slope on the subsystem score: least-squares line through the three anchor points."""
     y = state_anchors(q, p_met)
     slope = (y[2] - y[0]) / 2
     return sum(y) / 3 - slope, slope
@@ -316,9 +315,10 @@ def state_line(q: float, p_met: float) -> tuple[float, float]:
 
 def flight_parameters(q: float | None = None, p_met: float | None = None,
                       duration: float | None = None) -> tuple[list[float], list[list[float]]]:
-    """Коэффициенты [intercept, dysregulation_score, duration_log2] и их ковариация.
+    """Coefficients [intercept, dysregulation_score, duration_log2] and their covariance.
 
-    Неопределённость q и p_met переносится на коэффициенты линеаризацией по логиту (90%-диапазоны -> SD).
+    The uncertainty of q and p_met is carried to the coefficients by linearisation on the logit scale
+    (90% ranges -> SD).
     """
     q = Q_LATE["central"] if q is None else q
     p_met = P_MET["central"] if p_met is None else p_met
@@ -343,9 +343,9 @@ FLIGHT = {
         "code": "multisystem_dysregulation",
         "ru": "Риск многосистемной иммунной дисрегуляции (≥2 подсистем) к концу миссии",
         "en": "Risk of multi-system immune dysregulation (≥2 subsystems) by the end of the mission",
-        "definition_ru": "Вовлечены две и более из четырёх подсистем: воспаление, сдвиг лейкоцитов, реактивация "
-                         "ВЭБ, стресс-ось. Градация исследований: 0 — нет изменений, 1 — одна подсистема, "
-                         "2 — две подсистемы или клиническое проявление, 3 — системная дисрегуляция.",
+        "definition": "Two or more of four subsystems involved: inflammation, leukocyte shift, EBV reactivation, "
+                      "stress axis. Study grading: 0 — no changes, 1 — one subsystem, 2 — two subsystems or a "
+                      "clinical manifestation, 3 — systemic dysregulation.",
     },
     "inputs": {
         "il6_b": {"type": "number", "required": False, "unit": "pg/mL", "min": 0, "max": 10000,
@@ -365,8 +365,8 @@ FLIGHT = {
         "days": {"type": "number", "required": True, "unit": "days", "min": 1, "max": 3000,
                  "plausible": [1, 3000], "label": {"ru": "Длительность миссии", "en": "Mission days"}},
     },
-    # Подсистема считается вовлечённой, если сработал любой из её критериев.
-    # Веса — клиническая значимость (экспертная оценка); в сумме 4, балл читается как число подсистем.
+    # A subsystem is involved when any of its criteria is met.
+    # Weights reflect clinical significance (expert estimate); they sum to 4, so the score reads as a subsystem count.
     "markers": {
         "cytokine": {
             "weight": 1.0, "column": "has_cytokine_response",
@@ -376,12 +376,12 @@ FLIGHT = {
                 {"kind": "absolute", "field": "il6_a", "threshold": 7.0, "softness": 0.75},
             ],
             "refs": ["elecsys_il6", "il6_bv", "fraser2001", "crucian2014", "kim2024"],
-            "why": "Системное воспаление. После полёта IL-6 растёт вместе с IL-10, CRP и MCP-1 — так же, как у "
-                   "астронавтов после длительных миссий (Kim 2024); сдвиги цитокинов сохраняются весь полёт "
-                   "(Crucian 2014). Абсолютный порог 7 пг/мл — 95-й перцентиль у 817 здоровых (Elecsys IL-6). "
-                   f"Относительный порог +{RCV['il6'] * 100:.0f}% = критическая разница (RCV) при "
-                   "внутрииндивидуальной вариабельности IL-6 30–48%; у экипажа Inspiration4 по трём анализам до "
-                   "полёта — 27% (NASA OSDR, OSD-575).",
+            "why": "Systemic inflammation. After flight IL-6 rises together with IL-10, CRP and MCP-1, as in "
+                   "astronauts after long missions (Kim 2024); cytokine shifts persist throughout flight "
+                   "(Crucian 2014). Absolute threshold 7 pg/mL: 95th percentile of 817 healthy adults (Elecsys IL-6). "
+                   f"Relative threshold +{RCV['il6'] * 100:.0f}% = reference change value (RCV) for a within-person "
+                   "IL-6 variability of 30–48%; 27% in the Inspiration4 crew over three pre-flight draws "
+                   "(NASA OSDR, OSD-575).",
         },
         "immune_shift": {
             "weight": 0.75, "column": "has_immune_cell_shift",
@@ -391,11 +391,11 @@ FLIGHT = {
                 {"kind": "absolute", "field": "nlr_a", "threshold": 3.5, "softness": 0.25},
             ],
             "refs": ["forget2017", "paul2020", "leuko_bv", "fraser2001", "kim2024"],
-            "why": "NLR растёт в полёте (Paul 2020), но маркер неспецифичен (острый стресс, время забора); "
-                   "верхняя граница нормы 3.53 (Forget 2017). Относительный порог "
-                   f"+{RCV['nlr'] * 100:.0f}% (RCV): заложенная вариабельность NLR ≈20% совпала с измеренной "
-                   "у экипажа Inspiration4 по трём предполётным анализам (training/checks.py). Пониженный вес: "
-                   "во всех исследованиях с изолированным сдвигом лейкоцитов исход был лёгким.",
+            "why": "NLR rises in flight (Paul 2020), but the marker is non-specific (acute stress, sampling "
+                   "time); upper reference limit 3.53 (Forget 2017). Relative threshold "
+                   f"+{RCV['nlr'] * 100:.0f}% (RCV): the assumed NLR variability of ≈20% matched the one measured in "
+                   "the Inspiration4 crew over three pre-flight draws (training/checks.py). Lower weight: in all "
+                   "studies with an isolated leukocyte shift the outcome was mild.",
         },
         "viral": {
             "weight": 1.25, "column": "has_viral_reactivation",
@@ -403,10 +403,10 @@ FLIGHT = {
                 {"kind": "log10", "field": "ebv", "threshold": EBV_THRESHOLD, "softness": 0.15},
             ],
             "refs": ["pierson2005", "mehta2017", "rooney2019", "crucian2018"],
-            "why": "Прямой признак потери Т-клеточного контроля над латентными вирусами — ближайшее к "
-                   "клиническим событиям звено (Mehta 2017; Crucian 2018). Порог ≈129 копий/мл — "
-                   "геометрическая середина между уровнем до полёта (40) и средним в полёте (417) по данным "
-                   "Pierson 2005 (32 астронавта, 1398 образцов слюны).",
+            "why": "A direct sign of lost T-cell control over latent viruses, the link closest to clinical events "
+                   "(Mehta 2017; Crucian 2018). Threshold ≈129 copies/mL: geometric midpoint between the "
+                   "pre-flight level (40) and the in-flight mean (417) in Pierson 2005 (32 astronauts, 1398 "
+                   "saliva samples).",
         },
         "neuroendocrine": {
             "weight": 1.0, "column": "has_neuroendocrine_change",
@@ -416,17 +416,16 @@ FLIGHT = {
                 {"kind": "absolute", "field": "corta", "threshold": 550.0, "softness": 25.0},
             ],
             "refs": ["stowe2000", "stowe2001", "mehta2017", "cortisol_bv", "fraser2001"],
-            "why": "Стресс-гормоны — пусковое звено реактивации ВЭБ: кортизол (Stowe 2000), катехоламины "
-                   "(Stowe 2001); реактивация на МКС совпадала со сдвигом суточного ритма кортизола (Mehta "
-                   f"2017). Относительный порог +{RCV['cortisol'] * 100:.0f}% = RCV при CVi кортизола 16% "
-                   "(в разных версиях базы EFLM 15–21%, порог тогда +37…+50%). Абсолютный порог 550 нмоль/л — "
-                   "ориентир команды (около верхней границы утреннего референсного интервала, зависит от "
-                   "метода).",
+            "why": "Stress hormones trigger EBV reactivation: cortisol (Stowe 2000), catecholamines "
+                   "(Stowe 2001); on the ISS reactivation coincided with a shift in the daily cortisol rhythm "
+                   f"(Mehta 2017). Relative threshold +{RCV['cortisol'] * 100:.0f}% = RCV for a cortisol CVi of 16% "
+                   "(15–21% across EFLM database versions, giving +37…+50%). Absolute threshold 550 nmol/L is the "
+                   "team's benchmark (near the upper limit of the morning reference interval; method-dependent).",
         },
     },
     "duration": {"field": "days", "reference_days": 180,
                  "transform": "log2((days + 1) / (180 + 1))"},
-    # 437 сут — самый длинный полёт (В. Поляков)
+    # 437 days: the longest spaceflight (V. Polyakov)
     "evidence": {"well_studied_days": 200, "longest_flight_days": 437,
                  "extrapolation_sd_per_doubling": DURATION_MEAN,
                  "refs": ["manzey1998", "garrett2019"]},
@@ -436,26 +435,26 @@ FLIGHT = {
     "parameters": {"mean": _MEAN, "covariance": _COV},
     "priors": {
         "intercept": {"mean": round(_MEAN[0], 4), "sd": round(math.sqrt(_COV[0][0]), 4),
-                      "why": f"Не обучен. Выведен из допущения q = {Q_LATE['central']} ({Q_LATE['low']}–"
-                             f"{Q_LATE['high']}): доля подсистем, которые у стабильного в начале полёта человека "
-                             "вовлекаются к 6-му месяцу. Для двух из четырёх подсистем это ~11% (90%: ~3–35%). "
-                             "Сдвиги обычно возникают в первые недели и сохраняются (Crucian 2014, 2015), поэтому "
-                             "стабильные маркеры — благоприятный признак; но поздние изменения возможны: в "
-                             "изоляции на 1 год реакции усиливались после 3–4 месяцев (Feuerecker 2019).",
+                      "why": f"Not fitted. Derived from the assumption q = {Q_LATE['central']} ({Q_LATE['low']}–"
+                             f"{Q_LATE['high']}): the share of subsystems that become involved by month 6 in a person "
+                             "who is stable early in flight. For two of four subsystems this gives ~11% (90%: ~3–35%). "
+                             "Shifts usually appear in the first weeks and persist (Crucian 2014, 2015), so stable "
+                             "markers are a good sign; late changes are still possible: in a year of isolation immune "
+                             "responses intensified after 3–4 months (Feuerecker 2019).",
                       "refs": ["crucian2014", "crucian2015", "feuerecker2019", "rooney2019"]},
         "dysregulation_score": {"mean": round(_MEAN[1], 4), "sd": round(math.sqrt(_COV[1][1]), 4),
-                                "why": "Не обучен. Следует из определения исхода: при 1 вовлечённой подсистеме "
-                                       "нужна ещё одна (~39% при q = 0.15), при 2 исход уже достигнут "
-                                       f"({P_MET['central']:.0%}, поправка на выброс единичного измерения). "
-                                       "Наклон — прямая через эти три точки.",
+                                "why": "Not fitted. Follows from the outcome definition: with 1 involved subsystem one "
+                                       "more is needed (~39% at q = 0.15); with 2 the outcome is already met "
+                                       f"({P_MET['central']:.0%}, allowing for a one-off outlier). The slope is the line "
+                                       "through these three points.",
                                 "refs": []},
         "duration_log2": {"mean": DURATION_MEAN, "sd": DURATION_SD,
-                          "why": "Не обучен. Rooney 2019: выделение вирусов в коротких полётах (10–16 сут) и на МКС "
-                                 "(≥180 сут) — любые герпесвирусы 53→61%, VZV 41→65%, ВЭБ 82→96%, ЦМВ 47→61%. "
-                                 "На удвоение длительности логарифм шансов растёт на "
+                          "why": "Not fitted. Rooney 2019: viral shedding on short flights (10–16 days) vs the ISS "
+                                 "(≥180 days): any herpesvirus 53→61%, VZV 41→65%, EBV 82→96%, CMV 47→61%. "
+                                 "Per doubling of mission length the log-odds rise by "
                                  + ", ".join(f"{v:.2f}" for v in DURATION_EFFECTS.values())
-                                 + f"; взята медиана {DURATION_MEAN:.2f}. Риск растёт с длительностью, но всё "
-                                   "медленнее: основная часть сдвигов возникает в начале полёта.",
+                                 + f"; the median {DURATION_MEAN:.2f} is used. The risk grows with mission length, "
+                                   "but ever more slowly: most shifts appear early in flight.",
                           "refs": ["rooney2019", "mehta2017", "crucian2015"]},
     },
     "risk_levels": [
@@ -464,7 +463,7 @@ FLIGHT = {
         {"code": "elevated", "below": 80.0, "color": ORANGE},
         {"code": "high", "below": 101.0, "color": RED},
     ],
-    # Другие допущения (reports/metrics.json -> scenarios)
+    # Alternative assumptions (reports/metrics.json -> scenarios)
     "scenarios": {
         "q_low": {"q": Q_LATE["low"]},
         "q_high": {"q": Q_LATE["high"]},

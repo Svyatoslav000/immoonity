@@ -1,7 +1,7 @@
-"""Байесовская логистическая регрессия для малых выборок.
+"""Bayesian logistic regression for small samples.
 
-MAP-оценка с гауссовскими априорными распределениями (устойчива при полном разделении классов),
-интервалы по аппроксимации Лапласа и её проверка выборкой по значимости.
+MAP estimate with Gaussian priors (stable under complete separation), Laplace-approximation intervals
+and an importance-sampling check of that approximation.
 """
 
 from __future__ import annotations
@@ -18,8 +18,8 @@ def _sigmoid(z):
 @dataclass
 class Posterior:
     terms: list[str]
-    mean: np.ndarray            # MAP-оценка
-    cov: np.ndarray             # ковариация по Лапласу
+    mean: np.ndarray            # MAP estimate
+    cov: np.ndarray             # Laplace covariance
     prior_mean: np.ndarray
     prior_sd: np.ndarray
     n_iter: int
@@ -60,7 +60,7 @@ def fit_map(X, y, terms, prior_mean, prior_sd, weights=None, max_iter=200, tol=1
         grad = X.T @ (w * (y - p)) - (beta - mu) / sd ** 2
         hess = X.T @ (X * (w * p * (1 - p))[:, None]) + np.diag(1.0 / sd ** 2)
         step = np.linalg.solve(hess, grad)
-        # метод Ньютона с дроблением шага
+        # Newton's method with step halving
         t = 1.0
         lp_old = log_posterior(beta, X, y, mu, sd, w)
         while log_posterior(beta + t * step, X, y, mu, sd, w) < lp_old - 1e-12 and t > 1e-6:
@@ -78,7 +78,7 @@ def fit_map(X, y, terms, prior_mean, prior_sd, weights=None, max_iter=200, tol=1
 
 def importance_check(post: Posterior, X, y, profiles: dict[str, np.ndarray], n_draws=40000,
                      inflate=1.5, seed=0) -> dict:
-    """Сравнение интервалов Лапласа с точным апостериорным (выборка по значимости)."""
+    """Compare Laplace intervals with the exact posterior (importance sampling)."""
     rng = np.random.default_rng(seed)
     k = len(post.mean)
     prop_cov = post.cov * inflate ** 2
@@ -111,7 +111,7 @@ def importance_check(post: Posterior, X, y, profiles: dict[str, np.ndarray], n_d
         eta, s = float(post.mean @ x), float(np.sqrt(x @ post.cov @ x))
         out["profiles"][name] = {
             "laplace": [float(_sigmoid(eta - 1.6448536 * s)), float(_sigmoid(eta)), float(_sigmoid(eta + 1.6448536 * s))],
-            # медиана сопоставима с sigmoid(MAP)
+            # the median is comparable with sigmoid(MAP)
             "exact_is": [wquantile(risk_draws, 0.05), wquantile(risk_draws, 0.5), wquantile(risk_draws, 0.95)],
         }
     return out

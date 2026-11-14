@@ -1,4 +1,4 @@
-"""Запрос к LLM для консультанта: правила и факты из интерпретатора. Сам вызов LLM — на сервере."""
+"""LLM request for the consultant: rules and facts from the interpreter. The LLM call itself runs server-side."""
 
 from __future__ import annotations
 

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="2. Сайт + API (консультант на русском)" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="2. Site + API (Russian consultant)" type="PythonConfigurationType" factoryName="Python">
     <module name="immoonity" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />

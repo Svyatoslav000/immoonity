@@ -1,4 +1,4 @@
-"""Свойства, которых требует предметная область: монотонность, гладкость, знаки, диапазоны."""
+"""Domain properties: monotonicity, smoothness, signs, ranges."""
 
 import json
 from pathlib import Path
@@ -77,7 +77,7 @@ def test_two_systems_outweigh_one(models):
 
 
 def test_relative_rise_within_normal_variation_is_not_flagged(models):
-    """Рост IL-6 на 20% — в пределах обычных колебаний (CVi 30–48%)."""
+    """A 20% IL-6 rise is within normal variation (CVi 30–48%)."""
     f = models["flight"]
     p = f.predict({"il6_b": 2.0, "il6_a": 2.4, "nlr_b": 2, "nlr_a": 2, "ebv": 20, "cortb": 400, "corta": 400, "days": 180})
     assert p["details"]["markers"]["cytokine"]["status"] == "below"
@@ -108,7 +108,7 @@ def test_json_models_match_training_output(models):
 
 
 def test_flight_duration_effect_comes_from_published_shedding_rates(models):
-    """Rooney 2019: выделение вирусов в коротких полётах против МКС -> эффект на удвоение длительности."""
+    """Rooney 2019: viral shedding on short flights vs the ISS -> effect per doubling of mission length."""
     from training import config
     assert config.DURATION_EFFECTS == pytest.approx({"any": 0.089, "VZV": 0.266, "EBV": 0.45, "CMV": 0.154}, abs=1e-3)
     assert models["flight"].coef("duration_log2") == pytest.approx(0.21)

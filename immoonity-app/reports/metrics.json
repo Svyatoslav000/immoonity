@@ -86,8 +86,8 @@
       }
     },
     "flight": {
-      "scheme": "не применимо: независимых данных об исходе нет",
-      "reason": "В aggregated_dataset.csv исход совпадает с суммой флагов-входов в 37 из 41 строк (утечка целевой переменной); метрики качества на нём не информативны.",
+      "scheme": "not applicable: no independent outcome data",
+      "reason": "In aggregated_dataset.csv the outcome equals the sum of the input flags in 37 of 41 rows (target leakage), so accuracy metrics on it are not informative.",
       "checks": "reports/metrics.json -> flight_checks"
     }
   },

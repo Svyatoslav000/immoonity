@@ -1,146 +1,148 @@
-# Обоснование моделей
+# Model rationale
 
-## Что считают модели
+## What the models estimate
 
-| | Земная (до полёта) | Полётная |
+| | Earth (pre-flight) | In-flight |
 |---|---|---|
-| Исход | реактивация хотя бы одного латентного герпесвируса (ВЭБ, VZV, ЦМВ) за ~6-месячную миссию | вовлечение ≥2 из 4 иммунных подсистем к концу миссии |
-| Входы | пол, VO₂max, отжимания, подтягивания | IL-6, NLR, кортизол (до полёта и в полёте), ДНК ВЭБ в слюне, длительность |
-| Параметры | обучены на 22 астронавтах МКС (Agha 2020) | заданы по опубликованным исследованиям |
-| Проверка | скользящий контроль: AUC 0.65, Brier 0.18 | проверки на данных без утечки (ниже) |
+| Outcome | reactivation of at least one latent herpesvirus (EBV, VZV, CMV) during a ~6-month mission | involvement of ≥2 of 4 immune subsystems by the end of the mission |
+| Inputs | sex, VO₂max, push-ups, pull-ups | IL-6, NLR, cortisol (before and in flight), EBV DNA in saliva, mission length |
+| Parameters | fitted to 22 ISS crew members (Agha 2020) | set from published studies |
+| Validation | leave-one-out: AUC 0.65, Brier 0.18 | checks on data without target leakage (below) |
 
-Параметры, пороги и источники — `immoonity-app/training/config.py`, результаты — `immoonity-app/reports/metrics.json`.
+Parameters, thresholds and sources: `immoonity-app/training/config.py`; results: `immoonity-app/reports/metrics.json`.
 
-## Земная модель
+## Earth model
 
-- Индекс подготовки F = 0.4·VO₂max + 0.3·отжимания + 0.3·подтягивания, каждый компонент — мягкий порог.
-  Веса пропорциональны |ln RR| из Agha 2020: при высокой аэробной выносливости риск реактивации на 29% ниже,
-  при высокой выносливости верхнего плечевого пояса — на 39% ниже; 0.41 : 0.59.
-- Коэффициенты (байесовская логистическая регрессия, слабые априорные распределения): свободный член +1.87,
-  индекс −1.65 (полностью подготовленный против неподготовленного — шансы ×0.19), мужской пол +0.26 (не значим).
-- В когорте реактивация у 17 из 22 (77%), поэтому даже у подготовленных риск 55–65%.
-- Скользящий контроль: AUC 0.65 (95% ДИ 0.41–0.88), Brier 0.18. Выборка мала — интервалы широкие.
-- Нормативы (VO₂max 43 / 36, отжимания 45 / 20, подтягивания 10 / 3 для мужчин / женщин) — нормативы команды,
-  без поправки на возраст.
+- Fitness index F = 0.4·VO₂max + 0.3·push-ups + 0.3·pull-ups; each component is a soft threshold.
+  The weights are proportional to |ln RR| from Agha 2020: high aerobic fitness lowers the reactivation risk by 29%,
+  high upper-body endurance by 39%; 0.41 : 0.59.
+- Coefficients (Bayesian logistic regression, weakly informative priors): intercept +1.87,
+  index −1.65 (fully fit vs unfit: odds ×0.19), male +0.26 (not significant).
+- 17 of 22 crew members (77%) reactivated, so even fit people have a 55–65% risk.
+- Leave-one-out: AUC 0.65 (95% CI 0.41–0.88), Brier 0.18. The sample is small, so the intervals are wide.
+- Targets (VO₂max 43 / 36, push-ups 45 / 20, pull-ups 10 / 3 for men / women) are the team's benchmarks,
+  not adjusted for age.
 
-## Полётная модель
+## In-flight model
 
-### Подсистемы и пороги
+### Subsystems and thresholds
 
-| Подсистема | Вовлечена, если | Основание | Вес |
+| Subsystem | Involved if | Basis | Weight |
 |---|---|---|---|
-| Воспаление | IL-6 > 7 пг/мл или рост > +71% | 95-й перцентиль у 817 здоровых (Elecsys IL-6); RCV при CVi 30% | 1.0 |
-| Сдвиг лейкоцитов | NLR > 3.5 или рост > +46% | норма 0.78–3.53 (Forget 2017); RCV при CVi 19% | 0.75 |
-| Реактивация ВЭБ | ДНК ВЭБ в слюне > 129 копий/мл | середина между 40 до полёта и 417 в полёте (Pierson 2005) | 1.25 |
-| Стресс-ось | кортизол > 550 нмоль/л или рост > +39% | RCV при CVi 16% (в базах 15–21% → +37…+50%) | 1.0 |
+| Inflammation | IL-6 > 7 pg/mL or a rise > +71% | 95th percentile of 817 healthy adults (Elecsys IL-6); RCV for CVi 30% | 1.0 |
+| Leukocyte shift | NLR > 3.5 or a rise > +46% | normal range 0.78–3.53 (Forget 2017); RCV for CVi 19% | 0.75 |
+| EBV reactivation | EBV DNA in saliva > 129 copies/mL | midpoint between 40 before flight and 417 in flight (Pierson 2005) | 1.25 |
+| Stress axis | cortisol > 550 nmol/L or a rise > +39% | RCV for CVi 16% (15–21% across databases → +37…+50%) | 1.0 |
 
-RCV — критическая разница: √2 · 1.645 · √(CVa² + CVi²), CVa = 5% (Fraser 2001). Пороги мягкие: вблизи
-порога вклад меняется плавно. Веса — экспертная оценка клинической значимости: ВЭБ ближе всех к клиническим
-событиям, NLR неспецифичен (острый стресс, время забора).
+RCV is the reference change value: √2 · 1.645 · √(CVa² + CVi²), CVa = 5% (Fraser 2001). The thresholds are soft:
+near a threshold the contribution changes smoothly. The weights are an expert estimate of clinical significance:
+EBV is closest to clinical events, NLR is non-specific (acute stress, sampling time).
 
-### Почему параметры не обучены
+### Why the parameters are not fitted
 
-В групповом датасете команды (`aggregated_dataset.csv`) исход `outcome_severity_score` совпадает с суммой
-флагов тех же подсистем, что служат входами модели, в 37 строках из 41. Модель, обученная на таких данных,
-воспроизводит определение исхода: метрики версии 3.0.0 (AUC 0.98, Brier 0.05) и ROC-AUC 0.980 на сайте —
-следствие утечки, а не точности. Открытых индивидуальных данных «маркеры → исход» нет.
+In the team's group-level dataset (`aggregated_dataset.csv`) the outcome `outcome_severity_score` equals the sum of
+the flags of the same subsystems that serve as model inputs in 37 of 41 rows. A model fitted to such data reproduces
+the outcome definition: the metrics of version 3.0.0 (AUC 0.98, Brier 0.05) and the ROC-AUC of 0.980 on the site
+came from this leakage, not from accuracy. There are no open individual-level "markers → outcome" data.
 
-Поэтому параметры заданы явно:
+So the parameters are set explicitly:
 
-- Длительность: +0.21 к логарифму шансов на каждое удвоение (90%: 0.09–0.45). Rooney 2019: доля
-  астронавтов с выделением вирусов в полётах 10–16 сут и на МКС (≥180 сут) — любые герпесвирусы 53 → 61%,
-  VZV 41 → 65%, ВЭБ 82 → 96%, ЦМВ 47 → 61%; это 0.09, 0.27, 0.45 и 0.15 на удвоение, медиана 0.21.
-- Состояние: допущение q = 0.15 (0.07–0.30): вероятность, что подсистема, стабильная в начале полёта,
-  вовлечётся к 6-му месяцу. Отсюда риск к 180 сут: ~11% без вовлечённых подсистем, ~39% при одной, 90% при
-  двух (исход уже достигнут, 10% — на выброс единичного измерения). Свободный член −2.27 и наклон 2.15 —
-  прямая через эти точки.
-- Интервал отражает неопределённость q, этих 90% и эффекта длительности.
+- Mission length: +0.21 log-odds per doubling (90%: 0.09–0.45). Rooney 2019: the share of astronauts shedding
+  viruses on 10–16-day flights and on the ISS (≥180 days) — any herpesvirus 53 → 61%, VZV 41 → 65%,
+  EBV 82 → 96%, CMV 47 → 61%; that is 0.09, 0.27, 0.45 and 0.15 per doubling, median 0.21.
+- State: assumption q = 0.15 (0.07–0.30), the probability that a subsystem stable early in flight becomes
+  involved by month 6. This gives a risk by day 180 of ~11% with no involved subsystems, ~39% with one and 90% with
+  two (the outcome is already met; 10% allows for a one-off outlier). The intercept −2.27 and slope 2.15 are the line
+  through these points.
+- The interval reflects the uncertainty of q, of the 90% and of the mission-length effect.
 
-### Проверки на данных без утечки (`training/checks.py`)
+### Checks on data without leakage (`training/checks.py`)
 
-| Проверка | Данные | Результат |
+| Check | Data | Result |
 |---|---|---|
-| Утечка | `aggregated_dataset.csv` | исход = сумма входов в 37 из 41 строки |
-| Эффект длительности | 22 группы реальных полётов: только исход и длительность | +0.21 ± 0.23 на удвоение, для реактивации вирусов +0.32 ± 0.26 — совпадает с моделью |
-| Вариабельность NLR | Inspiration4: 4 человека × 3 анализа до полёта (NASA OSDR, OSD-569) | 20.8% против заложенных 19.8% |
-| Сдвиг NLR после 3-суточного полёта | Inspiration4, R+1 | +23%, +45%, −29%, −11%: порог +46% не превышен (один — на границе) |
-| Вариабельность IL-6 | Inspiration4: 4 человека × 3 анализа до полёта (NASA OSDR, OSD-575) | 27% против заложенных 30% |
-| Сдвиг IL-6 после 3-суточного полёта | Inspiration4, R+1 | +81%, +31%, +190%, +59%: порог +71% превышен у двоих — рост IL-6 после посадки описан и у Kim 2024 |
-| Исходное значение за 3 сут до старта | Inspiration4 | решение меняется у одного человека и по NLR, и по IL-6 — «до полёта» лучше брать за 1–2 месяца |
+| Leakage | `aggregated_dataset.csv` | outcome = sum of the inputs in 37 of 41 rows |
+| Mission-length effect | 22 real spaceflight groups: outcome and mission length only | +0.21 ± 0.23 per doubling, +0.32 ± 0.26 for viral reactivation — matches the model |
+| NLR variability | Inspiration4: 4 people × 3 pre-flight draws (NASA OSDR, OSD-569) | 20.8% vs 19.8% assumed |
+| NLR shift after the 3-day flight | Inspiration4, R+1 | +23%, +45%, −29%, −11%: the +46% threshold not exceeded (one borderline) |
+| IL-6 variability | Inspiration4: 4 people × 3 pre-flight draws (NASA OSDR, OSD-575) | 27% vs 30% assumed |
+| IL-6 shift after the 3-day flight | Inspiration4, R+1 | +81%, +31%, +190%, +59%: the +71% threshold exceeded in two — the post-landing IL-6 rise is also reported by Kim 2024 |
+| Baseline taken 3 days before launch | Inspiration4 | the decision changes for one person for both NLR and IL-6 — take "before" values 1–2 months before launch |
 
-## Длительность миссии: «если маркеры не изменились, за 2000 суток тоже не изменятся»
+## Mission length: "if the markers did not change, they will not change over 2000 days either"
 
-### Что подтверждается
+### What the evidence supports
 
-- Большинство иммунных сдвигов возникают в первые недели полёта и затем держатся на одном уровне, а не
-  нарастают: 6-месячные миссии на МКС (Crucian 2014, 2015, 2018); 340 сут NASA Twins Study — воспалительные
-  маркеры повышены на протяжении полёта и вернулись к норме после посадки (Garrett-Bakelman 2019).
-- Индивидуальная устойчивость реальна: лучшая подготовка — меньше реактивации (Agha 2020: −29% и −39%);
-  у опытных астронавтов функция NK-клеток снижалась меньше, чем у новичков (Bigley 2019); у части экипажа
-  VO₂peak в полёте почти не меняется (Moore 2014).
+- Most immune shifts appear in the first weeks of flight and then stay at the same level rather than growing:
+  6-month ISS missions (Crucian 2014, 2015, 2018); in the 340-day NASA Twins Study inflammatory markers were raised
+  throughout the flight and returned to normal after landing (Garrett-Bakelman 2019).
+- Individual resilience is real: better fitness means less reactivation (Agha 2020: −29% and −39%); NK-cell function
+  fell less in experienced astronauts than in first-time flyers (Bigley 2019); some crew members' VO₂peak barely
+  changes in flight (Moore 2014).
 
-### Что не подтверждается
+### What it does not support
 
-- Реактивация вирусов растёт с длительностью: 53% экипажа в полётах 10–16 сут против 61% на МКС, VZV
-  41 → 65%; после длительных миссий выделение вирусов длится до 30 сут против 3–5 (Rooney 2019; Mehta 2017).
-- Бывают поздние изменения: на станции «Конкордия» за год изоляции иммунные реакции резко усилились после
-  3–4 месяцев (Feuerecker 2019); в 520-суточном «Марс-500» — повышенный кортизол и усиленные иммунные реакции
+- Viral reactivation grows with mission length: 53% of crew on 10–16-day flights vs 61% on the ISS, VZV 41 → 65%;
+  after long missions shedding lasts up to 30 days vs 3–5 (Rooney 2019; Mehta 2017).
+- Late changes happen: during a year of isolation at Concordia station immune responses rose sharply after
+  3–4 months (Feuerecker 2019); in the 520-day Mars-500 study cortisol was higher and immune responses stronger
   (Yi 2014).
-- События копятся со временем даже при стабильном состоянии: на МКС сыпь — 1.12, симптомы ОРВИ — 0.97 на
-  лётный год; «заметное» событие за миссию — у 46% экипажа (Crucian 2016).
-- Радиация накапливается линейно: на МКС 0.2–0.5 мЗв/сут, в межпланетном полёте ≈1.8 мЗв/сут (Zeitlin 2013).
-  За 2000 сут это 400–1000 мЗв на орбите или ~3600 мЗв в дальнем космосе при карьерном лимите NASA 600 мЗв.
-  Ранние маркеры этого не отражают.
-- Данных нет: самый длинный полёт — 437 сут (В. Поляков, 1994–1995; Manzey 1998). 2000 сут — в 4.6 раза дольше.
+- Events accumulate even in a stable state: on the ISS rashes occur 1.12 times and upper respiratory symptoms
+  0.97 times per flight-year; 46% of crew members had a "notable" event per mission (Crucian 2016).
+- Radiation accumulates linearly: 0.2–0.5 mSv/day on the ISS, ≈1.8 mSv/day in interplanetary flight
+  (Zeitlin 2013). Over 2000 days that is 400–1000 mSv in orbit or ~3600 mSv in deep space, against NASA's career
+  limit of 600 mSv. Early markers do not reflect this.
+- No data exist: the longest spaceflight is 437 days (V. Polyakov, 1994–1995; Manzey 1998); 2000 days is 4.6 times
+  longer.
 
-### Вывод
+### Conclusion
 
-Стабильные маркеры в начале полёта — благоприятный признак, но не гарантия: риск продолжает
-расти, хотя всё медленнее. Модель это учитывает: при стабильных маркерах риск растёт с длительностью
-медленнее, чем при начавшихся сдвигах; после 437 сут — предупреждение, расширенный интервал и оценка дозы.
+Stable markers early in flight are a good sign, not a guarantee: the risk keeps growing, though ever more slowly.
+The model reflects this: with stable markers the risk grows with mission length more slowly than once shifts have
+started; beyond 437 days it shows a warning, a wider interval and a radiation dose estimate.
 
-| Профиль | 30 сут | 180 сут | 437 сут | 1000 сут | 2000 сут |
+| Profile | 30 days | 180 days | 437 days | 1000 days | 2000 days |
 |---|---|---|---|---|---|
-| стабильные маркеры | 7% (2–26) | 11% (3–36) | 14% (3–43) | 17% (4–52) | 21% (4–61) |
-| кортизол ↑ | 32% (14–57) | 44% (24–67) | 51% (29–73) | 57% (31–80) | 62% (30–86) |
-| кортизол ↑ + ВЭБ 417 | 85% (67–94) | 91% (79–96) | 93% (83–97) | 94% (84–98) | 95% (84–99) |
+| stable markers | 7% (2–26) | 11% (3–36) | 14% (3–43) | 17% (4–52) | 21% (4–61) |
+| cortisol ↑ | 32% (14–57) | 44% (24–67) | 51% (29–73) | 57% (31–80) | 62% (30–86) |
+| cortisol ↑ + EBV 417 | 85% (67–94) | 91% (79–96) | 93% (83–97) | 94% (84–98) | 95% (84–99) |
 
-В скобках — 90% интервал. Для стабильных маркеров на 2000 сут: 5% при q = 0.07 и 54% при q = 0.30;
-15% и 37% при меньшем и большем эффекте длительности (`reports/metrics.json → scenarios`).
+90% intervals in brackets. For stable markers at 2000 days: 5% at q = 0.07 and 54% at q = 0.30;
+15% and 37% with a smaller and larger mission-length effect (`reports/metrics.json → scenarios`).
 
-## Данные NASA
+## NASA data
 
-Поиск на сайтах NASA (ноябрь 2026):
+Search of NASA sites (November 2026):
 
-| Источник | Что нашлось | Использование |
+| Source | What was found | Use |
 |---|---|---|
-| data.nasa.gov, запрос «immune» | 80 наборов: мыши, дрозофилы, клетки в пробирке; данных людей с маркерами модели нет | — |
-| NASA OSDR (osdr.nasa.gov, API) | Inspiration4: OSD-569 (общий анализ крови), OSD-575 (цитокины и биохимия сыворотки), OSD-571 (метаболомика плазмы), OSD-656 (моча); Axiom: OSD-903, OSD-943 (экспрессия генов) | OSD-569 → `inspiration4_cbc.csv`, OSD-575 → `inspiration4_il6.csv` |
-| api.nasa.gov | 16 API; к иммунитету относится только API OSDR | через него получены данные OSDR |
-| Earthdata | данные о Земле; по «immune» — описания исследований без данных (рыбы, персонал в Антарктиде) | — |
-| science.nasa.gov | статьи и программы, не данные | — |
+| data.nasa.gov, query "immune" | 80 datasets: mice, fruit flies, cells in vitro; no human data with the model's markers | — |
+| NASA OSDR (osdr.nasa.gov, API) | Inspiration4: OSD-569 (complete blood count), OSD-575 (serum cytokines and chemistry), OSD-571 (plasma metabolomics), OSD-656 (urine); Axiom: OSD-903, OSD-943 (gene expression) | OSD-569 → `inspiration4_cbc.csv`, OSD-575 → `inspiration4_il6.csv` |
+| api.nasa.gov | 16 APIs; only the OSDR API relates to immunity | used to get the OSDR data |
+| Earthdata | Earth science data; for "immune" only study descriptions without data (fish, Antarctic personnel) | — |
+| science.nasa.gov | articles and programs, not data | — |
 
-Кортизол в метаболомике плазмы Inspiration4 (OSD-571) после посадки выше, чем до полёта (p = 0.025, с поправкой на
-множественные сравнения 0.11), но данные нормированы — порог роста кортизола по ним не проверить.
+In the Inspiration4 plasma metabolomics (OSD-571) cortisol is higher after landing than before flight (p = 0.025,
+0.11 after correction for multiple comparisons), but the data are normalized, so the cortisol rise threshold cannot
+be checked against them.
 
-Пакет данных команды:
+The team's data package:
 
-| Файлы пакета | Использование |
+| Package files | Use |
 |---|---|
-| 06, 08 — общий анализ крови Inspiration4 (OSD-569) | `data/inspiration4_cbc.csv` |
-| 09 — датасет 1 (41 строка с пометками) | `data/aggregated_dataset.csv`: проверки утечки и эффекта длительности |
-| 10, 11 — датасеты 2 и 3 | не используются: цифры извлечены из статей автоматически и не сверены с источниками |
-| 01–04 — экспрессия генов (человек и мыши) | не используются: модель работает с лабораторными маркерами; ткани мышей не переносятся на кровь человека |
+| 06, 08 — Inspiration4 complete blood count (OSD-569) | `data/inspiration4_cbc.csv` |
+| 09 — dataset 1 (41 rows with quality flags) | `data/aggregated_dataset.csv`: leakage and mission-length checks |
+| 10, 11 — datasets 2 and 3 | not used: the values were extracted from papers automatically and not verified against the sources |
+| 01–04 — gene expression (human and mouse) | not used: the model works with laboratory markers; mouse tissues do not transfer to human blood |
 
-## Ограничения
+## Limitations
 
-- Земная модель — 22 человека одного исследования; полётная — параметры из литературы и допущений, без
-  проверки на индивидуальных исходах.
-- Нет поправки на возраст, время суток (кортизол), тип образца.
-- Для проверки на индивидуальных исходах нужны данные NASA LSDA (Integrated Immune, по заявке): в открытом
-  доступе есть только 3-суточный полёт Inspiration4 (4 человека).
+- The earth model is based on 22 people from a single study; the in-flight model uses parameters from the
+  literature and assumptions and has not been validated on individual outcomes.
+- No adjustment for age, time of day (cortisol) or sample type.
+- Validation on individual outcomes needs NASA LSDA data (Integrated Immune, on request); the only open data are
+  from the 3-day Inspiration4 flight (4 people).
 
-## Источники
+## References
 
 - Agha NH, et al. FASEB J. 2020;34:2869–2881. https://doi.org/10.1096/fj.201902327R
 - Bigley AB, et al. J Appl Physiol. 2019;126:842–853. https://doi.org/10.1152/japplphysiol.00761.2018
@@ -155,11 +157,11 @@ RCV — критическая разница: √2 · 1.645 · √(CVa² + CVi�
 - Kim J, et al. Nat Commun. 2024;15:4954. https://doi.org/10.1038/s41467-024-49211-2
 - Manzey D, Lorenz B, Poljakov V. Ergonomics. 1998;41:537–559. https://doi.org/10.1080/001401398186991
 - Mehta SK, et al. NPJ Microgravity. 2017;3:11. https://doi.org/10.1038/s41526-017-0015-y
-- NASA Open Science Data Repository: OSD-569, OSD-575 (SpaceX Inspiration4).
-  https://osdr.nasa.gov/bio/repo/data/studies/OSD-569, https://osdr.nasa.gov/bio/repo/data/studies/OSD-575
 - Moore AD Jr, et al. J Appl Physiol. 2014;117:231–238. https://doi.org/10.1152/japplphysiol.01251.2013
 - NASA OCHMO. Radiation protection technical brief (NASA-STD-3001).
   https://www.nasa.gov/wp-content/uploads/2023/03/radiation-protection-technical-brief-ochmo.pdf
+- NASA Open Science Data Repository: OSD-569, OSD-575 (SpaceX Inspiration4).
+  https://osdr.nasa.gov/bio/repo/data/studies/OSD-569, https://osdr.nasa.gov/bio/repo/data/studies/OSD-575
 - Pierson DL, et al. Brain Behav Immun. 2005;19:235–242. https://doi.org/10.1016/j.bbi.2004.08.001
 - Rooney BV, et al. Front Microbiol. 2019;10:16. https://doi.org/10.3389/fmicb.2019.00016
 - Stowe RP, et al. Psychosom Med. 2001;63:891–895.

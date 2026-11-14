@@ -1,4 +1,4 @@
-"""Интерпретация результата модели (RU/EN): уровень, факторы, сценарии «что если», рекомендации."""
+"""Interpretation of a model result (EN/RU): level, drivers, what-if scenarios, recommendations."""
 
 from __future__ import annotations
 
@@ -352,12 +352,12 @@ def _num(v: float) -> str:
 
 
 def _pct(v: float) -> str:
-    """Целые проценты, половина вверх — как toFixed(0) на сайте: 38.5 -> '39'."""
+    """Whole percent, rounding half up like toFixed(0) on the site: 38.5 -> '39'."""
     return str(math.floor(v + 0.5))
 
 
 def _reps(value: float, unit: str, lang: str) -> str:
-    """1 раз / 2 раза / 5 раз; 1 rep / 2 reps."""
+    """Russian plural forms for repetitions (1 раз / 2 раза / 5 раз); 1 rep / 2 reps."""
     if unit not in ("раз", "reps"):
         return unit
     if lang == "en":

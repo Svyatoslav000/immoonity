@@ -7,14 +7,16 @@ English | [Русский](README.ru.md)
 Immune risk assessment for spaceflight: a website with an interactive demo and an API for two models —
 pre-flight (physical fitness) and in-flight (biomarkers).
 
+**Live:** https://immoonity.onrender.com
+
 | Folder / file | Contents |
 |---|---|
 | `immoonity-site/` | website (single page; the Demo section calls the API) |
 | `immoonity-app/` | API, models, training, data, tests |
 | `wsgi.py`, `gunicorn.conf.py` | site and API as one service |
 | `render.yaml`, `Dockerfile`, `Procfile`, `.python-version` | deployment |
-| `MODEL.md` | model rationale and sources (in Russian) |
-| `CHANGES.md` | changelog (in Russian) |
+| `MODEL.md` | model rationale and sources |
+| `CHANGES.md` | changelog |
 
 ## Models
 
@@ -46,15 +48,15 @@ Tests: `python -m pytest` in `immoonity-app`.
 
 1. **File → Open** → the `immoonity` folder.
 2. **Add Interpreter → Virtualenv**, then install `requirements-dev.txt` when PyCharm offers it.
-3. Run configuration **«1. Сайт + API»** (site + API).
+3. Run configuration **1. Site + API**.
 
 | Run configuration | What it does |
 |---|---|
-| 1. Сайт + API | site with the demo and API on port 8000 |
-| 2. Сайт + API (консультант на русском) | the same, interpretation in Russian |
-| 3. Только API (app.py) | API only, port 5000 |
-| 4. Тесты (pytest) | API and model tests |
-| 5. Переобучить модели | rebuild `models/*.json` after editing `training/config.py` |
+| 1. Site + API | site with the demo and API on port 8000 |
+| 2. Site + API (Russian consultant) | the same, interpretation in Russian |
+| 3. API only (app.py) | API only, port 5000 |
+| 4. Tests (pytest) | API and model tests |
+| 5. Retrain models | rebuild `models/*.json` after editing `training/config.py` |
 
 ## Deploy
 

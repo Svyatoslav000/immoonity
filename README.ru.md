@@ -2,6 +2,8 @@
 
 [English](README.md) | Русский
 
+**Сайт:** https://immoonity.onrender.com
+
 Оценка иммунного риска в космическом полёте: сайт с демо и API двух моделей — предполётной
 (физическая подготовка) и полётной (биомаркеры).
 
@@ -11,23 +13,23 @@
 | `immoonity-app/` | API, модели, обучение, данные, тесты |
 | `wsgi.py`, `gunicorn.conf.py` | сайт и API одним сервисом |
 | `render.yaml`, `Dockerfile`, `Procfile`, `.python-version` | деплой |
-| `MODEL.md` | обоснование моделей и источники |
-| `CHANGES.md` | список изменений |
+| `MODEL.md` | обоснование моделей и источники (на английском) |
+| `CHANGES.md` | список изменений (на английском) |
 
 ## Запуск в PyCharm
 
 1. **File → Open** → папка `immoonity`.
 2. Интерпретатор: **Add Interpreter → Virtualenv**, Python 3.13 (подойдёт 3.10+). На предложение установить
    зависимости из `requirements-dev.txt` — согласиться (или в терминале `pip install -r requirements-dev.txt`).
-3. Конфигурация **«1. Сайт + API»** → **Run**. Откроется http://localhost:8000/#demo
+3. Конфигурация **1. Site + API** → **Run**. Откроется http://localhost:8000/#demo
 
 | Конфигурация | Что делает |
 |---|---|
-| 1. Сайт + API | сайт с демо и API на порту 8000 |
-| 2. Сайт + API (консультант на русском) | то же, интерпретация на русском |
-| 3. Только API (app.py) | API на порту 5000 |
-| 4. Тесты (pytest) | тесты API и моделей |
-| 5. Переобучить модели | пересчёт `models/*.json` после правок в `training/config.py` |
+| 1. Site + API | сайт с демо и API на порту 8000 |
+| 2. Site + API (Russian consultant) | то же, интерпретация на русском |
+| 3. API only (app.py) | API на порту 5000 |
+| 4. Tests (pytest) | тесты API и моделей |
+| 5. Retrain models | пересчёт `models/*.json` после правок в `training/config.py` |
 
 Без PyCharm: `pip install -r requirements-dev.txt`, затем `python run_local.py`.
 

@@ -1,4 +1,4 @@
-"""Проверки полётной модели на данных без утечки целевой переменной."""
+"""Checks of the in-flight model on data without target leakage."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ NOT_A_GROUP_RESULT = ("mission_days_0", "review_article_not_primary", "mission_d
                       "non_spaceflight")
 PREFLIGHT = ("L-92", "L-44", "L-3")
 
-# Маркеры Inspiration4 (NASA OSDR): столбец в файле, поля модели и подсистема
+# Inspiration4 markers (NASA OSDR): file column, model fields and subsystem
 I4_MARKERS = {
     "nlr": {"column": "nlr", "before": "nlr_b", "after": "nlr_a", "subsystem": "immune_shift"},
     "il6": {"column": "il6_pg_ml", "before": "il6_b", "after": "il6_a", "subsystem": "cytokine"},
@@ -36,7 +36,7 @@ def spaceflight_groups(rows: list[dict]) -> list[dict]:
 
 def duration(rows: list[dict]) -> dict:
     groups = spaceflight_groups(rows)
-    # Inspiration4 (4 человека) встречается в нескольких статьях — считаем одной группой
+    # Inspiration4 (4 people) appears in several papers, so it counts as one group
     same = [r for r in groups if "same_cohort" in r["qc_flags"]]
     w = np.array([1.0 / len(same) if r in same else 1.0 for r in groups])
     x = np.array([math.log2((float(r["mission_days"]) + 1) / (C.FLIGHT["duration"]["reference_days"] + 1))
@@ -61,7 +61,7 @@ def _by_subject(rows: list[dict], column: str) -> dict[str, dict[str, float]]:
 
 
 def variability(rows: list[dict], marker: str) -> dict:
-    """Вариабельность у одного человека по трём анализам до полёта против заложенной в RCV."""
+    """Within-person variability over three pre-flight draws vs the variability assumed in the RCV."""
     cvs = []
     for series in _by_subject(rows, I4_MARKERS[marker]["column"]).values():
         pre = [series[t] for t in PREFLIGHT if t in series]
@@ -74,7 +74,7 @@ def variability(rows: list[dict], marker: str) -> dict:
 
 
 def inspiration4(rows: list[dict], marker: str, model) -> dict:
-    """Значение на R+1 против среднего трёх анализов до полёта и решение модели по подсистеме."""
+    """Value at R+1 vs the mean of three pre-flight draws, and the model's decision for the subsystem."""
     m = I4_MARKERS[marker]
     crew, flagged_l3 = [], 0
     for sid, series in sorted(_by_subject(rows, m["column"]).items()):
@@ -82,7 +82,7 @@ def inspiration4(rows: list[dict], marker: str, model) -> dict:
         state = model._marker_states({m["before"]: before, m["after"]: after})[m["subsystem"]]
         crew.append({"subject": sid, "before": round(before, 3), "r1": round(after, 3),
                      "change_pct": round((after / before - 1) * 100, 1), "membership": round(state["membership"], 3)})
-        # если за исходное взять анализ за 3 сут до старта
+        # with the draw 3 days before launch as the baseline
         last = model._marker_states({m["before"]: series["L-3"], m["after"]: after})[m["subsystem"]]
         flagged_l3 += last["membership"] >= 0.5
     return {"mission_days": 3, "threshold_pct": round(C.RCV[marker] * 100, 1), "crew": crew,

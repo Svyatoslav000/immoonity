@@ -1,7 +1,7 @@
-"""Локальный запуск: сайт и API на одном порту.
+"""Run the site and the API locally on one port.
 
     python run_local.py              http://localhost:8000
-    python run_local.py --lang ru    ответы консультанта на русском
+    python run_local.py --lang ru    consultant answers in Russian
     python run_local.py --port 8080
 """
 
@@ -18,7 +18,7 @@ sys.path.insert(0, str(ROOT / "immoonity-app"))
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="IMMOONITY: сайт + API")
+    parser = argparse.ArgumentParser(description="IMMOONITY: site + API")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--lang", choices=("en", "ru"), default="en")
@@ -28,7 +28,7 @@ def main() -> None:
     try:
         from app import create_app
     except ModuleNotFoundError as exc:
-        sys.exit(f"Не установлен пакет {exc.name}: pip install -r requirements.txt")
+        sys.exit(f"Package {exc.name} is not installed: pip install -r requirements.txt")
 
     app = create_app(site_dir=ROOT / "immoonity-site")
     url = f"http://localhost:{args.port}/"

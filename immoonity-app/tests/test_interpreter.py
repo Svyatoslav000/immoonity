@@ -7,11 +7,11 @@ def test_earth_interpretation_structure_and_logic(models):
     out = interpret(pred, m, "ru")
     assert out["language"] == "ru"
     assert {"headline", "level", "drivers", "what_if", "recommendations", "notes", "disclaimer", "references"} <= set(out)
-    # подтягивания ниже цели -> сценарий и рекомендация по верхнему плечевому поясу
+    # pull-ups below target -> a what-if scenario and an upper-body recommendation
     assert [w["factor"] for w in out["what_if"]] == ["pullups"]
     assert out["what_if"][0]["risk_after"] < pred["risk"]
     assert "upper_body" in [r["id"] for r in out["recommendations"]]
-    assert "aerobic" not in [r["id"] for r in out["recommendations"]]  # VO2max уже выше цели
+    assert "aerobic" not in [r["id"] for r in out["recommendations"]]  # VO2max is already above target
     assert out["references"][0]["key"] == "agha2020"
 
 
@@ -64,7 +64,7 @@ def test_duration_wording_and_russian_plurals(models):
 
 
 def test_headline_rounds_like_the_site(models):
-    """Сайт выводит интервал через toFixed(0) (половина вверх) — заголовок должен совпадать: 38.5 -> 39."""
+    """The site rounds the interval with toFixed(0) (half up), so the headline must match: 38.5 -> 39."""
     m = models["earth"]
     pred = m.predict({"sex": "M", "vo2max": 48.0, "pullups": 15.0, "pushups": 60.0})
     pred["risk"], pred["risk_interval"] = 62.5, {"low": 38.5, "high": 82.9, "level": 0.9}

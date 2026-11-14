@@ -1,77 +1,85 @@
-# Изменения
+# Changelog
+
+## 3.1.1
+
+- Site live at https://immoonity.onrender.com (Render Blueprint).
+- Team section: Svyatoslav, lead developer.
+- Documentation, code comments, model-card texts and PyCharm run configurations in English; the Russian interface
+  of the demo (`?lang=ru`) stays.
+- Model parameters and API responses unchanged.
 
 ## 3.1.0 — MVP
 
-### Модели
+### Models
 
-- Полётная модель больше не обучается на `aggregated_dataset.csv`: исход там совпадает с суммой входов
-  в 37 строках из 41 (утечка). Её метрики в 3.0.0 (AUC 0.98, Brier 0.05) недостоверны.
-- Параметры полётной модели заданы по литературе: длительность +0.21 на удвоение (Rooney 2019),
-  состояние — из допущения q = 0.15 (0.07–0.30). Риск при стабильных маркерах на 180 сут — 11% (было 2%).
-- Длительность: риск растёт всё медленнее; после 437 сут (самый длинный полёт) — предупреждение
-  и расширенный интервал; для миссий от года — оценка дозы радиации.
-- Исход назван точнее: «многосистемная иммунная дисрегуляция (≥2 подсистем)» вместо «клинически значимой» —
-  такие сдвиги обычно бессимптомны.
-- Проверки без утечки (`training/checks.py`): эффект длительности в данных команды +0.21 на удвоение;
-  вариабельность NLR у экипажа Inspiration4 20.8% против заложенных 19.8%; после 3-суточного полёта порог NLR
-  не превышен.
-- Данные: добавлены `inspiration4_cbc.csv` (NASA OSDR, OSD-569) и `inspiration4_il6.csv` (OSD-575);
-  `aggregated_dataset.csv` — 41 строка с пометками качества. Вариабельность IL-6 у экипажа Inspiration4 — 27%
-  против заложенных 30%; через сутки после посадки порог роста IL-6 превышен у 2 из 4.
-- Земная модель без изменений.
-- Обоснование и источники — `MODEL.md`.
+- The in-flight model is no longer fitted to `aggregated_dataset.csv`: there the outcome equals the sum of the
+  inputs in 37 of 41 rows (target leakage). Its 3.0.0 metrics (AUC 0.98, Brier 0.05) are not valid.
+- In-flight parameters are set from the literature: mission length +0.21 per doubling (Rooney 2019), state from the
+  assumption q = 0.15 (0.07–0.30). Risk with stable markers at 180 days: 11% (was 2%).
+- Mission length: the risk grows ever more slowly; beyond 437 days (the longest spaceflight) a warning and a wider
+  interval; for missions of a year or longer, a radiation dose estimate.
+- Outcome named precisely: "multi-system immune dysregulation (≥2 subsystems)" instead of "clinically relevant" —
+  such shifts are usually asymptomatic.
+- Checks without leakage (`training/checks.py`): mission-length effect in the team's data +0.21 per doubling;
+  NLR variability in the Inspiration4 crew 20.8% vs 19.8% assumed; after the 3-day flight the NLR threshold was not
+  exceeded.
+- Data: added `inspiration4_cbc.csv` (NASA OSDR, OSD-569) and `inspiration4_il6.csv` (OSD-575);
+  `aggregated_dataset.csv` has 41 rows with quality flags. IL-6 variability in the Inspiration4 crew 27% vs 30%
+  assumed; one day after landing the IL-6 rise threshold was exceeded in 2 of 4.
+- Earth model unchanged.
+- Rationale and sources: `MODEL.md`.
 
-### Сайт
+### Site
 
-- Блок Solution: убраны неподтверждённые ROC-AUC 0.825 / 0.980 и «2,000+ data points».
-- В демо: значения «Before» — за 1–2 месяца до старта.
-- Все картинки названы латиницей (`main.png`, `block3.png` и др.): кириллица в именах файлов ломалась при распаковке
-  архива в Windows.
+- Solution section: unsupported ROC-AUC 0.825 / 0.980 and "2,000+ data points" removed.
+- Demo: "Before" values are taken 1–2 months before launch.
+- All images have Latin file names (`main.png`, `block3.png`, etc.): Cyrillic names broke archive extraction on
+  Windows.
 
-### Проект
+### Project
 
-- Один репозиторий: `wsgi.py` отдаёт сайт и API с одного адреса.
-- Деплой: `render.yaml` (Render Blueprint), `Dockerfile`, `Procfile`, `.python-version`, `gunicorn.conf.py`.
-- GitHub Actions: тесты и запуск сервера на каждый push.
-- `requirements.txt` — сервер, `requirements-dev.txt` — тесты и обучение.
+- One repository: `wsgi.py` serves the site and the API from one address.
+- Deployment: `render.yaml` (Render Blueprint), `Dockerfile`, `Procfile`, `.python-version`, `gunicorn.conf.py`.
+- GitHub Actions: tests and a server smoke test on every push.
+- `requirements.txt` for the server, `requirements-dev.txt` for tests and training.
 
 ## 3.0.0
 
-### Модели
+### Models
 
-- Исходы определены явно: земная модель — реактивация латентных вирусов (ВЭБ, VZV, ЦМВ) в полёте;
-  полётная — дисрегуляция двух и более подсистем.
-- Байесовская логистическая регрессия: устойчивые веса и 90% интервал прогноза.
-- Земная модель: индекс подготовки с весами 0.4 / 0.3 / 0.3 (VO₂max / отжимания / подтягивания, по Agha et al., 2020).
-  Подтягивания больше не повышают риск.
-- Полётная модель: балл подсистем с весами ВЭБ 1.25, кортизол 1.0, IL-6 1.0, NLR 0.75.
-  Длительность миссии повышает риск (раньше снижала).
-- Пороги: ВЭБ 500 → 129 копий/мл; рост IL-6 +20% → +71%, кортизола +25% → +39%, NLR +50% → +46%
-  (критическая разница по биологической вариабельности).
-- Мягкие пороги: риск меняется плавно, без скачков на границах.
-- Скользящий контроль земной модели: Brier 0.180.
+- Outcomes defined explicitly: earth model — reactivation of latent viruses (EBV, VZV, CMV) in flight;
+  in-flight model — dysregulation of two or more subsystems.
+- Bayesian logistic regression: stable weights and a 90% prediction interval.
+- Earth model: fitness index weighted 0.4 / 0.3 / 0.3 (VO₂max / push-ups / pull-ups, after Agha et al., 2020).
+  Pull-ups no longer increase the risk.
+- In-flight model: subsystem score weighted EBV 1.25, cortisol 1.0, IL-6 1.0, NLR 0.75.
+  Mission length increases the risk (it used to decrease it).
+- Thresholds: EBV 500 → 129 copies/mL; IL-6 rise +20% → +71%, cortisol +25% → +39%, NLR +50% → +46%
+  (reference change values from biological variation).
+- Soft thresholds: the risk changes smoothly, without jumps at the boundaries.
+- Earth model leave-one-out Brier: 0.180.
 
 ### API
 
-- Модели в JSON вместо pickle; на сервере не нужны scikit-learn и numpy.
-- Проверка ввода: ошибки 400 по полям (RU/EN) вместо 500; ноль в «до» не ломает расчёт.
-- Значения «до полёта» необязательны.
-- В ответе: 90% интервал, уровень, вклад факторов, сценарии «что если», интерпретация.
-- Новые адреса: `/api/health`, `/api/models`, `/api/consultant/prompt`.
-- Поле `risk` и команда `gunicorn app:app` сохранены.
+- Models stored as JSON instead of pickle; the server needs neither scikit-learn nor numpy.
+- Input validation: per-field 400 errors (EN/RU) instead of 500; a zero "before" value no longer breaks the result.
+- "Before flight" values are optional.
+- Response: 90% interval, level, factor contributions, what-if scenarios, interpretation.
+- New endpoints: `/api/health`, `/api/models`, `/api/consultant/prompt`.
+- The `risk` field and the `gunicorn app:app` command are kept.
 
-### Сайт (index.html, блок Demo)
+### Site (index.html, Demo section)
 
-- Вывод интервала, уровня риска и панели консультанта.
-- Проверка заполнения; ошибки показываются в форме вместо alert.
-- Сообщение о пробуждении сервера Render.
-- Адрес API выбирается автоматически: локальный или Render.
-- Кнопка Male выделена по умолчанию; поля «Before» необязательны.
-- Скрипт демо изолирован: глобальное имя `section` из блока «What happens» ломало форму.
-- Контент первого экрана виден, если GSAP не загрузился.
-- Картинки переименованы в `astronaut.png` и `logo.png`; удалён неиспользуемый PDF (`…0006.pdf`).
+- Interval, risk level and consultant panel shown.
+- Required fields checked; errors shown in the form instead of `alert`.
+- Notice while the free Render instance wakes up.
+- API address chosen automatically: local or Render.
+- Male selected by default; "Before" fields optional.
+- Demo script isolated: the global name `section` from the "What happens" block broke the form.
+- First-screen content visible even if GSAP fails to load.
+- Images renamed to `astronaut.png` and `logo.png`; unused PDF (`…0006.pdf`) removed.
 
-## Открытые вопросы
+## Open questions
 
-- Подтвердить: тип образца для ВЭБ (слюна), порог кортизола 550 нмоль/л, нормативы с учётом возраста.
-- Допущение q = 0.15 для полётной модели — проверить на индивидуальных данных (NASA LSDA, OSDR OSD-570/575).
+- To confirm: EBV sample type (saliva), the 550 nmol/L cortisol threshold, age-adjusted fitness targets.
+- The q = 0.15 assumption of the in-flight model needs validation on individual data (NASA LSDA, OSDR OSD-570/575).

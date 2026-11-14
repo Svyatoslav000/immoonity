@@ -1,7 +1,7 @@
-"""Сборка моделей: python training/train_models.py
+"""Build the models: python training/train_models.py
 
-Земная модель обучается на данных Agha et al. 2020, полётная собирается из параметров config.py.
-Результат: models/*.json, reports/metrics.json, reports/figures/*.png.
+The earth model is fitted to Agha et al. 2020; the in-flight model is assembled from the parameters in config.py.
+Output: models/*.json, reports/metrics.json, reports/figures/*.png.
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ MODELS = ROOT / "models"
 REPORTS = ROOT / "reports"
 FIG = REPORTS / "figures"
 
-# переполнение exp при почти полном разделении классов — ожидаемо
+# exp overflow under near-complete separation is expected
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 
@@ -45,7 +45,7 @@ def priors_for(cfg: dict, override: dict | None = None, scale: float = 1.0):
 
 
 def parse_variant(spec):
-    """Вариант анализа чувствительности -> (замена априорных, множитель SD, веса)."""
+    """Sensitivity variant -> (prior overrides, SD multiplier, weights)."""
     if isinstance(spec, str) and spec.startswith("scale_sd:"):
         return None, float(spec.split(":")[1]), None
     spec = dict(spec)
@@ -64,7 +64,7 @@ def logloss(p, y):
 
 
 def auc(p, y):
-    """ROC-AUC через статистику Манна — Уитни (совпадения считаются за 1/2)."""
+    """ROC AUC via the Mann-Whitney statistic (ties count as 1/2)."""
     p = np.asarray(p, float)
     y = np.asarray(y).astype(int)
     pos, neg = p[y == 1], p[y == 0]
@@ -96,7 +96,7 @@ def metrics_block(p, y):
 
 
 def flight_posterior(cfg: dict, **override) -> bayes.Posterior:
-    """Параметры полётной модели из config.py в форме Posterior."""
+    """In-flight model parameters from config.py as a Posterior."""
     mean, cov = C.flight_parameters(**override)
     pm = np.array([cfg["priors"][t]["mean"] for t in cfg["terms"]], float)
     ps = np.array([cfg["priors"][t]["sd"] for t in cfg["terms"]], float)
@@ -106,10 +106,10 @@ def flight_posterior(cfg: dict, **override) -> bayes.Posterior:
 
 
 METHODS = {
-    "earth": "Байесовская логистическая регрессия: MAP-оценка, интервалы по аппроксимации Лапласа.",
-    "flight": "Модель на опубликованных данных: параметры заданы по литературе и явным допущениям "
-              "(training/config.py), без обучения; интервал отражает неопределённость этих допущений, "
-              "за пределами самого длинного полёта он дополнительно расширяется.",
+    "earth": "Bayesian logistic regression: MAP estimate, Laplace-approximation intervals.",
+    "flight": "Knowledge-based model: parameters come from published studies and explicit assumptions "
+              "(training/config.py), no fitting; the interval reflects the uncertainty of these assumptions "
+              "and widens further beyond the longest spaceflight.",
 }
 
 
@@ -173,7 +173,7 @@ def engine_for(name, cfg, post, weights=None):
     return EarthModel(spec) if name == "earth" else FlightModel(spec)
 
 
-# Типовые профили: для анализа чувствительности и проверки интервалов
+# Typical profiles for sensitivity analysis and interval checks
 EARTH_PROFILES = {
     "M_fit": {"sex": "M", "vo2max": 48, "pullups": 15, "pushups": 60},
     "M_aerobic": {"sex": "M", "vo2max": 48, "pullups": 4, "pushups": 25},
@@ -206,7 +206,7 @@ def flight_values(delta):
 
 
 def earth_validation(E, earth_rows):
-    """Скользящий контроль с исключением одного человека."""
+    """Leave-one-out cross-validation."""
     X, y = D.earth_table(earth_rows, E)
     mu, sd = priors_for(E)
     loo = np.zeros(len(y))
@@ -230,7 +230,7 @@ def earth_sensitivity(E, earth_rows):
 
 
 def flight_scenarios(F):
-    """Как меняются риски типовых профилей при других допущениях."""
+    """Risks of typical profiles under alternative assumptions."""
     out = {}
     for vname, vspec in [("main", {})] + list(F["scenarios"].items()):
         vspec = dict(vspec)
@@ -262,16 +262,16 @@ def main():
     flight_checks = checks.run_all(agg_rows, i4_rows, engine_for("flight", F, post_f))
     lk = flight_checks["leakage"]
     val_f = {
-        "scheme": "не применимо: независимых данных об исходе нет",
-        "reason": f"В {F['data_file']} исход совпадает с суммой флагов-входов в {lk['score_equals_flag_sum']} из "
-                  f"{lk['rows']} строк (утечка целевой переменной); метрики качества на нём не информативны.",
+        "scheme": "not applicable: no independent outcome data",
+        "reason": f"In {F['data_file']} the outcome equals the sum of the input flags in {lk['score_equals_flag_sum']} of "
+                  f"{lk['rows']} rows (target leakage), so accuracy metrics on it are not informative.",
         "checks": "reports/metrics.json -> flight_checks",
     }
 
     training = {
         "earth": {"data_file": "data/" + E["data_file"], "n": post_e.n, "events": post_e.events,
                   "source": "Agha et al. 2020 (doi 10.1096/fj.201902327R), 22 ISS crew members"},
-        "flight": {"method": "без обучения",
+        "flight": {"method": "not fitted",
                    "check_files": ["data/" + F["data_file"]] + ["data/" + f for f in F["check_files"].values()]},
     }
     cv = val_e["cv"]
@@ -315,7 +315,7 @@ def main():
 
     print("earth: " + ", ".join(f"{t} {m:+.3f}" for t, m in zip(post_e.terms, post_e.mean))
           + f" | LOO AUC {cv['auc']:.3f}, Brier {cv['brier']:.3f}")
-    print("flight: " + ", ".join(f"{t} {m:+.3f}" for t, m in zip(post_f.terms, post_f.mean)) + " | без обучения")
+    print("flight: " + ", ".join(f"{t} {m:+.3f}" for t, m in zip(post_f.terms, post_f.mean)) + " | not fitted")
     d = flight_checks["duration"]
     print(f"checks: leakage {lk['score_equals_flag_sum']}/{lk['rows']}; duration slope in data "
           f"{d['multisystem']['slope_per_doubling']:+.2f} (viral {d['viral']['slope_per_doubling']:+.2f}) vs model "
@@ -325,7 +325,7 @@ def main():
     print("saved:", MODELS / "earth_model.json", MODELS / "flight_model.json", REPORTS / "metrics.json")
 
 
-# Оформление графиков
+# Figure style
 INK, INK2, MUTED, GRID, AXIS, SURFACE = "#0b0b0b", "#52514e", "#898781", "#e1e0d9", "#c3c2b7", "#fcfcfb"
 S1, S2, S3, S4 = "#2a78d6", "#eb6834", "#1baf7a", "#eda100"
 
@@ -351,11 +351,11 @@ def figures(em, fm, post_e, post_f):
 
     plt.rcParams.update({"font.family": "DejaVu Sans", "figure.facecolor": SURFACE, "savefig.facecolor": SURFACE})
 
-    # риск в зависимости от VO2max
+    # risk vs VO2max
     fig, ax = plt.subplots(figsize=(8, 4.2))
-    _style(ax, "Земная модель: риск в зависимости от VO₂max (90% интервал)")
+    _style(ax, "Earth model: risk vs VO₂max (90% interval)")
     grid = np.arange(25, 60.01, 0.1)
-    setups = {"M": ({"pullups": 15, "pushups": 60}, S1, "Мужчины"), "F": ({"pullups": 6, "pushups": 30}, S2, "Женщины")}
+    setups = {"M": ({"pullups": 15, "pushups": 60}, S1, "Men"), "F": ({"pullups": 6, "pushups": 30}, S2, "Women")}
     for sex, (fixed, colr, lab) in setups.items():
         ys, lo, hi = [], [], []
         for x in grid:
@@ -369,19 +369,19 @@ def figures(em, fm, post_e, post_f):
         ax.annotate(lab, (grid[-1], ys[-1]), xytext=(4, 0), textcoords="offset points", va="center", fontsize=9, color=INK2)
     ax.set_xlim(25, 63)
     ax.set_ylim(0, 100)
-    ax.set_xlabel("VO₂max, мл/кг/мин (подтягивания и отжимания выше порогов)", color=INK2, fontsize=9)
-    ax.set_ylabel("Риск реактивации, %", color=INK2, fontsize=9)
+    ax.set_xlabel("VO₂max, ml/kg/min (pull-ups and push-ups above targets)", color=INK2, fontsize=9)
+    ax.set_ylabel("Reactivation risk, %", color=INK2, fontsize=9)
     ax.legend(loc="lower left", frameon=False, fontsize=9, labelcolor=INK2)
     fig.tight_layout()
     fig.savefig(FIG / "earth_vo2max.png", dpi=150)
     plt.close(fig)
 
-    # коэффициенты: земная — априорные и итоговые, полётная — заданные значения
-    labels = {"intercept": "Свободный член", "fitness_index": "Индекс подготовки", "sex_male": "Мужской пол",
-              "dysregulation_score": "Балл подсистем", "duration_log2": "Длительность (на удвоение)"}
+    # coefficients: earth — prior and posterior, in-flight — set values
+    labels = {"intercept": "Intercept", "fitness_index": "Fitness index", "sex_male": "Male",
+              "dysregulation_score": "Subsystem score", "duration_log2": "Mission length (per doubling)"}
     fig, axes = plt.subplots(1, 2, figsize=(11, 3.6))
-    panels = ((axes[0], post_e, "Земная модель (обучена на 22 астронавтах)", True),
-              (axes[1], post_f, "Полётная модель (параметры из литературы)", False))
+    panels = ((axes[0], post_e, "Earth model (fitted to 22 astronauts)", True),
+              (axes[1], post_f, "In-flight model (parameters from literature)", False))
     for ax, post, title, fitted in panels:
         _style(ax, title)
         terms = post.terms[::-1]
@@ -393,16 +393,16 @@ def figures(em, fm, post_e, post_f):
                 pm, ps = post.prior_mean[i], post.prior_sd[i]
                 ax.plot([pm - 1.96 * ps, pm + 1.96 * ps], [j + 0.17] * 2, color=S2, lw=2, solid_capstyle="round")
                 ax.plot(pm, j + 0.17, "o", ms=8, color=S2, mec=SURFACE, mew=2,
-                        label="Априорное (95%)" if j == 0 else None)
+                        label="Prior (95%)" if j == 0 else None)
             ax.plot([qm - 1.96 * qs, qm + 1.96 * qs], [j + off] * 2, color=S1, lw=2, solid_capstyle="round")
             ax.plot(qm, j + off, "o", ms=8, color=S1, mec=SURFACE, mew=2,
-                    label="Итоговое / заданное (95%)" if (j == 0 and fitted) else None)
+                    label="Posterior / set value (95%)" if (j == 0 and fitted) else None)
             ax.annotate(f"{qm:+.2f}", (qm, j + off), xytext=(0, -13), textcoords="offset points", ha="center",
                         fontsize=8, color=INK2)
         ax.set_yticks(range(len(terms)))
         ax.set_yticklabels([labels[t] for t in terms], color=INK2)
         ax.axvline(0, color=AXIS, lw=1)
-        ax.set_xlabel("Коэффициент (лог-шансы)", color=INK2, fontsize=9)
+        ax.set_xlabel("Coefficient (log-odds)", color=INK2, fontsize=9)
         ax.set_ylim(-0.7, len(terms) - 0.3)
     handles, labs = axes[0].get_legend_handles_labels()
     fig.legend(handles, labs, loc="lower center", ncol=2, frameon=False, fontsize=9, labelcolor=INK2)
@@ -410,16 +410,16 @@ def figures(em, fm, post_e, post_f):
     fig.savefig(FIG / "weights_prior_vs_posterior.png", dpi=150)
     plt.close(fig)
 
-    # риск в зависимости от длительности миссии
+    # risk vs mission length
     fig, ax = plt.subplots(figsize=(8.6, 4.6))
-    _style(ax, "Полётная модель: риск и 90% интервал в зависимости от длительности")
+    _style(ax, "In-flight model: risk and 90% interval vs mission length")
     longest = fm.evidence["longest_flight_days"]
     ax.axvspan(longest, 3000, color=GRID, alpha=0.6, linewidth=0)
-    ax.annotate("дольше самого\nдлинного полёта", (longest * 1.08, 4), fontsize=8, color=INK2)
+    ax.annotate("beyond the longest\nspaceflight", (longest * 1.08, 4), fontsize=8, color=INK2)
     ax.axvline(180, color=AXIS, lw=1, linestyle="--")
     days = np.unique(np.round(np.logspace(0, math.log10(3000), 220)))
-    curves = [("Без сдвигов", {}, S1, True), ("Кортизол ↑", {"corta": 600.0}, S2, False),
-              ("ВЭБ 417 копий/мл", {"ebv": 417.0}, S3, False), ("Кортизол ↑ + ВЭБ", {"corta": 600.0, "ebv": 417.0}, S4, True)]
+    curves = [("No shifts", {}, S1, True), ("Cortisol ↑", {"corta": 600.0}, S2, False),
+              ("EBV 417 copies/mL", {"ebv": 417.0}, S3, False), ("Cortisol ↑ + EBV", {"corta": 600.0, "ebv": 417.0}, S4, True)]
     for lab, delta, colr, band in curves:
         xs = [fm.featurize(flight_values(dict(delta, days=float(d))))[0] for d in days]
         ys = [fm.risk_of(x) * 100 for x in xs]
@@ -433,8 +433,8 @@ def figures(em, fm, post_e, post_f):
     ax.set_xticks([1, 3, 10, 30, 90, 180, 437, 1000, 2000])
     ax.set_xticklabels(["1", "3", "10", "30", "90", "180", "437", "1000", "2000"])
     ax.set_ylim(0, 100)
-    ax.set_xlabel("Длительность миссии, сутки (логарифмическая шкала)", color=INK2, fontsize=9)
-    ax.set_ylabel("Риск, %", color=INK2, fontsize=9)
+    ax.set_xlabel("Mission length, days (log scale)", color=INK2, fontsize=9)
+    ax.set_ylabel("Risk, %", color=INK2, fontsize=9)
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.17), ncol=4, frameon=False, fontsize=8, labelcolor=INK2)
     fig.tight_layout()
     fig.savefig(FIG / "flight_duration.png", dpi=150)
