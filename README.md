@@ -7,7 +7,7 @@ English | [Русский](README.ru.md)
 Immune risk assessment for spaceflight: a website with an interactive demo and an API for two models —
 pre-flight (physical fitness) and in-flight (biomarkers).
 
-**Live:** https://immoonity.onrender.com
+**Live:** https://immoonity.onrender.com · **Demo deck (7 slides):** [docs/IMMOONITY_demo.pdf](docs/IMMOONITY_demo.pdf)
 
 | Folder / file | Contents |
 |---|---|

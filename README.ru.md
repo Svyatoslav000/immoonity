@@ -2,7 +2,7 @@
 
 [English](README.md) | Русский
 
-**Сайт:** https://immoonity.onrender.com
+**Сайт:** https://immoonity.onrender.com · **Презентация (7 слайдов, англ.):** [docs/IMMOONITY_demo.pdf](docs/IMMOONITY_demo.pdf)
 
 Оценка иммунного риска в космическом полёте: сайт с демо и API двух моделей — предполётной
 (физическая подготовка) и полётной (биомаркеры).
