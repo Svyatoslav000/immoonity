@@ -297,6 +297,9 @@ class FlightModel(RiskModel):
             }
         details["dysregulation_score"] = round(x[self.terms.index("dysregulation_score")], 4)
         details["duration_term"] = round(x[self.terms.index("duration_log2")], 4)
+        shifted = {k: 0.0 for k, m in memberships.items() if status_of(m) != "below"}
+        details["risk_if_shifted_normal"] = round(
+            self.risk_of(self._vector(dict(memberships, **shifted), values["days"])) * 100.0, 1)
         duration_warnings, dose = self._duration_notes(values["days"])
         warnings.extend(duration_warnings)
         if dose:

@@ -32,7 +32,10 @@ def test_flight_pattern_and_recommendations(models):
     ids = [r["id"] for r in out["recommendations"]]
     assert ids[0] == "priority" and "viral" in ids and "neuroendocrine" in ids
     assert any("Stowe" in p for p in out["pattern"])
-    assert {w["factor"] for w in out["what_if"]} == {"viral", "neuroendocrine"}
+    assert {w["factor"] for w in out["what_if"]} == {"viral", "neuroendocrine", "all_markers"}
+    combined = next(w for w in out["what_if"] if w["factor"] == "all_markers")
+    assert combined["risk_after"] < min(w["risk_after"] for w in out["what_if"] if w["factor"] != "all_markers")
+    assert out["what_if"][0]["factor"] == "all_markers"
 
 
 def test_flight_all_normal_suggests_prevention_only(models):
@@ -70,7 +73,6 @@ def test_headline_rounds_like_the_site(models):
     pred["risk"], pred["risk_interval"] = 62.5, {"low": 38.5, "high": 82.9, "level": 0.9}
     out = interpret(pred, m, "ru")
     assert "63% (90% интервал 39–83%)" in out["headline"]
-    assert any("интервал 39–83%" in n for n in out["notes"])
 
 
 def test_very_long_mission_is_flagged_and_explained(models):
@@ -86,3 +88,28 @@ def test_very_long_mission_is_flagged_and_explained(models):
     short = interpret(f.predict(dict(values, days=180.0)), f, "en")
     assert "extrapolation" not in " ".join(short["notes"]) and "mSv" not in " ".join(short["notes"])
 
+
+
+def test_saturated_risk_shows_only_the_combined_scenario(models):
+    """At ~99% one marker barely moves the estimate: show what normalising all of them would do instead."""
+    f = models["flight"]
+    storm = {"il6_b": 2.0, "il6_a": 12.0, "nlr_b": 2.0, "nlr_a": 5.0, "ebv": 2000.0, "cortb": 400.0, "corta": 700.0,
+             "days": 3000.0}
+    pred = f.predict(storm)
+    assert pred["risk"] > 97
+    out = interpret(pred, f, "en")
+    assert [w["factor"] for w in out["what_if"]] == ["all_markers"]
+    assert out["what_if"][0]["risk_after"] < 50
+    assert "could fall to about" in out["what_if"][0]["text"]
+    ru = interpret(pred, f, "ru")
+    assert "может снизиться" in ru["what_if"][0]["text"]
+
+
+def test_short_disclaimer_and_softened_earth_notes(models):
+    e = models["earth"]
+    pred = e.predict({"sex": "M", "vo2max": 48.0, "pullups": 15.0, "pushups": 60.0})
+    en, ru = interpret(pred, e, "en"), interpret(pred, e, "ru")
+    assert en["disclaimer"] == "Health decisions must be made together with a physician."
+    assert ru["disclaimer"] == "Решения о здоровье должны приниматься вместе с врачом."
+    assert en["notes"] == ["Age adjustment is in development."]
+    assert ru["notes"] == ["Учёт возрастных параметров — в разработке."]

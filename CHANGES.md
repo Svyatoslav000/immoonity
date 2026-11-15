@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.1.2
+
+- Consultant: Sources come before Limitations, and Limitations open on click like Sources.
+- What-if scenarios: softer wording; single-marker scenarios that change the estimate by less than 5 pp are hidden;
+  with two or more shifted markers the consultant shows the effect of normalising all of them.
+- Earth model notes: age adjustment is in development.
+- Consultant footer: "Health decisions must be made together with a physician."
+- Demo deck for NASA Space Apps 2026: `docs/IMMOONITY_demo.pdf`.
+
 ## 3.1.1
 
 - Site live at https://immoonity.onrender.com (Render Blueprint).

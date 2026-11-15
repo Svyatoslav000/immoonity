@@ -12,8 +12,7 @@ T: dict[str, dict[str, Any]] = {
     "ru": {
         "interval": "90% интервал",
         "pp": "п.п.",
-        "disclaimer": "Демонстрационная исследовательская модель IMMOONITY. Не является медицинским изделием, "
-                      "диагнозом или назначением; решения о здоровье принимаются только вместе с врачом.",
+        "disclaimer": "Решения о здоровье должны приниматься вместе с врачом.",
         "sex": {"M": "мужской", "F": "женский"},
         "earth": {
             "outcome_short": "Риск реактивации латентных вирусов в полёте",
@@ -39,7 +38,7 @@ T: dict[str, dict[str, Any]] = {
             },
             "sex_driver": "Пол: {sex}. В данных у мужчин риск немного выше, чем у женщин (разница {eff} п.п.), "
                           "но этот эффект статистически неопределённый.",
-            "what_if": "Если {name} достигнет {target} {unit}, оценка риска снизится примерно до {risk}% "
+            "what_if": "Если {name} достигнет {target} {unit}, оценка риска может снизиться примерно до {risk}% "
                        "(−{pot} п.п.).",
             "recs": {
                 "aerobic": ("Аэробная выносливость",
@@ -63,9 +62,7 @@ T: dict[str, dict[str, Any]] = {
                             "мониторинга с врачом экипажа."),
             },
             "notes": [
-                "Модель построена на данных 22 членов экипажа МКС одного исследования (Agha et al., 2020); "
-                "интервал {low}–{high}% отражает статистическую неопределённость оценки.",
-                "Возраст не учитывается; ориентиры VO₂max и силовых тестов — нормативы команды IMMOONITY.",
+                "Учёт возрастных параметров — в разработке.",
             ],
         },
         "flight": {
@@ -128,7 +125,9 @@ T: dict[str, dict[str, Any]] = {
                                "длительностью медленнее, чем при уже начавшихся сдвигах. Но поздние изменения не "
                                "исключены: в изоляции на год иммунные реакции усиливались после 3–4 месяцев "
                                "(Feuerecker et al., 2019).",
-            "what_if": "Если {name} нормализуется, риск снизится примерно до {risk}% (−{pot} п.п.).",
+            "what_if": "Если {name} нормализуется, оценка риска может снизиться примерно до {risk}% (−{pot} п.п.).",
+            "what_if_all": "Если все сместившиеся маркеры нормализуются, оценка риска может снизиться примерно до "
+                           "{risk}% (−{pot} п.п.).",
             "recs": {
                 "viral": ("Вирусная реактивация",
                           "Сообщить врачу экипажа; наблюдать за симптомами (высыпания на коже, поражения "
@@ -177,8 +176,7 @@ T: dict[str, dict[str, Any]] = {
     "en": {
         "interval": "90% interval",
         "pp": "pp",
-        "disclaimer": "IMMOONITY research demonstrator. Not a medical device, diagnosis or prescription; "
-                      "health decisions must be made together with a physician.",
+        "disclaimer": "Health decisions must be made together with a physician.",
         "sex": {"M": "male", "F": "female"},
         "earth": {
             "outcome_short": "Risk of latent virus reactivation in flight",
@@ -203,7 +201,7 @@ T: dict[str, dict[str, Any]] = {
             },
             "sex_driver": "Sex: {sex}. In the data men had a slightly higher risk than women ({eff} pp apart), "
                           "but this effect is statistically uncertain.",
-            "what_if": "With {name} at {target} {unit}, the estimated risk would drop to about {risk}% (−{pot} pp).",
+            "what_if": "With {name} at {target} {unit}, the estimate could fall to about {risk}% (−{pot} pp).",
             "recs": {
                 "aerobic": ("Aerobic endurance",
                             "Structured endurance training (including intervals) aiming at VO₂max ≥ {target} "
@@ -225,9 +223,7 @@ T: dict[str, dict[str, Any]] = {
                             "crew physician."),
             },
             "notes": [
-                "Based on 22 ISS crew members from a single study (Agha et al., 2020); the {low}–{high}% interval "
-                "reflects statistical uncertainty.",
-                "Age is not taken into account; VO₂max and strength targets are IMMOONITY team benchmarks.",
+                "Age adjustment is in development.",
             ],
         },
         "flight": {
@@ -289,7 +285,9 @@ T: dict[str, dict[str, Any]] = {
                                "more slowly than once shifts have started. Late changes are still possible: during a "
                                "year of isolation immune responses intensified after 3–4 months (Feuerecker et al., "
                                "2019).",
-            "what_if": "If {name} normalises, the risk drops to about {risk}% (−{pot} pp).",
+            "what_if": "If {name} returns to normal, the estimate could fall to about {risk}% (−{pot} pp).",
+            "what_if_all": "If all shifted markers return to normal, the estimate could fall to about {risk}% "
+                           "(−{pot} pp).",
             "recs": {
                 "viral": ("Viral reactivation",
                           "Inform the crew physician; watch for symptoms (skin rash, mucosal lesions, fever, "
@@ -387,6 +385,10 @@ def _base(pred: dict, model: RiskModel, t: dict, tm: dict) -> dict:
         "context": tm["context"],
         "disclaimer": t["disclaimer"],
     }
+
+
+# Single-marker scenarios that change the estimate by less than this are not shown.
+MIN_WHAT_IF_PP = 5.0
 
 
 def _references(model: RiskModel, keys: list[str]) -> list[dict]:
@@ -487,11 +489,19 @@ def interpret_flight(pred: dict, model: FlightModel, lang: str) -> dict:
         marker_list.append({"marker": name, "title": tm["names"][name], "status": info["status"],
                             "membership": info["membership"], "effect_pp": f["effect_pp"],
                             "text": text, "reference": tm["anchor"][name]})
-        if info["status"] != "below" and f["effect_pp"] >= 0.5:
+        if info["status"] != "below" and f["effect_pp"] >= MIN_WHAT_IF_PP:
             what_if.append({"factor": name, "risk_after": f["risk_if_normal"], "delta_pp": -f["effect_pp"],
                             "text": tm["what_if"].format(name=tm["names_lower"][name], risk=_pct(f['risk_if_normal']),
                                                          pot=f"{f['effect_pp']:.1f}")})
     marker_list.sort(key=lambda m: -m["effect_pp"])
+    shifted = [m for m in marker_list if m["status"] != "below"]
+    all_normal = pred["details"].get("risk_if_shifted_normal")
+    if len(shifted) >= 2 and all_normal is not None:
+        gain = round(pred["risk"] - all_normal, 1)
+        best_single = max((-w["delta_pp"] for w in what_if), default=0.0)
+        if gain >= MIN_WHAT_IF_PP and gain - best_single >= MIN_WHAT_IF_PP:
+            what_if.append({"factor": "all_markers", "risk_after": all_normal, "delta_pp": -gain,
+                            "text": tm["what_if_all"].format(risk=_pct(all_normal), pot=f"{gain:.1f}")})
     what_if.sort(key=lambda w: w["delta_pp"])
 
     involved = [m for m in marker_list if m["status"] == "above"]

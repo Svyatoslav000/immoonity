@@ -1880,6 +1880,8 @@
     .cp-sources summary { cursor: pointer; color: var(--accent-gold); }
     .cp-sources ul { margin: 6px 0 0 16px; padding: 0; }
     .cp-sources a { color: #9cbcff; word-break: break-word; }
+    .cp-limits { margin-top: 8px; }
+    .cp-limits .cp-note { margin: 6px 0 0; }
     .cp-disclaimer {
         font-style: italic; color: #8f8f8f; font-size: 0.75rem; margin: 14px 0 0;
         border-top: 1px solid rgba(255, 165, 0, 0.15); padding-top: 10px;
@@ -2117,10 +2119,6 @@
             li.appendChild(el('span', null, r.text));
             return li;
         });
-        if (it.notes && it.notes.length) {
-            panel.appendChild(el('h5', 'cp-title', T.notes));
-            it.notes.forEach(n => panel.appendChild(el('p', 'cp-note', n)));
-        }
         if (it.references && it.references.length) {
             const details = el('details', 'cp-sources');
             details.appendChild(el('summary', null, T.sources));
@@ -2134,6 +2132,12 @@
             });
             details.appendChild(ul);
             panel.appendChild(details);
+        }
+        if (it.notes && it.notes.length) {
+            const limits = el('details', 'cp-sources cp-limits');
+            limits.appendChild(el('summary', null, T.notes));
+            it.notes.forEach(n => limits.appendChild(el('p', 'cp-note', n)));
+            panel.appendChild(limits);
         }
         panel.appendChild(el('p', 'cp-disclaimer', it.disclaimer));
         panel.hidden = false;
