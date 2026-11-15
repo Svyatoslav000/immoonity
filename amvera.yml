@@ -1,0 +1,12 @@
+# Amvera Cloud (amvera.ru), a hosting reachable from Russia: builds the Dockerfile; the app listens on port 8000.
+meta:
+  environment: docker
+  toolchain:
+    name: docker
+    version: latest
+build:
+  dockerfile: Dockerfile
+  skip: false
+run:
+  persistenceMount: /data
+  containerPort: 8000

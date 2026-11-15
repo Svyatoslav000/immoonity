@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.1.3
+
+- Hosting reachable from Russia: `amvera.yml` (Amvera Cloud builds the `Dockerfile`); the Docker image runs one
+  worker. Fonts and GSAP are served from `immoonity-site/vendor/`, so the site needs no external CDNs and
+  works offline.
+- README: deploying on Amvera and running offline at conferences.
+
 ## 3.1.2
 
 - Consultant: Sources come before Limitations, and Limitations open on click like Sources.

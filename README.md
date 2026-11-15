@@ -14,7 +14,7 @@ pre-flight (physical fitness) and in-flight (biomarkers).
 | `immoonity-site/` | website (single page; the Demo section calls the API) |
 | `immoonity-app/` | API, models, training, data, tests |
 | `wsgi.py`, `gunicorn.conf.py` | site and API as one service |
-| `render.yaml`, `Dockerfile`, `Procfile`, `.python-version` | deployment |
+| `render.yaml`, `amvera.yml`, `Dockerfile`, `Procfile`, `.python-version` | deployment |
 | `MODEL.md` | model rationale and sources |
 | `CHANGES.md` | changelog |
 
@@ -68,6 +68,24 @@ Tests: `python -m pytest` in `immoonity-app`.
 3. Every push to `main` redeploys the site.
 
 A free instance sleeps after 15 minutes without traffic; the first request after that takes up to a minute.
+
+### Russia: Amvera (no VPN needed)
+
+Render is served through Cloudflare, which is throttled in Russia. Amvera is a Russian platform of the same kind:
+it builds the `Dockerfile` from the repository; settings are in `amvera.yml` (port 8000).
+
+1. amvera.ru → sign up → **Create application**.
+2. Source: this GitHub repository, branch `main`; the smallest plan is enough.
+3. After the build, enable the free domain under **Domains**: it serves the site and the demo.
+4. A push to `main` updates the app (otherwise use **Rebuild**).
+
+The site uses no external CDNs: fonts and GSAP are in `immoonity-site/vendor/`.
+
+### Offline (conferences)
+
+`python run_local.py` (or the **1. Site + API** run configuration) serves the site and the demo at
+http://localhost:8000. For phones on the same Wi-Fi: `python run_local.py --host 0.0.0.0`, then
+`http://<laptop IP>:8000`.
 
 ### Other hosts
 
