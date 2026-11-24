@@ -1,0 +1,7 @@
+﻿study_id,cohort_id,species,mission,arm,visit,phase,analyte,matrix,unit,reading_low,reading_high,exact_value,value_type,published_n_min,published_n_max,analysis_role,fit_eligible
+PAUL20,SLS2_RAT,Rattus norvegicus,SLS-2,flight,F14,inflight,NLR,peripheral_blood,ratio,0.14,0.17,,figure_reading_bracket,5,15,animal_phase_comparison,0
+PAUL20,SLS2_RAT,Rattus norvegicus,SLS-2,synchronous_ground,F14,matched_ground,NLR,peripheral_blood,ratio,0.04,0.07,,figure_reading_bracket,5,15,animal_phase_comparison,0
+PAUL20,SLS2_RAT,Rattus norvegicus,SLS-2,flight,R+0,recovery,NLR,peripheral_blood,ratio,0.3,0.35,,figure_reading_bracket,5,15,animal_phase_comparison,0
+PAUL20,SLS2_RAT,Rattus norvegicus,SLS-2,synchronous_ground,R+0,matched_ground,NLR,peripheral_blood,ratio,0.04,0.08,,figure_reading_bracket,5,15,animal_phase_comparison,0
+PAUL20,SLS2_RAT,Rattus norvegicus,SLS-2,flight,R+2,recovery,NLR,peripheral_blood,ratio,0.02,0.05,,figure_reading_bracket,5,15,animal_phase_comparison,0
+PAUL20,SLS2_RAT,Rattus norvegicus,SLS-2,synchronous_ground,R+2,matched_ground,NLR,peripheral_blood,ratio,0.07,0.11,,figure_reading_bracket,5,15,animal_phase_comparison,0

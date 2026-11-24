@@ -1,0 +1,9 @@
+﻿study_id,cohort_id,species,sex,strain,setting,arm,visit,exposure_days,analyte,matrix,unit,statistic,value,spread_type,spread,n_visit,analysis_role,fit_eligible
+MOY16,MOYER_MOUSE,Mus musculus,F,C57BL/6,ground_housing,vivarium,housing_day35,35,segmented_neutrophils,peripheral_blood,cells/uL,mean,443.7,SD,143.3,35,animal_housing_reference,0
+MOY16,MOYER_MOUSE,Mus musculus,F,C57BL/6,ground_housing,vivarium,housing_day35,35,lymphocytes,peripheral_blood,cells/uL,mean,3154.3,SD,987.8,35,animal_housing_reference,0
+MOY16,MOYER_MOUSE,Mus musculus,F,C57BL/6,ground_housing,AEM,housing_day35,35,segmented_neutrophils,peripheral_blood,cells/uL,mean,323.6,SD,140.8,35,animal_housing_reference,0
+MOY16,MOYER_MOUSE,Mus musculus,F,C57BL/6,ground_housing,AEM,housing_day35,35,lymphocytes,peripheral_blood,cells/uL,mean,1944.7,SD,724.5,35,animal_housing_reference,0
+MOY16,MOYER_RAT,Rattus norvegicus,M,Sprague-Dawley,ground_housing,vivarium,housing_day35,35,segmented_neutrophils,peripheral_blood,cells/uL,mean,1496,SD,480.3,14,animal_housing_reference,0
+MOY16,MOYER_RAT,Rattus norvegicus,M,Sprague-Dawley,ground_housing,vivarium,housing_day35,35,lymphocytes,peripheral_blood,cells/uL,mean,5655,SD,1871,14,animal_housing_reference,0
+MOY16,MOYER_RAT,Rattus norvegicus,M,Sprague-Dawley,ground_housing,AEM,housing_day35,35,segmented_neutrophils,peripheral_blood,cells/uL,mean,1603,SD,508.1,15,animal_housing_reference,0
+MOY16,MOYER_RAT,Rattus norvegicus,M,Sprague-Dawley,ground_housing,AEM,housing_day35,35,lymphocytes,peripheral_blood,cells/uL,mean,5329,SD,1583,15,animal_housing_reference,0

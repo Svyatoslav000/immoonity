@@ -1,0 +1,9 @@
+﻿study_id,cohort_id,species,setting,analyte,matrix,phase,visit,statistic,reported_value,reported_unit,spread_type,spread,q25,q75,qualifier,limit,n_visit,n_cohort,conversion_factor,standard_value,standard_unit,standard_spread,analysis_role,fit_eligible
+MOR12,MOR_HDBR30,Homo sapiens,head_down_bed_rest,cortisol_total,serum,pre_analog,Pre-BR_week1,mean,18.2,ug/dL,SD,4.8,,,=,,,12,27.6,502.32,nmol/L,132.48,human_ground_analog,0
+MOR12,MOR_HDBR30,Homo sapiens,head_down_bed_rest,cortisol_total,serum,pre_analog,Pre-BR_week2,mean,18.6,ug/dL,SD,5.2,,,=,,,12,27.6,513.36,nmol/L,143.52,human_ground_analog,0
+MOR12,MOR_HDBR30,Homo sapiens,head_down_bed_rest,cortisol_total,serum,during_analog,BR_week1,mean,18.7,ug/dL,SD,3.8,,,=,,,12,27.6,516.12,nmol/L,104.88,human_ground_analog,0
+MOR12,MOR_HDBR30,Homo sapiens,head_down_bed_rest,cortisol_total,serum,during_analog,BR_week2,mean,19.2,ug/dL,SD,5.4,,,=,,,12,27.6,529.92,nmol/L,149.04,human_ground_analog,0
+MOR12,MOR_HDBR30,Homo sapiens,head_down_bed_rest,cortisol_total,serum,during_analog,BR_week3,mean,19.1,ug/dL,SD,5.0,,,=,,,12,27.6,527.16,nmol/L,138.0,human_ground_analog,0
+MOR12,MOR_HDBR30,Homo sapiens,head_down_bed_rest,cortisol_total,serum,during_analog,BR_week4,mean,19.1,ug/dL,SD,5.2,,,=,,,12,27.6,527.16,nmol/L,143.52,human_ground_analog,0
+MOR12,MOR_HDBR30,Homo sapiens,head_down_bed_rest,cortisol_total,serum,during_analog,BR_day30_before_reambulation,mean,21.8,ug/dL,SD,5.1,,,=,,,12,27.6,601.68,nmol/L,140.76,human_ground_analog,0
+MOR12,MOR_HDBR30,Homo sapiens,head_down_bed_rest,cortisol_total,serum,analog_recovery,Recovery_days5-7,mean,19.0,ug/dL,SD,3.7,,,=,,,12,27.6,524.4,nmol/L,102.12,human_ground_analog,0

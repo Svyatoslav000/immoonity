@@ -17,7 +17,7 @@ API only (for example on Render): `gunicorn app:app`. Together with the site: `g
 |---|---|---|
 | GET | `/`, `/api/health` | health check |
 | GET | `/api/models` | model cards: inputs, thresholds, weights, checks, sources |
-| POST | `/predict` | prediction and interpretation, language `?lang=en` or `ru` |
+| POST | `/predict` | prediction and interpretation in `en`, `ru` or `zh` |
 | POST | `/api/consultant/prompt` | request for an LLM consultant |
 
 Request fields:
@@ -27,6 +27,8 @@ Request fields:
 
 Response: `risk` (%), `risk_interval` (90%), `level`, `factors`, `warnings`, `interpretation`.
 Input errors return HTTP 400 with `details` for each field.
+
+Series requests can include `"series_visit": {}` before launch and, for example, `"series_visit": {"day": 15}` in flight. The flight day is the actual day of sampling. The existing `days` field is the planned mission length. The response adds `series_assessment` with the evidence route, per-marker comparisons and the composite endpoint status. With `"include_translations": true`, the response also includes the other two interpretations for the same numeric result.
 
 ## Models and training
 

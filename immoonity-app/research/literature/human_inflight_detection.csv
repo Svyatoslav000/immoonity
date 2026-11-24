@@ -1,0 +1,24 @@
+﻿study_id,cohort_id,species,participant_id,phase,vzv_positive_documented,ebv_positive_documented,cmv_positive_documented,confirmed_any_detection,evidence_status,analysis_role,fit_eligible
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-01,inflight,1,1,0,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-02,inflight,1,1,1,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-03,inflight,0,0,1,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-04,inflight,1,1,1,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-05,inflight,1,1,1,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-06,inflight,1,0,0,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-07,inflight,0,0,1,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-08,inflight,1,1,0,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-09,inflight,0,1,1,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-10,inflight,0,1,0,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-11,inflight,1,1,1,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-12,inflight,1,1,0,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-13,inflight,0,0,0,,no_positive_documented,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-14,inflight,1,1,1,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-15,inflight,0,0,0,,no_positive_documented,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-16,inflight,1,1,0,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-17,inflight,1,0,1,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-18,inflight,1,1,0,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-19,inflight,1,0,0,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-20,inflight,1,1,1,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-21,inflight,1,0,0,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-22,inflight,0,0,1,1,detected,endpoint_only_no_fitness,0
+MEHTA17,MEHTA_ISS_23,Homo sapiens,M17-23,inflight,0,0,1,1,detected,endpoint_only_no_fitness,0

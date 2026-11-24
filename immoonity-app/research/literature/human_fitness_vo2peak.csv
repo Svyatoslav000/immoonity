@@ -1,0 +1,7 @@
+﻿study_id,cohort_id,species,arm,n_arm,n_visit,phase,visit,analyte,test,unit,statistic,value,spread_type,spread,analysis_role,fit_eligible
+SPRINT20,SPRINT_ISS_CON,Homo sapiens,CON,17,,preflight,L-50,VO2peak,upright_cycle_ergometry,mL/kg/min,mean,41.8,SE,1.6,related_fitness_measure_group_only,0
+SPRINT20,SPRINT_ISS_CON,Homo sapiens,CON,17,,recovery,R+3,VO2peak,upright_cycle_ergometry,mL/kg/min,mean,39.7,SE,1.6,related_fitness_measure_group_only,0
+SPRINT20,SPRINT_ISS_CON,Homo sapiens,CON,17,,recovery,R+30,VO2peak,upright_cycle_ergometry,mL/kg/min,mean,41.8,SE,1.6,related_fitness_measure_group_only,0
+SPRINT20,SPRINT_ISS_SPRINT,Homo sapiens,SPRINT,9,,preflight,L-50,VO2peak,upright_cycle_ergometry,mL/kg/min,mean,41.6,SE,1.9,related_fitness_measure_group_only,0
+SPRINT20,SPRINT_ISS_SPRINT,Homo sapiens,SPRINT,9,,recovery,R+1,VO2peak,upright_cycle_ergometry,mL/kg/min,mean,38.2,SE,1.9,related_fitness_measure_group_only,0
+SPRINT20,SPRINT_ISS_SPRINT,Homo sapiens,SPRINT,9,,recovery,R+30,VO2peak,upright_cycle_ergometry,mL/kg/min,mean,42.0,SE,1.9,related_fitness_measure_group_only,0

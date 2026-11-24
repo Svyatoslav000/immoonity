@@ -1,0 +1,12 @@
+domain,marker,phase,source,evidence_available,activation,needed
+Earth,VO2max,preflight,https://doi.org/10.1096/fj.201902327R,fitness categories in 22-row model table,not_ready,individual values or reported quantiles for compatible sex population and exercise protocol
+Earth,VO2max,preflight,https://doi.org/10.1038/s41526-020-00111-x,group VO2peak from cycle ergometry,not_ready,compatible VO2max protocol and individual distribution
+Earth,pullups and pushups,preflight,https://doi.org/10.1096/fj.201902327R,categorical groups in model CSV,not_ready,individual repetitions in the same two minute tests
+Flight,IL6,preflight and recovery,https://osdr.nasa.gov/bio/repo/data/studies/OSD-575,individual data from four people at each visit,exploratory_only,larger matched cohort with sampling and assay metadata
+Flight,NLR,preflight and recovery,https://osdr.nasa.gov/bio/repo/data/studies/OSD-569,paired counts and NLR from four people at each visit,exploratory_only,larger matched cohort in the relevant phase
+Flight,IL6,inflight,https://doi.org/10.1089/jir.2013.0129,group summaries by phase,not_ready,individual values or published p05 and p95
+Flight,NLR,inflight,https://doi.org/10.3389/fimmu.2020.564950,human figure 1B is GLR and rat figure 1A is NLR,not_ready,individual human neutrophils and lymphocytes from same sample
+Flight,cortisol_total,inflight,https://doi.org/10.1210/jc.2011-2233,group summaries,not_ready,human distribution for matched matrix sampling time and assay
+Flight,cortisol_total,inflight,https://doi.org/10.1152/japplphysiol.00550.2019,group summaries,not_ready,human distribution for matched matrix sampling time and assay
+Flight,EBV_DNA_saliva,inflight,https://doi.org/10.1016/j.bbi.2004.08.001,phase means including 417 copies/mL,not_ready,participant-level saliva copy numbers with sampling day and detection limits
+Flight,EBV_detection,inflight,https://doi.org/10.1038/s41526-017-0015-y,23 participant rows with qualitative phase flags,not_ready,quantitative distribution for routing or dated independent clinical adjudication for endpoint

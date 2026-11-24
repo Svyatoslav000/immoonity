@@ -4,8 +4,15 @@ from __future__ import annotations
 
 import json
 from typing import Any
+from .validation import normalise_lang
 
 SYSTEM = {
+    "zh": (
+        "你是 IMMOONITY 航天免疫学研究项目的助手。根据 FACTS 解释模型结果、主要影响因素及其限制。"
+        "只使用提供的事实和来源。不要新增诊断、药物、剂量或未经验证的预测。"
+        "同时说明风险估计和不确定区间。高风险时建议与乘组医生优先讨论。"
+        "用简体中文简明作答，并说明本工具用于研究。"
+    ),
     "ru": (
         "Ты — ИИ-консультант исследовательского проекта IMMOONITY (астроиммунология). Ты объясняешь "
         "результат модели риска человеку, который ввёл свои показатели на сайте.\n\n"
@@ -35,6 +42,7 @@ SYSTEM = {
 }
 
 DEFAULT_QUESTION = {
+    "zh": "请解释我的结果和可与医生讨论的后续措施。",
     "ru": "Объясни мой результат и что мне стоит сделать.",
     "en": "Explain my result and what I should do.",
 }
@@ -68,7 +76,7 @@ def build_facts(prediction: dict[str, Any], interpretation: dict[str, Any]) -> d
 
 def build_consultant_request(prediction: dict[str, Any], interpretation: dict[str, Any], lang: str = "en",
                              question: str | None = None) -> dict[str, Any]:
-    lang = "ru" if lang == "ru" else "en"
+    lang = normalise_lang(lang)
     facts = build_facts(prediction, interpretation)
     question = (question or "").strip()[:1000] or DEFAULT_QUESTION[lang]
     user = ("FACTS:\n```json\n" + json.dumps(facts, ensure_ascii=False, indent=2) + "\n```\n\n" + question)
