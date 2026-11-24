@@ -20,6 +20,7 @@ from werkzeug.exceptions import HTTPException
 
 from immoonity_core import __version__ as API_VERSION
 from immoonity_core import validation as V
+from immoonity_core.evidence import assess_visit, load_registry, visit_error
 from immoonity_core.engine import load_models
 from immoonity_core.interpreter import interpret
 from immoonity_core.llm import build_consultant_request
@@ -37,6 +38,7 @@ def create_app(site_dir: str | Path | None = None) -> Flask:
     CORS(app, origins="*" if origins == "*" else [o.strip() for o in origins.split(",") if o.strip()])
 
     models = load_models()
+    reference_registry = load_registry()
     site = Path(site_dir).resolve() if site_dir else None
 
     def lang_of(payload: dict | None) -> str:
@@ -58,9 +60,21 @@ def create_app(site_dir: str | Path | None = None) -> Flask:
         values, errors, warnings = V.validate(model.inputs, payload, lang)
         if errors:
             return None, [dict(e, model=name) for e in errors]
+        if "series_visit" in payload:
+            message = visit_error(name, payload["series_visit"], lang)
+            if message:
+                return None, [{"model": name, "field": "series_visit", "message": message}]
         pred = model.predict(values)
         pred["input_warnings"] = warnings
         pred["interpretation"] = interpret(pred, model, lang)
+        if "series_visit" in payload:
+            pred["series_assessment"] = assess_visit(name, values, payload["series_visit"], reference_registry, raw_inputs=payload)
+            if payload.get("include_translations") is True:
+                pred["translations"] = {
+                    other: {"interpretation": interpret(pred, model, other),
+                            "input_warnings": V.validate(model.inputs, payload, other)[2]}
+                    for other in V.MESSAGES if other != lang
+                }
         return pred, []
 
     def run(payload: dict | None):
@@ -80,7 +94,7 @@ def create_app(site_dir: str | Path | None = None) -> Flask:
             if pred:
                 results[name] = pred
         if errors:
-            msg = "Проверьте введённые данные." if lang == "ru" else "Please check the entered values."
+            msg = {"ru": "Проверьте введённые данные.", "zh": "请检查输入的数值。", "en": "Please check the entered values."}[lang]
             return None, fail(400, "validation_error", msg, errors), lang
         return results, None, lang
 

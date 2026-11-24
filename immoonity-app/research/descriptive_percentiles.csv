@@ -1,0 +1,5 @@
+study,visit,phase,marker,unit,n_people,p05,p95,quantile_method,status,source
+Inspiration4,L-44,preflight,nlr,ratio,4,1.473980,2.958835,linear_type_7,exploratory_only,OSD-569
+Inspiration4,L-44,preflight,il6_pg_mL,pg/mL,4,2.5965,4.0250,linear_type_7,exploratory_only,OSD-575
+Inspiration4,R+1,postflight,nlr,ratio,4,1.685575,2.152030,linear_type_7,exploratory_only,OSD-569
+Inspiration4,R+1,postflight,il6_pg_mL,pg/mL,4,5.8470,7.4890,linear_type_7,exploratory_only,OSD-575

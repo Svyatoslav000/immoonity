@@ -4,16 +4,26 @@ from __future__ import annotations
 
 import math
 from typing import Any
+from .chinese import FIELD_LABELS
 
 EARTH_KEYS = ("vo2max", "pullups", "pushups")  # sex alone is not enough to pick a model
 FLIGHT_KEYS = ("il6_b", "il6_a", "nlr_b", "nlr_a", "ebv", "cortb", "corta", "days")
 
 SEX_ALIASES = {
+    "男": "M", "男性": "M", "女": "F", "女性": "F",
     "m": "M", "male": "M", "man": "M", "м": "M", "муж": "M", "мужской": "M", "мужчина": "M",
     "f": "F", "female": "F", "woman": "F", "ж": "F", "жен": "F", "женский": "F", "женщина": "F",
 }
 
 MESSAGES = {
+    "zh": {
+        "required": "请填写{label}。", "not_a_number": "{label}必须是有效数值，当前为“{value}”。",
+        "below_min": "{label}应至少为 {min} {unit}。", "above_max": "{label}应至多为 {max} {unit}。",
+        "invalid_sex": "请选择男性（M）或女性（F）。",
+        "implausible": "{label}为 {value} {unit}，超出通常范围（{lo}–{hi} {unit}）。请核对数值和单位。",
+        "no_inputs": "请提供飞行前或飞行中模型的输入指标。", "unknown_model": "未知模型“{value}”。请选择 earth 或 flight。",
+        "bad_json": "请求正文应为 JSON 对象。",
+    },
     "en": {
         "required": "{label}: a value is required.",
         "not_a_number": "{label}: “{value}” is not a number.",
@@ -43,11 +53,20 @@ UNITS_RU = {"ml/kg/min": "мл/кг/мин", "reps": "раз", "pg/mL": "пг/м
 
 
 def normalise_lang(lang: Any) -> str:
-    return "ru" if str(lang or "").lower().startswith("ru") else "en"
+    primary = str(lang or "").lower().strip().split(",", 1)[0].split(";", 1)[0].replace("_", "-").split("-", 1)[0]
+    return primary if primary in MESSAGES else "en"
+
+
+def field_label(spec: dict, field: str, lang: str) -> str:
+    if lang == "zh":
+        return FIELD_LABELS.get(field, field)
+    return spec.get("label", {}).get(lang, field)
 
 
 def unit_label(unit: str | None, lang: str) -> str:
     unit = unit or ""
+    if lang == "zh":
+        return {"reps": "次", "days": "天", "copies/mL":"拷贝/mL"}.get(unit, unit)
     return UNITS_RU.get(unit, unit) if lang == "ru" else unit
 
 
@@ -60,6 +79,10 @@ def is_blank(raw: Any) -> bool:
     return raw is None or (isinstance(raw, str) and raw.strip() == "")
 
 
+def number_text(raw: Any) -> str:
+    return str(raw).strip().replace("\u00a0", "").replace(" ", "").replace(",", ".")
+
+
 def parse_number(raw: Any) -> float:
     """A number or a numeric string; a decimal comma and spaces are allowed: "4,5", "1 200"."""
     if isinstance(raw, bool):
@@ -67,8 +90,7 @@ def parse_number(raw: Any) -> float:
     if isinstance(raw, (int, float)):
         value = float(raw)
     else:
-        text = str(raw).strip().replace(" ", "").replace(" ", "").replace(",", ".")
-        value = float(text)
+        value = float(number_text(raw))
     if not math.isfinite(value):
         raise ValueError("not finite")
     return value
@@ -93,7 +115,7 @@ def validate(inputs_spec: dict[str, Any], payload: dict[str, Any], lang: str):
     errors: list[dict[str, str]] = []
     warnings: list[dict[str, str]] = []
     for field, spec in inputs_spec.items():
-        label = spec.get("label", {}).get(lang, field)
+        label = field_label(spec, field, lang)
         unit = unit_label(spec.get("unit"), lang)
         raw = payload.get(field)
         if is_blank(raw):

@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.0
+
+- Added Russian, English and Simplified Chinese to the site and consultant, and updated the team portrait and profiles.
+- Added a pre-flight assessment and three dated in-flight measurements. The summary shows measured values, changes between visits and the two original model endpoints.
+- Added an inclusive human p05–p95 reference check, curated research data and the event-by-day definition. The release has no approved reference intervals or calibrated probability for the composite outcome.
+
 ## 3.1.3
 
 - Hosting reachable from Russia: `amvera.yml` (Amvera Cloud builds the `Dockerfile`); the Docker image runs one

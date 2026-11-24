@@ -29,6 +29,10 @@ pre-flight (physical fitness) and in-flight (biomarkers).
 
 Research demonstrator, not a medical device.
 
+The demo supports English, Russian and Simplified Chinese. A series has one pre-flight assessment and up to three in-flight visits. Enter the actual flight day at each visit. The summary keeps the original risk estimates and compares measured values across visits. Changing language preserves the current series.
+
+The evidence check compares each supplied marker with compatible human p05–p95 limits, including both endpoints. Its registry is currently empty. The composite probability by flight day requires independently confirmed outcomes and calibration. [Research data and coverage](immoonity-app/research/README.md).
+
 ## Run locally
 
 Python 3.10+ (3.13 recommended):
@@ -41,7 +45,7 @@ pip install -r requirements-dev.txt
 python run_local.py
 ```
 
-The demo opens at http://localhost:8000/#demo (`--lang ru` for the consultant in Russian, `--port` for another port).
+The demo opens at http://localhost:8000/#demo. Use `--lang ru` or `--lang zh` to choose the initial language and `--port` to change the port.
 Tests: `python -m pytest` in `immoonity-app`.
 
 ### PyCharm
@@ -101,7 +105,7 @@ http://localhost:8000. For phones on the same Wi-Fi: `python run_local.py --host
 |---|---|---|
 | GET | `/api/health` | availability and version |
 | GET | `/api/models` | model cards: inputs, thresholds, weights, checks, sources |
-| POST | `/predict` | risk, 90% interval, level, factors, interpretation (`?lang=en` or `ru`) |
+| POST | `/predict` | risk, 90% interval, level, factors and interpretation in `en`, `ru` or `zh` |
 | POST | `/api/consultant/prompt` | request for an LLM consultant |
 
 Request fields:

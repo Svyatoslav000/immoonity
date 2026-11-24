@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IMMOONITY — Space AI Innovation</title>
     
-    <!-- fonts and GSAP are served with the site: no external CDNs -->
-    <link rel="stylesheet" href="vendor/fonts.css">
+        <link rel="stylesheet" href="vendor/fonts.css">
     <script src="vendor/gsap.min.js"></script>
     <script src="vendor/ScrollTrigger.min.js"></script>
-    <!-- the first screen stays visible without GSAP -->
-    <script>if (!window.gsap) { document.documentElement.classList.add('no-gsap'); }</script>
+        <script>if (!window.gsap || !window.ScrollTrigger) document.documentElement.classList.add('no-gsap');</script>
     <style>
         .no-gsap .hero-logo-text, .no-gsap .hero-subtitle, .no-gsap .btn-explore,
         .no-gsap .pain-card, .no-gsap .nasa-notice { opacity: 1 !important; transform: none !important; }
@@ -47,7 +46,6 @@
             overflow-y: scroll;
         }
 
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -63,7 +61,6 @@
             background: var(--accent-gold);
         }
 
-        /* Global star canvas (always in the background) */
         #space-canvas {
             position: fixed;
             top: 0;
@@ -92,7 +89,7 @@
         .logo-container {
             display: flex;
             align-items: center;
-            height: 75px; /* Full header height */
+            height: 75px;
         }
 
        .logo-img {
@@ -102,11 +99,9 @@
            padding: 5px 0;
            filter: drop-shadow(0 0 15px rgba(255, 214, 10, 0.4));
        }
-       /* Hide the burger menu on large screens */
        .menu-toggle { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
        .menu-toggle span { width: 25px; height: 3px; background: var(--accent-gold); border-radius: 2px; }
        
-       /* Mobile layout */
         @media (max-width: 768px) {
             header { padding: 5px 4% !important; height: 60px !important; }
             .menu-toggle { display: flex; margin-right: 65px; } 
@@ -120,26 +115,23 @@
             }
             .nav-links.active { transform: translateY(0); }
 
-            /* Hero section fixes */
             .hero-section {
                 flex-direction: column;
                 height: auto !important;
                 padding-top: 100px !important;
                 text-align: center;
                 min-height: 100vh;
-                overflow: visible; /* Nothing gets clipped */
+                overflow: visible;
             }
 
             .hero-logo-text { font-size: 1.8rem !important; margin-top: 10px; }
             .typing-container { font-size: 1rem !important; margin-bottom: 20px; min-height: auto; }
             .btn-explore { padding: 12px 25px; font-size: 0.7rem; }
 
-            /* Graphics: astronaut and background */
             .hero-right { width: 100%; height: 280px; margin-top: 20px; order: 2; display: flex; justify-content: center; }
             .hero-black-hole-bg { width: 150vw !important; height: 150vw !important; right: -25% !important; background-size: cover !important; }
             .astronaut-container { width: 200px; height: 200px; }
             
-            /* Smaller markers */
             .biomarker { width: 40px !important; height: 40px !important; font-size: 0.5rem !important; }
             .hero-left { padding-top: 20px; }
         }
@@ -183,7 +175,36 @@
             width: 100%;
         }
 
-        /* --- 1. HERO SECTION (MAIN SCREEN) --- */
+        .lang-switcher {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 20px;
+            z-index: 101;
+        }
+        .lang-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 214, 10, 0.25);
+            color: var(--text-secondary);
+            font-family: var(--font-main);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+        .lang-btn:hover, .lang-btn.active {
+            background: var(--accent-gold);
+            color: var(--bg-ink-black);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 10px rgba(255, 214, 10, 0.4);
+        }
+        @media (max-width: 768px) {
+            .lang-switcher { margin-left: auto; margin-right: 12px; }
+            .menu-toggle { margin-right: 0; background: none; border: 0; }
+        }
+
         .hero-section {
             position: relative;
             width: 100%;
@@ -276,12 +297,11 @@
             align-items: center;
         }
 
-        /* Background */
         .hero-black-hole-bg {
             position: absolute;
             width: 220vh; 
             height: 220vh;
-            right: -30%; /* Shifted to the right */
+            right: -30%;
             background: url('main.png') center center no-repeat;
             background-size: contain;
             z-index: 1;
@@ -370,7 +390,6 @@
         }
 
 
-        /* --- 2. THE PAIN SECTION --- */
         .pain-section {
             position: relative;
             width: 100%;
@@ -379,25 +398,22 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center; /* Center all content horizontally */
+            align-items: center;
             z-index: 10;
             background-color: transparent;
             
-            /* Background image: zoomed out and centered */
             background-image: url('The_pain_back.png');
             background-position: center center;
             background-repeat: no-repeat;
-            background-size: 100% auto; /* Zoomed out so the edges are not clipped */
+            background-size: 100% auto;
             
-            /* Smooth movement for the mouse effect */
             transition: background-position 0.1s ease-out;
         }
 
-        /* Section title: smaller and centered */
         .section-header {
             max-width: 800px;
             width: 100%;
-            text-align: center; /* Centered text */
+            text-align: center;
             margin-bottom: 60px;
             z-index: 3;
         }
@@ -415,7 +431,7 @@
 
         .section-title {
             font-family: var(--font-tech);
-            font-size: 1.8rem; /* Smaller size for a cleaner look */
+            font-size: 1.8rem;
             font-weight: 700;
             letter-spacing: 0px;
             line-height: 1.3;
@@ -423,13 +439,12 @@
             text-transform: uppercase;
         }
 
-        /* Responsive card grid */
         .pain-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 30px;
             width: 100%;
-            max-width: 1200px; /* Width limit for large monitors */
+            max-width: 1200px;
             margin: 0 auto 60px auto;
             z-index: 3;
         }
@@ -454,7 +469,6 @@
             box-shadow: 0 15px 35px rgba(0, 8, 20, 0.6), 0 0 25px rgba(255, 195, 0, 0.03);
         }
 
-        /* Hover styles for the second (orange) card */
         .pain-card.orange-accent:hover {
             border-color: rgba(232, 93, 4, 0.4);
             box-shadow: 0 15px 35px rgba(0, 8, 20, 0.6), 0 0 25px rgba(232, 93, 4, 0.05);
@@ -471,7 +485,6 @@
         .cc-tl { top: 0; left: 0; border-width: 1px 0 0 1px; }
         .cc-br { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
 
-        /* Corners of the orange card */
         .orange-accent .card-corner {
             border-color: #e85d04;
         }
@@ -484,7 +497,6 @@
             filter: drop-shadow(0 0 8px rgba(255, 214, 10, 0.3));
         }
 
-        /* Orange sun icon */
         .orange-accent .card-icon {
             color: #e85d04;
             filter: drop-shadow(0 0 8px rgba(232, 93, 4, 0.4));
@@ -507,7 +519,6 @@
             text-shadow: 0 0 20px rgba(255, 214, 10, 0.4);
         }
 
-        /* Glow for the orange number */
         .pain-card.orange-accent.active-glow .counter-box {
             color: #e85d04;
             text-shadow: 0 0 20px rgba(232, 93, 4, 0.5);
@@ -520,19 +531,18 @@
             line-height: 1.6;
         }
 
-        /* NASA GAP block: centered, styled as a widget */
         .nasa-notice {
             display: flex;
             align-items: center;
             gap: 25px;
             background: linear-gradient(90deg, rgba(0, 29, 61, 0.4), rgba(0, 8, 20, 0.6));
             border: 1px solid rgba(255, 214, 10, 0.15);
-            border-left: 3px solid var(--accent-gold); /* Strong accent on the left */
+            border-left: 3px solid var(--accent-gold);
             padding: 25px 35px;
             border-radius: 4px;
             max-width: 900px;
             width: 100%;
-            margin: 0 auto; /* Center the block on the page */
+            margin: 0 auto;
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             opacity: 0;
@@ -567,10 +577,9 @@
             font-weight: 600;
         }
 
-        /* Responsive layout (tablets and phones) */
         @media (max-width: 1024px) {
             .pain-grid {
-                grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
+                grid-template-columns: repeat(2, 1fr);
                 gap: 20px;
             }
         }
@@ -579,16 +588,18 @@
             .pain-section { padding: 80px 5%; }
             .section-title { font-size: 1.5rem; }
             .pain-grid {
-                grid-template-columns: 1fr; /* 1 column on phones */
+                grid-template-columns: 1fr;
             }
             .nasa-notice {
-                flex-direction: column; /* NASA items stack on phones */
+                flex-direction: column;
                 align-items: flex-start;
                 gap: 15px;
                 padding: 20px 25px;
             }
         }
     </style>
+<link rel="stylesheet" href="mission-series.css">
+<script src="site-language.js"></script>
 </head>
 <body>
 
@@ -596,18 +607,23 @@
 
     <header>
         <div class="logo-container">
-            <img src="logo.png" alt="IMMOONITY" class="logo-img" onerror="this.src='https://i.postimg.cc/9F7stTLz/logo-placeholder.png'">
+            <img src="logo.png" alt="IMMOONITY" class="logo-img">
         </div>
-        <div class="menu-toggle" onclick="toggleMenu()">
+        <button type="button" class="menu-toggle" aria-controls="site-menu" aria-expanded="false" onclick="toggleMenu()">
             <span></span><span></span><span></span>
-        </div>
-        <ul class="nav-links">
+        </button>
+        <ul class="nav-links" id="site-menu">
             <li><a href="#pain">The Pain</a></li>
             <li><a href="#what-happens">What happens</a></li>
             <li><a href="#solution">Solution</a></li>
             <li><a href="#demo">Demo</a></li>
             <li><a href="#team">Team</a></li>
         </ul>
+        <div class="lang-switcher">
+            <button type="button" class="lang-btn" data-lang="ru">RU</button>
+            <button type="button" class="lang-btn" data-lang="en">EN</button>
+            <button type="button" class="lang-btn" data-lang="zh">中文</button>
+        </div>
     </header>
 
     <section class="hero-section" id="hero">
@@ -654,16 +670,16 @@
     <script>
         function toggleMenu() {
             const nav = document.querySelector('.nav-links');
-            nav.classList.toggle('active');
+            const expanded = nav.classList.toggle('active');
+            document.querySelector('.menu-toggle').setAttribute('aria-expanded', String(expanded));
         }
-    // Close the menu on link click so it does not cover the content
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', () => {
                 document.querySelector('.nav-links').classList.remove('active');
+                document.querySelector('.menu-toggle').setAttribute('aria-expanded', 'false');
             });
         });
     </script>
-<!-- --- 2. THE PAIN SECTION --- -->
     <section class="pain-section" id="pain">
         <div class="section-header">
             <span class="section-tag">The Threat</span>
@@ -671,7 +687,6 @@
         </div>
 
         <div class="pain-grid">
-            <!-- Card 1: financial losses -->
             <div class="pain-card">
                 <div class="card-corner cc-tl"></div><div class="card-corner cc-br"></div>
                 <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -679,10 +694,9 @@
                     <path d="M11 13c2-2 5-6 8-9s7-2 7-2-1 4-4 7-7 6-9 8M14 16l-2-2M9 11L7 9"/>
                 </svg>
                 <div class="counter-box">$<span class="count-num" data-target="130000">0</span></div>
-                <p class="counter-desc">Hourly cost of critical space mission operations, where medical emergencies pose catastrophic financial risks.</p>
+                <p class="counter-desc">Cost of an hour of ISS crew time in a 2025 NASA commercial cost example.</p>
             </div>
 
-            <!-- Card 2: viral reactivation -->
             <div class="pain-card orange-accent">
                 <div class="card-corner cc-tl"></div><div class="card-corner cc-br"></div>
                 <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -690,10 +704,9 @@
                     <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
                 </svg>
                 <div class="counter-box"><span class="count-num" data-target="65">0</span>%</div>
-                <p class="counter-desc">Of astronauts experience latent virus reactivation (EBV, VZV) during long-duration spaceflights due to stress and cosmic radiation.</p>
+                <p class="counter-desc">Share of participants in an ISS study whose saliva contained varicella-zoster virus (VZV) DNA.</p>
             </div>
 
-            <!-- Card 3: event frequency -->
             <div class="pain-card">
                 <div class="card-corner cc-tl"></div><div class="card-corner cc-br"></div>
                 <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -701,22 +714,20 @@
                     <path d="M12 6v6l4 2"/>
                 </svg>
                 <div class="counter-box"><span class="count-num" data-target="3.4" data-decimals="1">0</span></div>
-                <p class="counter-desc">Immune-related adverse health events occurring per flight-year on long-term interstellar expeditions without AI monitoring.</p>
+                <p class="counter-desc">Medical events recorded per crew member per flight year in a review of ISS medical records.</p>
             </div>
         </div>
 
-        <!-- NASA insight widget -->
         <div class="nasa-notice">
             <div class="nasa-tag">NASA Risk Gap</div>
-            <p class="nasa-text">Officially recognized under <strong>Gap IM-501</strong>: Current space medicine infrastructure lacks advanced tools for predictive, real-time immune tracking before clinical symptoms manifest.</p>
+            <p class="nasa-text">NASA gap <strong>IM-501</strong> calls for flight testing of an integrated set of immune countermeasures.</p>
         </div>
     </section>
 
     <script>
-        // Register the GSAP ScrollTrigger plugin
-        gsap.registerPlugin(ScrollTrigger);
+        const hasAnimations = Boolean(window.gsap && window.ScrollTrigger);
+        if (hasAnimations) gsap.registerPlugin(ScrollTrigger);
 
-        // --- Interactive starfield (350 stars) ---
         const canvas = document.getElementById('space-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -769,115 +780,112 @@
         }
         animateCanvas();
 
-        // --- Mouse parallax for the first screen and the Pain section ---
         const spaceCanvas = document.getElementById('space-canvas');
         const astroBox = document.getElementById('astro-box');
         const heroBH = document.getElementById('hero-bh');
-        const painSection = document.getElementById('pain'); // Pain section
+        const painSection = document.getElementById('pain');
 
         window.addEventListener('mousemove', (e) => {
-            // Offset from the screen center
             const moveX = (e.clientX - window.innerWidth / 2) * 0.03;
             const moveY = (e.clientY - window.innerHeight / 2) * 0.03;
 
-            // First screen elements
             if(astroBox) astroBox.style.transform = `translate(${moveX * 1.2}px, ${moveY * 1.2}px)`;
             if(heroBH) heroBH.style.transform = `translate(${-moveX * 0.4}px, ${-moveY * 0.4}px)`;
             spaceCanvas.style.transform = `translate(${-moveX * 0.2}px, ${-moveY * 0.2}px)`;
 
-            // Parallax for the Pain section background
             if(painSection) {
-                // Move the background with the mouse (depth effect)
-                // Start at center (50%) and add or subtract pixels
                 const bgX = 50 + (moveX * 0.5);
                 const bgY = 50 + (moveY * 0.5);
                 painSection.style.backgroundPosition = `${bgX}% ${bgY}%`;
             }
         });
 
-        // --- First screen entrance animation (GSAP) ---
         window.addEventListener('DOMContentLoaded', () => {
+            if (!hasAnimations) { startTyping(); return; }
             const tl = gsap.timeline();
             tl.to('.hero-logo-text', { opacity: 1, duration: 1.2, ease: 'power3.out', delay: 0.2 })
               .to('.hero-subtitle', { opacity: 1, duration: 0.8, ease: 'power2.out' }, '-=0.8')
               .to('.btn-explore', { opacity: 1, duration: 0.8, onComplete: startTyping }, '-=0.4');
         });
 
-        // --- Typewriter effect for the slogan ---
-        const slogan = "Predict immune failure before symptoms appear";
-        const sloganContainer = document.getElementById('slogan-text');
-        let index = 0;
-
+        let sloganTimer;
         function startTyping() {
-            function type() {
-                if (index < slogan.length) {
-                    sloganContainer.innerHTML += slogan.charAt(index);
-                    index++;
-                    setTimeout(type, 40);
-                }
+            clearTimeout(sloganTimer);
+            const el = document.getElementById('slogan-text');
+            const slogan = window.siteCopy().slogan;
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                el.textContent = slogan;
+                return;
             }
-            type();
+            let length = 0;
+            function tick() {
+                el.textContent = slogan.slice(0, ++length);
+                if (length < slogan.length) sloganTimer = setTimeout(tick, 40);
+            }
+            tick();
         }
+        document.addEventListener('site-language', startTyping);
+
 
         document.getElementById('explore-btn').addEventListener('click', () => {
             document.getElementById('pain').scrollIntoView({ behavior: 'smooth' });
         });
 
 
-        // --- Scroll animation: THE PAIN section ---
-        
-        // 1. Cards fly in with a 3D turn
-        gsap.to(".pain-card", {
-            scrollTrigger: {
-                trigger: ".pain-grid",
-                start: "top 80%", // Starts when the grid reaches 80% of the viewport
-                toggleActions: "play none none none"
-            },
-            opacity: 1,
-            y: 0,
-            rotateX: 0,
-            duration: 1.2,
-            stagger: 0.25, // Cards appear one after another
-            ease: "power4.out"
-        });
-
-        // 2. Glow and number counter animation
-        gsap.utils.toArray(".pain-card").forEach((card) => {
-            const numElement = card.querySelector(".count-num");
-            const targetVal = parseFloat(numElement.getAttribute("data-target"));
-            const decimals = parseInt(numElement.getAttribute("data-decimals")) || 0;
-            
-            let obj = { value: 0 };
-
-            gsap.to(obj, {
+        if (hasAnimations) {
+            gsap.to(".pain-card", {
                 scrollTrigger: {
-                    trigger: card,
+                    trigger: ".pain-grid",
                     start: "top 80%",
-                    onEnter: () => card.classList.add("active-glow") // Gold neon glow for the numbers
+                    toggleActions: "play none none none"
                 },
-                value: targetVal,
-                duration: 2.5, // Moderate counting speed
-                ease: "power2.out",
-                onUpdate: () => {
-                    numElement.textContent = obj.value.toLocaleString('en-US', {
-                        minimumFractionDigits: decimals,
-                        maximumFractionDigits: decimals
-                    });
-                }
+                opacity: 1,
+                y: 0,
+                rotateX: 0,
+                duration: 1.2,
+                stagger: 0.25,
+                ease: "power4.out"
             });
-        });
 
-        // 3. The NASA risk note fades in after the cards
-        gsap.to(".nasa-notice", {
-            scrollTrigger: {
-                trigger: ".nasa-notice",
-                start: "top 90%"
-            },
-            opacity: 1,
-            x: 0,
-            duration: 1,
-            ease: "power3.out"
-        });
+            gsap.utils.toArray(".pain-card").forEach((card) => {
+                const numElement = card.querySelector(".count-num");
+                const targetVal = parseFloat(numElement.getAttribute("data-target"));
+                const decimals = parseInt(numElement.getAttribute("data-decimals")) || 0;
+
+                let obj = { value: 0 };
+
+                gsap.to(obj, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 80%",
+                        onEnter: () => card.classList.add("active-glow")
+                    },
+                    onComplete: () => { numElement.dataset.counted = 'true'; },
+                    value: targetVal,
+                    duration: 2.5,
+                    ease: "power2.out",
+                    onUpdate: () => {
+                        numElement.textContent = obj.value.toLocaleString(document.documentElement.lang, {
+                            minimumFractionDigits: decimals,
+                            maximumFractionDigits: decimals
+                        });
+                    }
+                });
+            });
+
+            gsap.to(".nasa-notice", {
+                scrollTrigger: {
+                    trigger: ".nasa-notice",
+                    start: "top 90%"
+                },
+                opacity: 1,
+                x: 0,
+                duration: 1,
+                ease: "power3.out"
+            });
+        } else {
+            document.querySelectorAll('.count-num').forEach(el => { el.textContent = el.dataset.target; });
+        }
     </script>
 
 <style>
@@ -886,9 +894,8 @@
         width: 100%;
         min-height: 100vh;
         padding: 90px 8%;
-        /* Background image */
         background-image: url('block3.png');
-        background-size: contain; /* Keep the edges visible */
+        background-size: contain;
         background-position: center;
         background-repeat: no-repeat;
         background-color: transparent;
@@ -898,10 +905,9 @@
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        transition: background-position 0.1s ease-out; /* Smooth parallax */
+        transition: background-position 0.1s ease-out;
     }
 
-    /* Header grid */
     .wh-header-container {
         text-align: center;
         max-width: 750px;
@@ -927,7 +933,6 @@
         line-height: 1.5;
     }
 
-    /* Main interactive diagram container */
     .wh-interactive-scheme {
         position: relative;
         width: 100%;
@@ -939,7 +944,6 @@
         margin-bottom: 35px;
     }
 
-    /* Left side: change blocks */
     .wh-cards-container {
         flex: 0.85;
         display: flex;
@@ -949,7 +953,6 @@
         z-index: 5;
     }
 
-    /* Translucent glass cards */
     .wh-card {
         background: rgba(0, 29, 61, 0.15);
         border: 1px solid rgba(255, 214, 10, 0.12);
@@ -1000,7 +1003,6 @@
         color: var(--text-main);
     }
 
-    /* Right side: astronaut container (larger, floating animation) */
     .wh-visual-container {
         flex: 1.25;
         height: 100%;
@@ -1009,7 +1011,7 @@
         justify-content: center;
         align-items: center;
         z-index: 4;
-        animation: floatWhatHappens 6s infinite ease-in-out; /* Gentle floating */
+        animation: floatWhatHappens 6s infinite ease-in-out;
     }
 
     @keyframes floatWhatHappens {
@@ -1020,14 +1022,13 @@
 
     .wh-astronaut-wrapper {
         position: relative;
-        width: 440px; /* Wider */
-        height: 540px; /* Taller */
+        width: 440px;
+        height: 540px;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    /* High-resolution astronaut2.png */
     .wh-astronaut-img {
         width: 100%;
         height: 100%;
@@ -1035,7 +1036,6 @@
         filter: drop-shadow(0 10px 30px rgba(0, 8, 20, 0.7));
     }
 
-    /* Labels and hexagonal stars around the body */
     .wh-marker-wrapper {
         position: absolute;
         display: flex;
@@ -1045,7 +1045,6 @@
         cursor: pointer;
     }
 
-    /* Hexagonal star shape */
     .wh-star-node {
         width: 14px;
         height: 14px;
@@ -1055,7 +1054,6 @@
         transition: transform 0.3s ease, background-color 0.3s ease;
     }
 
-    /* Pulsing halo */
     .wh-star-pulse {
         position: absolute;
         width: 30px;
@@ -1074,7 +1072,6 @@
         100% { transform: scale(1.3); opacity: 0; }
     }
 
-    /* Text label */
     .wh-node-label {
         font-family: var(--font-tech);
         font-size: 0.7rem;
@@ -1089,18 +1086,15 @@
         pointer-events: none;
     }
 
-    /* Stars placed in the space around the astronaut */
-    #marker-ebv { top: 18%; left: -5%; flex-direction: row-reverse; } /* Top left of the helmet */
-    #marker-il6 { top: 40%; left: -12%; flex-direction: row-reverse; } /* Left, at shoulder and chest level */
-    #marker-cortisol { top: 55%; right: -10%; } /* Right, at waist level */
+    #marker-ebv { top: 18%; left: -5%; flex-direction: row-reverse; }
+    #marker-il6 { top: 40%; left: -12%; flex-direction: row-reverse; }
+    #marker-cortisol { top: 55%; right: -10%; }
 
-    /* Marker hover */
     .wh-marker-wrapper:hover .wh-star-node {
         transform: scale(1.3) rotate(45deg);
         background-color: #ffffff;
     }
 
-    /* Tooltips */
     .wh-tooltip {
         position: absolute;
         background: rgba(0, 8, 20, 0.95);
@@ -1132,7 +1126,6 @@
         color: var(--text-main);
     }
 
-    /* Thin SVG guide lines */
     .wh-svg-connections {
         position: absolute;
         top: 0;
@@ -1157,7 +1150,6 @@
         stroke-width: 1.5px;
     }
 
-    /* Conclusion */
     .wh-footer-conclusion {
         width: 100%;
         max-width: 850px;
@@ -1187,54 +1179,51 @@
         opacity: 1 !important;
         transform: translate(0) !important;
     }
-    /* Small screens */
     @media (max-width: 900px) {
         .what-happens-section {
-            padding: 60px 5%; /* Smaller padding on phones */
+            padding: 60px 5%;
         }
 
         .wh-interactive-scheme {
-            flex-direction: column; /* Stack the items */
-            height: auto; /* No fixed height */
+            flex-direction: column;
+            height: auto;
             margin-bottom: 20px;
         }
 
         .wh-cards-container {
             max-width: 100%;
             width: 100%;
-            order: 1; /* Cards first */
+            order: 1;
         }
 
         .wh-visual-container {
             width: 100%;
             margin-top: 30px;
-            order: 2; /* Astronaut second */
+            order: 2;
             min-height: 450px;
         }
 
         .wh-astronaut-wrapper {
-            width: 100%; /* Fluid astronaut width */
+            width: 100%;
             max-width: 320px;
             height: auto;
             aspect-ratio: 440/540;
         }
 
-    /* Marker positions on phones */
         #marker-ebv { top: 15%; left: 10%; }
         #marker-il6 { top: 45%; left: 5%; }
         #marker-cortisol { top: 60%; right: 10%; }
 
-    /* Keep tooltips inside the screen */
         .wh-tooltip {
-            width: 80vw; /* 80% of the screen width */
+            width: 80vw;
             max-width: 300px;
             white-space: normal;
         }
-        .what-happens-section { background-image: none; } /* No section background */
+        .what-happens-section { background-image: none; }
     
         .wh-visual-container {
             background-image: url('block3.png');
-            background-size: cover; /* The image fills the container */
+            background-size: cover;
             background-position: center;
             border-radius: 20px;
             padding: 20px;
@@ -1265,7 +1254,7 @@
             
             <div class="wh-card" id="card-tcells" data-target="marker-ebv">
                 <div class="wh-card-title">Viruses</div>
-                <div class="wh-card-text">Latent herpes viruses (EBV, VZV, HSV‑1) reactivate in up to 65% of crew members — a clear sign of immune dysregulation.</div>
+                <div class="wh-card-text">Studies of ISS crews found herpesvirus DNA, including EBV and VZV, in samples collected during flight.</div>
             </div>
 
             <div class="wh-card" id="card-inflammation" data-target="marker-il6">
@@ -1321,7 +1310,7 @@
     </div>
 
     <div class="wh-footer-conclusion" id="wh-conclusion">
-        <p class="wh-conclusion-text">These changes don't happen overnight. <span>Our model detects patterns days before symptoms appear</span> — giving crews time to act</p>
+        <p class="wh-conclusion-text"><span>Repeated measurements</span> show how an individual crew member’s markers change during flight.</p>
     </div>
 
 </section>
@@ -1337,7 +1326,6 @@
             marker.addEventListener('mouseenter', () => {
                 tooltip.style.opacity = '1';
     
-    // Coordinates of the star
                 const rect = marker.getBoundingClientRect();
     
                 if (window.innerWidth <= 900) {
@@ -1392,7 +1380,6 @@
             });
         });
 
-        // Draw S-curves to the points around the astronaut
         function drawConnectionLines() {
             const canvas = document.getElementById('wh-svg-canvas');
             if(!canvas) return;
@@ -1428,13 +1415,11 @@
         setTimeout(drawConnectionLines, 300);
         window.addEventListener('resize', drawConnectionLines);
 
-        // Cards appear when the section scrolls into view
         const whObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if(entry.isIntersecting) {
                     const whCards = entry.target.querySelectorAll('.wh-card');
                     whCards.forEach((card, index) => {
-                        // Smooth fly-in
                         setTimeout(() => {
                             card.style.opacity = '1';
                             card.style.transform = 'translateX(0)';
@@ -1459,7 +1444,7 @@
     });
 </script>
 <script>
-    // 1. The background follows the mouse
+
     const section = document.querySelector('.what-happens-section');
     document.addEventListener('mousemove', (e) => {
         const x = (e.clientX / window.innerWidth - 0.5) * 20; // up to 20px offset
@@ -1467,14 +1452,12 @@
         section.style.backgroundPosition = `calc(50% + ${x}px) calc(50% + ${y}px)`;
     });
 
-    // 2. Smooth scrolling for all links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
             const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
+            const targetElement = document.getElementById(targetId.slice(1));
             if (targetElement) {
-                // Smooth scroll
                 window.scrollTo({
                     top: targetElement.offsetTop,
                     behavior: 'smooth'
@@ -1486,13 +1469,11 @@
 
 
 <style>
-    /* Background image layer of section 4 */
     .solution-section {
         position: relative;
         padding: 100px 8%;
         color: var(--text-main);
         z-index: 10;
-        /* Background photo */
         background-image: url('block4b.png'), url('block4.png');
         background-position: center bottom, center -5%;
         background-size: 100% auto, 94% auto;
@@ -1504,8 +1485,7 @@
     .sol-title { font-family: var(--font-tech); font-size: 2 rem; color: var(--accent-gold); margin-bottom: 20px; }
     .sol-subtitle { max-width: 700px; margin: 0 auto; font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary); }
 
-    /* Solution cards */
-    .sol-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 80px; }
+    .sol-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 30px; margin-bottom: 80px; }
     .sol-card {
         background: rgba(0, 29, 61, 0.05); border: 1px solid rgba(255, 214, 10, 0.2);
         padding: 40px; border-radius: 8px; transition: 0.4s; backdrop-filter: blur(2px);
@@ -1515,12 +1495,10 @@
     .sol-card.animate { opacity: 1; transform: translateY(0); }
     .sol-card h3 { color: var(--accent-gold); margin: 20px 0; font-family: var(--font-tech); }
 
-    /* Metrics */
     .sol-metrics { display: flex; gap: 40px; justify-content: center; margin-bottom: 50px; flex-wrap: wrap; }
     .metric-item { background: rgba(0, 0, 0, 0.5); padding: 25px; border-left: 3px solid var(--accent-gold); }
     .metric-val { font-size: 1.5rem; font-weight: 700; color: #fff; display: block; }
 
-    /* AI block */
     .ai-box { max-width: 900px; margin: 0 auto; text-align: center; padding: 50px; background: rgba(0,13,15,0.8); border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 15px; }
     .btn-demo { 
         margin-top: 30px; padding: 15px 40px; background: transparent; border: 1px solid var(--accent-gold); 
@@ -1529,39 +1507,32 @@
     
     .btn-demo:hover { background: var(--accent-gold); color: #000; box-shadow: 0 0 20px var(--accent-gold); }
    
-    /* Large monitors only (1500px and wider) */
 @media (min-width: 1500px) {
     .solution-section {
-        /* Limit image width on very wide screens */
         background-size: 1400px auto, 1300px auto !important;
         background-position: center bottom, center 0px !important;
     }
 
-    /* Dark, opaque Predict / Prevent / Protect cards */
     .sol-card {
-        background: rgba(0, 10, 20, 0.96) !important; /* Solid dark color */
-        border: 1px solid rgba(255, 165, 0, 0.4) !important; /* Slightly brighter border for contrast */
+        background: rgba(0, 10, 20, 0.96) !important;
+        border: 1px solid rgba(255, 165, 0, 0.4) !important;
         backdrop-filter: blur(15px) !important;
     }
 
-    /* Crisp metric badges (Earth Model / In-Flight Model) */
     .metric-item {
         background: rgba(0, 10, 20, 0.96) !important; 
         border: 1px solid rgba(255, 165, 0, 0.3) !important;
         border-left: 4px solid var(--accent-gold) !important; 
     }
 
-    /* Fully opaque AI assistant block */
     .ai-box {
         background: rgba(0, 5, 10, 0.98) !important;
         border: 1px solid rgba(255, 165, 0, 0.5) !important;
     }
 }
 
-/* Very large monitors (2K and 4K) */
 @media (min-width: 2000px) {
     .solution-section {
-        /* Backgrounds stay centered and sharp on 4K monitors */
         background-size: 1600px auto, 1500px auto !important;
     }
 }
@@ -1570,25 +1541,25 @@
 
 <section class="solution-section" id="solution">
     <div class="sol-header">
-        <h2 class="sol-title">We predict. We prevent. We protect.</h2>
-        <p class="sol-subtitle">A two‑layer immune risk model built on real astronaut data. From pre‑flight screening to in‑flight monitoring — we give crews time to act</p>
+        <h2 class="sol-title">Immune risk assessment before and during flight</h2>
+        <p class="sol-subtitle">The pre-flight assessment uses physical fitness. The in-flight model uses four biomarker systems and the planned mission length.</p>
     </div>
 
     <div class="sol-grid">
         <div class="sol-card" style="transition-delay: 0.1s;">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="2" style="margin-bottom: 10px;"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-            <h3>Predict</h3>
-            <p>Our models are built on peer‑reviewed astronaut studies and open NASA data. They combine biomarkers, stress hormones and fitness to flag immune risk early — before symptoms appear.</p>
+            <h3>Assessment</h3>
+            <p>Pre-flight fitness measurements estimate the risk of latent herpesvirus reactivation during the mission.</p>
         </div>
         <div class="sol-card" style="transition-delay: 0.2s;">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="2" style="margin-bottom: 10px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <h3>Prevent</h3>
-            <p>Early warning days in advance. Crew receives actionable alerts: adjust rest, nutrition, or consult a doctor. No waiting for illness — we prevent it.</p>
+            <h3>Monitoring</h3>
+            <p>Record up to three in-flight visits and compare measured values and model estimates over time.</p>
         </div>
         <div class="sol-card" style="transition-delay: 0.3s;">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="2" style="margin-bottom: 10px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <h3>Protect</h3>
-            <p>Healthier crew, safer missions, millions saved. One prevented incident covers the cost of the entire system. That’s how we protect what matters most.</p>
+            <h3>Interpretation</h3>
+            <p>The summary shows marker contributions and the human reference intervals available for comparison.</p>
         </div>
     </div>
 
@@ -1599,12 +1570,12 @@
         </div>
         <div class="metric-item">
             <span class="metric-val">In‑Flight Model: 4 systems</span>
-            <p>Cytokines, leukocytes, viral load, stress hormones | NASA‑based thresholds</p>
+            <p>Cytokines, leukocytes, viral load and cortisol | The project documentation describes the in-flight model thresholds.</p>
         </div>
     </div>
 
     <div class="ai-box">
-        <p>After each prediction, our AI assistant delivers personalised advice: adjust your sleep, modify nutrition, or consult mission control. The more data our model receives, the smarter it becomes — learning from every mission, every biomarker, every case.</p>
+        <p>The consultant explains which inputs contributed to the estimate and where the model’s interpretation is limited.</p>
         <button class="btn-demo" onclick="location.href='#demo'">Try Demo</button>
     </div>
 </section>
@@ -1626,13 +1597,12 @@
         padding: 100px 8%;
         position: relative;
         z-index: 5;
-        /* Background */
         background-image: url('block5.png');
         background-size: 100% auto; 
         background-position: center 0px; 
         background-repeat: no-repeat;
         background-color: transparent;
-        transition: background-position 0.5s ease-out; /* Smooth movement */
+        transition: background-position 0.5s ease-out;
         will-change: background-position;
         background-attachment: scroll;
     }
@@ -1693,7 +1663,7 @@
     .calc-btn:hover {
         background: linear-gradient(45deg, #ff9500, #ffcc00);
         color: #000;
-        border: 2px solid transparent; /* No border on hover */
+        border: 2px solid transparent;
     }
     .gender-selector { display: flex; gap: 10px; margin-bottom: 10px; }
     .gender-btn {
@@ -1711,7 +1681,6 @@
         color: #000;
         border: none;
     }
-    /* Hide the browser's number spinners */
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
         -webkit-appearance: none;
@@ -1729,9 +1698,8 @@
         text-align: center;
         color: var(--accent-gold);
         font-size: 0.95rem;
-        display: none; /* Hidden until calculated */
+        display: none;
     }
-    /* Pulse animation */
     @keyframes pulse {
         0% { border-color: rgba(255, 165, 0, 0.3); box-shadow: 0 0 5px rgba(255, 165, 0, 0.2); }
         50% { border-color: rgba(255, 165, 0, 1); box-shadow: 0 0 20px rgba(255, 165, 0, 0.6); }
@@ -1742,7 +1710,6 @@
         animation: pulse 2s infinite;
     }
 
-    /* Gauge */
     .meter-bg { width: 100%; height: 10px; background: #222; border-radius: 5px; margin-top: 15px; overflow: hidden; }
     .meter-fill { height: 100%; width: 0%; transition: width 1s ease, background 1s ease; }
     
@@ -1751,20 +1718,19 @@
             display: grid !important; 
             grid-template-areas: 
                 "d"
-                "i"; /* d = desc (top), i = inputs (bottom) */
+                "i";
             grid-template-columns: 1fr;
         }
 
         .form-content .desc {
-            grid-area: d; /* desc on top */
+            grid-area: d;
             margin-bottom: 20px;
         }
 
         .form-content .inputs {
-            grid-area: i; /* inputs below */
+            grid-area: i;
         }
     }
-    /* PDF link button */
     .pdf-download-btn {
         display: inline-flex;
         align-items: center;
@@ -1795,13 +1761,12 @@
     .pdf-icon {
         flex-shrink: 0;
     }
-    /* Title on the space background */
     .demo-header {
         display: flex;
         flex-direction: column;
-        align-items: center; /* Centered inside the block */
-        text-align: center;  /* Centered text */
-        margin-bottom: 35px; /* Slightly smaller margin */
+        align-items: center;
+        text-align: center;
+        margin-bottom: 35px;
         padding: 0 20px;
         width: 100%;
         box-sizing: border-box;
@@ -1809,25 +1774,22 @@
     
     .demo-main-title {
         font-family: 'Montserrat', 'Century Gothic', AppleGothic, sans-serif;
-        /* Smaller title */
         font-size: clamp(1.5rem, 3vw, 2.2rem); 
         color: var(--accent-gold); 
-        margin: 0 auto 10px auto; /* Center the block, bottom margin */
+        margin: 0 auto 10px auto;
         line-height: 1.3;
         font-weight: 600;
-        max-width: 800px; /* Nicer line breaks on wide screens */
+        max-width: 800px;
     }
     
     .demo-subtitle {
         font-family: 'Montserrat', 'Century Gothic', AppleGothic, sans-serif;
-        /* Smaller subtitle */
         font-size: clamp(0.85rem, 1.5vw, 1rem);
-        color: #aaa; /* Soft gray so it does not compete with the white title */
+        color: #aaa;
         max-width: 650px;
-        margin: 0 auto; /* Center the subtitle */
+        margin: 0 auto;
         line-height: 1.5;
     }
-    /* Result, form messages, consultant panel */
     .risk-outcome { font-size: 0.78rem; color: #bdbdbd; line-height: 1.35; }
     .risk-number { font-size: 2.2rem; font-weight: 700; margin-top: 6px; line-height: 1.1; }
     .risk-number .risk-val { color: #ff9500; }
@@ -1896,12 +1858,9 @@
         <p class="demo-subtitle">Try our demo model and find out how your immune system will behave during spaceflight</p>
     </div>
     <div class="demo-card">
-        <div class="tabs" role="tablist">
-            <button type="button" class="tab-btn active" role="tab" onclick="showTab('earth', this)">Earth Model</button>
-            <button type="button" class="tab-btn" role="tab" onclick="showTab('flight', this)">In-Flight Model</button>
-        </div>
-
-        <form id="earth-form" class="form-content active" data-model="earth" novalidate>
+        <nav class="mission-nav" id="mission-nav" aria-label="Measurement series"></nav>
+        <div id="series-message" class="series-message" aria-live="polite"></div>
+        <form id="earth-form" class="form-content active" data-step="0" data-model="earth" novalidate>
             <div class="inputs">
                 <div class="input-box">
                     <label>Sex</label>
@@ -1933,16 +1892,16 @@
                             <line x1="16" y1="17" x2="8" y2="17"></line>
                             <polyline points="10 9 9 9 8 9"></polyline>
                         </svg>
-                        Purchase Detailed Report
+                        Download the project report (PDF)
                     </a>
                 </div>
             </div>
-            <button type="button" class="calc-btn" onclick="calculateRisk('earth-form')">Calculate Earth Risk</button>
+            <button type="submit" class="calc-btn">Calculate Earth Risk</button>
             <div class="form-message" role="alert" hidden></div>
             <div class="consultant-panel" aria-live="polite" hidden></div>
         </form>
 
-        <form id="flight-form" class="form-content" data-model="flight" novalidate>
+        <form id="flight-form" class="form-content" data-step="1" data-model="flight" novalidate>
             <div class="inputs">
                 <div class="input-box"><label for="il6_b">IL-6 (Before / After) pg/mL</label><input type="number" step="any" id="il6_b" placeholder="Before (optional)"><input type="number" step="any" id="il6_a" placeholder="After" data-required></div>
                 <div class="input-box"><label for="nlr_b">NLR (Before / After)</label><input type="number" step="any" id="nlr_b" placeholder="Before (optional)"><input type="number" step="any" id="nlr_a" placeholder="After" data-required></div>
@@ -1968,17 +1927,30 @@
                             <line x1="16" y1="17" x2="8" y2="17"></line>
                             <polyline points="10 9 9 9 8 9"></polyline>
                         </svg>
-                        Purchase Detailed Report
+                        Download the project report (PDF)
                     </a>
                 </div>
             </div>
-            <button type="button" class="calc-btn" onclick="calculateRisk('flight-form')">Calculate Flight Risk</button>
+            <button type="submit" class="calc-btn">Calculate Flight Risk</button>
             <div class="form-message" role="alert" hidden></div>
             <div class="consultant-panel" aria-live="polite" hidden></div>
         </form>
+        <section id="mission-summary" class="mission-summary" hidden></section>
+        <div class="series-footer" hidden>
+            <span id="series-storage-note"></span>
+            <button type="button" id="series-reset"></button>
+        </div>
+        <dialog id="mission-loading" class="mission-loading" aria-labelledby="mission-loading-title">
+            <h3 id="mission-loading-title"></h3>
+            <div class="loading-moons" aria-hidden="true"></div>
+            <p class="loading-step" role="status"></p>
+            <button type="button" class="series-cancel"></button>
+        </dialog>
     </div>
 </section>
 
+<script src="mission-summary.js"></script>
+<script src="mission-series.js"></script>
 <script>
 (function () {
     'use strict';
@@ -2002,16 +1974,23 @@
         return apiBasePromise;
     }
     resolveApiBase();
-    // Consultant language: ?lang=ru
-    const UI_LANG = (new URLSearchParams(location.search).get('lang') || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en';
+
+    let UI_LANG = document.documentElement.lang;
 
     const UI = {
+        zh: {
+            processing: '计算中…', waking: '正在等待服务器…',
+            calc: { 'earth-form': '计算飞行前风险', 'flight-form': '计算飞行中风险' },
+            required: '请填写标出的必填项。', check: '请核对输入值。', network: '服务器未响应，请稍后重试。',
+            interval: '90% 区间', badge: 'IMMOONITY AI 助手', drivers: '影响估计的因素', markers: '生物标志物系统',
+            whatIf: '哪些变化会影响估计', recs: '建议', notes: '局限性', sources: '资料来源'
+        },
         en: {
             processing: 'Processing…', waking: 'Waking up the server… (free hosting: up to a minute)',
             calc: { 'earth-form': 'Calculate Earth Risk', 'flight-form': 'Calculate Flight Risk' },
             required: 'Please fill in the highlighted fields.', check: 'Please double-check:',
             network: 'The server did not respond. Free hosting may still be waking up — please try again in a minute.',
-            interval: '90% interval', badge: 'IMMOONITY AI consultant · beta',
+            interval: '90% interval', badge: 'IMMOONITY AI consultant',
             drivers: 'What drives the estimate', markers: 'Biomarker systems', whatIf: 'What could change the risk',
             recs: 'Recommendations', notes: 'Limitations', sources: 'Sources'
         },
@@ -2020,41 +1999,19 @@
             calc: { 'earth-form': 'Рассчитать земной риск', 'flight-form': 'Рассчитать полётный риск' },
             required: 'Заполните выделенные поля.', check: 'Проверьте значения:',
             network: 'Сервер не ответил. Бесплатный хостинг может ещё просыпаться — попробуйте через минуту.',
-            interval: '90% интервал', badge: 'ИИ-консультант IMMOONITY · бета',
+            interval: '90% интервал', badge: 'ИИ-консультант IMMOONITY',
             drivers: 'Что определяет оценку', markers: 'Подсистемы-биомаркеры', whatIf: 'Что может изменить риск',
             recs: 'Рекомендации', notes: 'Ограничения', sources: 'Источники'
         }
     };
-    const T = UI[UI_LANG];
-    if (UI_LANG === 'ru') {
-        document.querySelectorAll('#demo .calc-btn').forEach(b => { b.textContent = T.calc[b.closest('form').id]; });
-    }
+    let T = UI[UI_LANG];
 
-    // 1. Tabs
-    function showTab(tab, btn) {
-        document.querySelectorAll('.form-content').forEach(f => f.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tab + '-form').classList.add('active');
-        btn.classList.add('active');
-    }
-
-    // 2. Sex selection (M by default)
     function selectGender(gender, btn) {
         document.getElementById('sex').value = gender;
         document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     }
 
-    // 3. Validation: no negative numbers
-    document.querySelectorAll('#demo input[type="number"]').forEach(input => {
-        input.setAttribute('min', '0');
-        input.addEventListener('input', function () {
-            if (this.value !== '' && Number(this.value) < 0) this.value = 0;
-            this.classList.remove('input-error');
-        });
-    });
-
-    // 4. Result
     function el(tag, cls, text) {
         const node = document.createElement(tag);
         if (cls) node.className = cls;
@@ -2172,70 +2129,23 @@
         box.hidden = false;
     }
 
-    function collect(form) {
-        const data = { model: form.dataset.model, lang: UI_LANG };
-        const missing = [];
-        form.querySelectorAll('input').forEach(input => {
-            const v = input.value.trim();
-            if (v !== '') data[input.id] = v;
-            else if (input.hasAttribute('data-required')) missing.push(input);
+    const formTemplate = document.querySelector('#demo .demo-card').cloneNode(true);
+    let series;
+    function mountSeries(previous) {
+        series = window.initMissionSeries({
+            lang: UI_LANG, labels: T, copy: window.siteCopy(), previous,
+            resolveApiBase, renderRisk, renderConsultant, showMessage
         });
-        return { data, missing };
     }
+    mountSeries();
+    document.addEventListener('site-language', event => {
+        const previous = series.takeSnapshot();
+        document.querySelector('#demo .demo-card').replaceWith(formTemplate.cloneNode(true));
+        UI_LANG = event.detail;
+        T = UI[UI_LANG];
+        mountSeries(previous);
+    });
 
-    // 5. Request
-    async function calculateRisk(formId) {
-        const form = document.getElementById(formId);
-        const btn = form.querySelector('.calc-btn');
-        const panel = form.querySelector('.consultant-panel');
-        form.querySelector('.form-message').hidden = true;
-        form.querySelectorAll('.input-error').forEach(i => i.classList.remove('input-error'));
-
-        const { data, missing } = collect(form);
-        if (missing.length) {
-            missing.forEach(i => i.classList.add('input-error'));
-            showMessage(form, T.required);
-            missing[0].focus();
-            return;
-        }
-
-        btn.textContent = T.processing;
-        btn.disabled = true;
-        const controller = new AbortController();
-        const slowTimer = setTimeout(() => { btn.textContent = T.waking; }, 4000);  // a free Render instance takes up to a minute to wake up
-        const killTimer = setTimeout(() => controller.abort(), 90000);
-        try {
-            const apiBase = await resolveApiBase();
-            const response = await fetch(apiBase + '/predict', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
-                signal: controller.signal
-            });
-            let body = null;
-            try { body = await response.json(); } catch (_) { body = null; }
-            if (!response.ok || !body || typeof body.risk !== 'number') {
-                const details = (body && body.details) || [];
-                details.forEach(d => { const i = document.getElementById(d.field); if (i) i.classList.add('input-error'); });
-                showMessage(form, (body && body.message) || T.network, details);
-                return;
-            }
-            renderRisk(form, body);
-            renderConsultant(panel, body.model, body.interpretation);
-            if (body.input_warnings && body.input_warnings.length) {
-                showMessage(form, T.check, body.input_warnings, 'warn');
-            }
-        } catch (e) {
-            showMessage(form, T.network);
-        } finally {
-            clearTimeout(slowTimer);
-            clearTimeout(killTimer);
-            btn.textContent = T.calc[formId];
-            btn.disabled = false;
-        }
-    }
-
-    // 6. Background animation
     document.addEventListener('mousemove', (e) => {
         const demoSection = document.querySelector('.demo-wrapper');
         const x = (window.innerWidth / 2 - e.pageX) / 50;
@@ -2243,14 +2153,10 @@
         demoSection.style.backgroundPosition = `calc(50% + ${x}px) calc(100% + ${y}px)`;
     });
 
-    // used by onclick in the markup
-    window.showTab = showTab;
     window.selectGender = selectGender;
-    window.calculateRisk = calculateRisk;
 })();
 </script>
 
-<!-- PRICING AND CONTACT SECTION -->
 <style>
     .pricing-cta-section {
         padding: 60px 8%;
@@ -2270,7 +2176,7 @@
 
     .pricing-card {
         background: rgba(0, 10, 20, 0.7);
-        border: 1px solid rgba(255, 165, 0, 0.2); /* One border for all cards */
+        border: 1px solid rgba(255, 165, 0, 0.2);
         backdrop-filter: blur(15px);
         padding: 35px;
         border-radius: 16px;
@@ -2350,7 +2256,6 @@
         box-shadow: 0 0 15px rgba(255, 149, 0, 0.4);
     }
 
-    /* Phones */
     @media (max-width: 768px) {
         .pricing-cta-section {
             padding: 40px 4%;
@@ -2368,7 +2273,6 @@
 <section class="pricing-cta-section">
     <div class="pricing-container">
         
-        <!-- Card 1: pricing (commercial license) -->
         <div class="pricing-card">
             <div>
                 <div class="pr-title">Commercial Licensing</div>
@@ -2380,10 +2284,9 @@
                     <li>Mission control dashboards & integration</li>
                 </ul>
             </div>
-            <a href="https://forms.gle/i6DPAjufZMioNLGD6" target="_blank" class="pr-btn">Request B2B Quote</a>
+            <a href="https://forms.gle/i6DPAjufZMioNLGD6" target="_blank" rel="noopener" class="pr-btn">Request B2B Quote</a>
         </div>
 
-        <!-- Card 2: contact and Google Form -->
         <div class="pricing-card">
             <div>
                 <div class="pr-title">Get Full Access</div>
@@ -2394,27 +2297,22 @@
                     <li>Leave your contact details to connect with the IMMOONITY Operations Team.</li>
                 </ul>
             </div>
-            <a href="https://forms.gle/i6DPAjufZMioNLGD6" target="_blank" class="pr-btn">Leave Contact Info</a>
+            <a href="https://forms.gle/i6DPAjufZMioNLGD6" target="_blank" rel="noopener" class="pr-btn">Leave Contact Info</a>
         </div>
 
     </div>
 </section>
-<!-- END OF PRICING AND CONTACT SECTION -->
-
-
-
 <style>
-    /* Starry background, thin stars only */
     .star-background {
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
-        background-color: var(--bg-ink-black); /* Main color */
-        background-image: url('team-bg.png'); /* Image path */
+        background-color: var(--bg-ink-black);
+        background-image: url('team-bg.png');
         background-position: center;
-        background-size: cover; /* Covers the whole block */
+        background-size: cover;
         background-repeat: no-repeat;
         z-index: 1;
-        opacity: 0.5; /* 0.3–0.5 makes the background paler */
+        opacity: 0.5;
     }
 
     #team { padding: 80px 5%; position: relative; color: #fff; text-align: center; overflow: hidden; }
@@ -2422,7 +2320,6 @@
     .team-title { font-size: 1.8rem; color: #ff9500; margin-bottom: 10px; }
     .team-desc { color: #aaa; margin-bottom: 40px; font-size: 0.9rem; max-width: 600px; margin: 0 auto; }
     
-    /* Photo: no border, wider */
     .team-photo-wrapper { max-width: 900px; margin: 0 auto; }
     .team-photo { width: 100%; height: auto; border-radius: 0; border: none; }
 
@@ -2431,7 +2328,6 @@
     .star-icon { color: #ff9500; font-size: 1.2rem; animation: flicker 1.5s infinite; }
     @keyframes flicker { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
     
-    /* Names and roles, responsive size */
     .member-name { 
         font-weight: bold; 
         font-size: clamp(0.7rem, 2vw, 1rem); 
@@ -2441,23 +2337,29 @@
         color: #aaa; 
         line-height: 1.2; 
     }
-    /* Keep members on one row on phones */
     .team-members-row { 
-        display: flex; 
-        justify-content: center; 
-        gap: 15px; 
-        margin-top: -5px; 
-        flex-wrap: nowrap; /* No wrapping */
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        max-width: 760px;
+        margin: -5px auto 0 auto;
+        align-items: start;
     }
 
     .details {
         position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%);
         background: rgba(0, 10, 20, 0.95); border: 1px solid #ff9500; padding: 15px;
-        border-radius: 8px; width: 220px; opacity: 0; visibility: hidden; transition: 0.3s;
+        border-radius: 8px; width: 220px; opacity: 0; visibility: hidden; transition: opacity 0.2s;
         text-align: left; z-index: 10; font-size: 0.8rem; pointer-events: none;
     }
-    .member-box:hover .details { opacity: 1; visibility: visible; }
-    .team-dev { display: flex; justify-content: center; margin-top: 25px; }
+    .member-box:hover .details, .member-box:focus .details { opacity: 1; visibility: visible; }
+    @media (max-width: 768px) {
+        .team-members-row { gap: 4px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .member-box { min-width: 0; padding-inline: 1px; overflow-wrap: anywhere; }
+        .details { max-width: min(220px, 70vw); }
+        .member-box:first-child .details { left: 0; transform: none; }
+        .member-box:last-child .details { left: auto; right: 0; transform: none; }
+    }
 </style>
 
 <section id="team">
@@ -2471,31 +2373,29 @@
         </div>
 
         <div class="team-members-row">
-            <div class="member-box">
+            <div class="member-box" tabindex="0">
                 <div class="star-icon">★</div>
                 <div class="member-name">Alex</div>
                 <div class="member-role">Immunologist &<br>Molecular Biologist</div>
                 <div class="details"><strong>Aleksei Korolev</strong><br>Leading expert outreach, partnerships, and social media — connecting science with the world.</div>
             </div>
-            <div class="member-box">
+            <div class="member-box" tabindex="0">
                 <div class="star-icon">★</div>
                 <div class="member-name">Liza</div>
                 <div class="member-role">Economist & Data Analyst<br>TEAM LEAD</div>
                 <div class="details"><strong>Elizaveta Prikhodko</strong><br>Building predictive models, developing the website, and turning complex data into actionable insights.</div>
             </div>
-            <div class="member-box">
+            <div class="member-box" tabindex="0">
                 <div class="star-icon">★</div>
                 <div class="member-name">Henry</div>
                 <div class="member-role">Medical Specialist</div>
                 <div class="details"><strong>Igor Mizin</strong><br>Collecting and structuring clinical data, bridging the gap between medicine and machine learning.</div>
             </div>
-        </div>
-
-        <div class="team-dev">
-            <div class="member-box">
+            <div class="member-box" tabindex="0">
                 <div class="star-icon">★</div>
                 <div class="member-name">Svyatoslav</div>
                 <div class="member-role">Lead Developer</div>
+                <div class="details"><strong>Svyatoslav</strong><br>Developing AI models, backend architecture, and machine learning pipelines for immune risk prediction.</div>
             </div>
         </div>
     </div>
@@ -2523,6 +2423,8 @@
     <p>&copy; 2026 IMMOONITY. All rights reserved.</p>
     <p style="font-size: 0.7rem; margin-top: 10px;">Scientific integrity, data-driven future.</p>
 </footer>
+
+
 
 </body>
 </html>

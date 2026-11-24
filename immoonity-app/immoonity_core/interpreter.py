@@ -6,9 +6,11 @@ import math
 from typing import Any
 
 from .engine import EarthModel, FlightModel, RiskModel
-from .validation import unit_label
+from .chinese import CONSULTANT as ZH, OUTCOMES as ZH_OUTCOMES
+from .validation import field_label, normalise_lang, unit_label
 
 T: dict[str, dict[str, Any]] = {
+    "zh": ZH,
     "ru": {
         "interval": "90% интервал",
         "pp": "п.п.",
@@ -372,12 +374,12 @@ def _pp(v: float) -> str:
     return f"{v:+.1f}".replace("+-", "−").replace("-", "−")
 
 
-def _base(pred: dict, model: RiskModel, t: dict, tm: dict) -> dict:
+def _base(pred: dict, model: RiskModel, t: dict, tm: dict, lang: str) -> dict:
     lvl = pred["level"]["code"]
     ri = pred["risk_interval"]
     return {
         "model": model.name,
-        "outcome": model.spec["outcome"]["ru" if t is T["ru"] else "en"],
+        "outcome": ZH_OUTCOMES[model.name] if lang == "zh" else model.spec["outcome"][lang],
         "headline": f"{tm['outcome_short']}: {_pct(pred['risk'])}% "
                     f"({t['interval']} {_pct(ri['low'])}–{_pct(ri['high'])}%) — {tm['levels'][lvl]}",
         "level": {"code": lvl, "label": tm["levels"][lvl], "color": pred["level"]["color"],
@@ -399,7 +401,7 @@ def _references(model: RiskModel, keys: list[str]) -> list[dict]:
 def interpret_earth(pred: dict, model: EarthModel, lang: str) -> dict:
     t = T[lang]
     tm = t["earth"]
-    out = _base(pred, model, t, tm)
+    out = _base(pred, model, t, tm, lang)
     sex = pred["inputs"]["sex"]
     comps = pred["details"]["components"]
     factors = {f["factor"]: f for f in pred["factors"]}
@@ -478,7 +480,7 @@ def _marker_text(name: str, info: dict, tm: dict, lang: str) -> tuple[str, str |
 def interpret_flight(pred: dict, model: FlightModel, lang: str) -> dict:
     t = T[lang]
     tm = t["flight"]
-    out = _base(pred, model, t, tm)
+    out = _base(pred, model, t, tm, lang)
     markers = pred["details"]["markers"]
     factors = {f["factor"]: f for f in pred["factors"]}
     marker_list, what_if = [], []
@@ -547,7 +549,7 @@ def interpret_flight(pred: dict, model: FlightModel, lang: str) -> dict:
         if w["code"] not in tm["warn"]:
             continue
         if "marker" in w:
-            label = model.inputs.get(w["field"], {}).get("label", {}).get(lang, w["field"])
+            label = field_label(model.inputs.get(w["field"], {}), w["field"], lang)
             notes.append(tm["warn"][w["code"]].format(field=label, name=tm["names"][w["marker"]]))
         else:
             notes.append(tm["warn"][w["code"]].format(days=days))
@@ -582,7 +584,7 @@ def interpret_flight(pred: dict, model: FlightModel, lang: str) -> dict:
 
 
 def interpret(pred: dict, model: RiskModel, lang: str = "en") -> dict:
-    lang = "ru" if lang == "ru" else "en"
+    lang = normalise_lang(lang)
     out = interpret_earth(pred, model, lang) if model.kind == "earth" else interpret_flight(pred, model, lang)
     out["language"] = lang
     return out

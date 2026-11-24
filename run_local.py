@@ -1,7 +1,8 @@
 """Run the site and the API locally on one port.
 
     python run_local.py              http://localhost:8000
-    python run_local.py --lang ru    consultant answers in Russian
+    python run_local.py --lang ru    open the site and consultant in Russian
+    python run_local.py --lang zh    open the site and consultant in Chinese
     python run_local.py --port 8080
 """
 
@@ -21,7 +22,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="IMMOONITY: site + API")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--lang", choices=("en", "ru"), default="en")
+    parser.add_argument("--lang", choices=("en", "ru", "zh"), default="en")
     parser.add_argument("--no-browser", action="store_true")
     args = parser.parse_args()
 
@@ -32,7 +33,7 @@ def main() -> None:
 
     app = create_app(site_dir=ROOT / "immoonity-site")
     url = f"http://localhost:{args.port}/"
-    page = url + ("?lang=ru" if args.lang == "ru" else "") + "#demo"
+    page = f"{url}?lang={args.lang}#demo"
     print(f"\n  IMMOONITY: {page}")
     print(f"  API:       {url}api/health\n")
     if not args.no_browser:
