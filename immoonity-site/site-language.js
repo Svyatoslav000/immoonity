@@ -48,13 +48,13 @@
             genders: ['Мужской', 'Женский'],
             earthDescTitle: 'Земной предиктор',
             placeholders: {
-                vo2max: 'напр. 48', pullups: 'напр. 15', pushups: 'напр. 60',
+                vo2max: 'напр. 48', pullups: 'напр. 15', pushups: 'напр. 25',
                 il6_b: 'До (необязательно)', il6_a: 'После',
                 nlr_b: 'До (необязательно)', nlr_a: 'После',
-                ebv: 'напр. 600', cortb: 'До (необязательно)', corta: 'После', days: 'напр. 180'
+                ebv: 'напр. 100', cortb: 'До (необязательно)', corta: 'После', days: 'напр. 180'
             },
             consultantHint: 'ИИ-консультант: подробный разбор ниже ↓',
-            pdfBtn: 'Скачать отчёт о проекте (PDF)',
+            pdfBtn: 'Скачать отчёт по замеру (PDF)',
             pricing: [
                 {
                     title: 'Коммерческая лицензия', price: 'Индивидуально',
@@ -140,13 +140,13 @@
             genders: ['Male', 'Female'],
             earthDescTitle: 'Earth Predictor',
             placeholders: {
-                vo2max: 'e.g. 48', pullups: 'e.g. 15', pushups: 'e.g. 60',
+                vo2max: 'e.g. 48', pullups: 'e.g. 15', pushups: 'e.g. 25',
                 il6_b: 'Before (optional)', il6_a: 'After',
                 nlr_b: 'Before (optional)', nlr_a: 'After',
-                ebv: 'e.g. 600', cortb: 'Before (optional)', corta: 'After', days: 'e.g. 180'
+                ebv: 'e.g. 100', cortb: 'Before (optional)', corta: 'After', days: 'e.g. 180'
             },
             consultantHint: 'AI consultant: see the analysis below ↓',
-            pdfBtn: 'Download the project report (PDF)',
+            pdfBtn: 'Download measurement report (PDF)',
             pricing: [
                 {
                     title: 'Commercial Licensing', price: 'Custom Pricing',
@@ -232,13 +232,13 @@
             genders: ['男性', '女性'],
             earthDescTitle: '地面预测器',
             placeholders: {
-                vo2max: '例如 48', pullups: '例如 15', pushups: '例如 60',
+                vo2max: '例如 48', pullups: '例如 15', pushups: '例如 25',
                 il6_b: '飞行前 (可选)', il6_a: '飞行中',
                 nlr_b: '飞行前 (可选)', nlr_a: '飞行中',
-                ebv: '例如 600', cortb: '飞行前 (可选)', corta: '飞行中', days: '例如 180'
+                ebv: '例如 100', cortb: '飞行前 (可选)', corta: '飞行中', days: '例如 180'
             },
             consultantHint: 'AI 顾问：详细分析请见下方 ↓',
-            pdfBtn: '下载项目报告（PDF）',
+            pdfBtn: '下载本次测量报告（PDF）',
             pricing: [
                 {
                     title: '商业授权', price: '定制报价',
