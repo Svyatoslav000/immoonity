@@ -18,6 +18,7 @@ API only (for example on Render): `gunicorn app:app`. Together with the site: `g
 | GET | `/`, `/api/health` | health check |
 | GET | `/api/models` | model cards: inputs, thresholds, weights, checks, sources |
 | POST | `/predict` | prediction and interpretation in `en`, `ru` or `zh` |
+| POST | `/api/report.pdf` | downloadable PDF for one measurement, in the same language as its interpretation |
 | POST | `/api/consultant/prompt` | request for an LLM consultant |
 
 Request fields:

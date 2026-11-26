@@ -26,52 +26,85 @@
         return { slope, at: day => ym + slope * (day - xm) };
     }
 
-    // The table next to the plot exposes all values to keyboard and screen-reader users.
-    function plot(canvas, xs, ys, intervals, trend, axisLabels, percent) {
-        const width = Math.max(210, canvas.clientWidth || 380), height = 172;
+    function dayTicks(end, width) {
+        const count = Math.max(2, Math.min(8, Math.floor(width / 64)));
+        const raw = Math.max(1, end / count);
+        const power = 10 ** Math.floor(Math.log10(raw));
+        const step = power * [1, 2, 5, 10].find(n => n * power >= raw);
+        const ticks = [0];
+        for (let tick = step; tick < end; tick += step) {
+            if ((end - tick) / end * width > 36) ticks.push(tick);
+        }
+        ticks.push(end);
+        return ticks;
+    }
+
+    function plot(canvas, series, lang) {
+        const {xs, ys, intervals, trend, planned, timed, percent, baseline, preLabel} = series;
+        const width = canvas.clientWidth, height = canvas.clientHeight;
+        if (!width || !height) return;
         const dpr = window.devicePixelRatio || 1;
         canvas.width = Math.round(width * dpr);
         canvas.height = Math.round(height * dpr);
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
         ctx.scale(dpr, dpr);
-        const left = 42, right = width - 24, top = 14, bottom = height - 30;
-        const max = percent ? 100 : Math.max(1, ...ys) * 1.12;
-        const x = n => xs.length === 1 ? (right + left) / 2 : left + (right - left) * (n - xs[0]) / (xs.at(-1) - xs[0]);
-        const y = n => bottom - n * (bottom - top) / max;
-        const segment = (x0, y0, x1, y1) => {
+        const number = new Intl.NumberFormat(lang, {maximumSignificantDigits: 3});
+        const left = 46, right = width - 22, top = 17, bottom = height - 34;
+        const hasBaseline = Number.isFinite(baseline);
+        const first = left + (hasBaseline ? 46 : 0);
+        const end = timed ? Math.max(1, planned, ...xs) : Math.max(1, xs.length);
+        const x = value => timed ? first + value / end * (right - first)
+            : first + (value - 0.5) / end * (right - first);
+        const peak = Math.max(1, hasBaseline ? baseline : 0, ...ys);
+        const unit = 10 ** Math.floor(Math.log10(peak));
+        const max = percent ? 100 : Math.ceil(peak * 1.08 / (unit / 2)) * (unit / 2);
+        const y = value => bottom - value / max * (bottom - top);
+        const line = (x0, y0, x1, y1) => {
             ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
         };
+        function point(px, value) {
+            ctx.beginPath(); ctx.arc(px, y(value), 4, 0, 2 * Math.PI);
+            ctx.fillStyle = '#f7c950'; ctx.fill();
+        }
         ctx.font = '12px Inter, sans-serif';
-        ctx.fillStyle = '#ced5dc'; ctx.textAlign = 'right'; ctx.strokeStyle = '#344451';
-        for (const tick of [0, max / 2, max]) {
-            segment(left, y(tick), right, y(tick));
-            ctx.fillText(Number(tick.toPrecision(3)).toString(), left - 6, y(tick) + 4);
-        }
-        if (trend) {
-            ctx.save(); ctx.beginPath(); ctx.rect(left, top, right - left, bottom - top); ctx.clip();
-            ctx.strokeStyle = '#8cd7dc'; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
-            segment(x(xs[0]), y(trend.at(xs[0])), x(xs.at(-1)), y(trend.at(xs.at(-1))));
-            ctx.restore();
-        }
-        if (!percent && xs.length > 1) {
-            ctx.strokeStyle = '#95804f'; ctx.lineWidth = 1.4;
-            for (let i = 1; i < xs.length; i++) segment(x(xs[i-1]), y(ys[i-1]), x(xs[i]), y(ys[i]));
+        ctx.textAlign = 'right';
+        for (let i = 0; i <= 4; i++) {
+            const tick = max * i / 4;
+            ctx.strokeStyle = '#344451'; line(left, y(tick), right, y(tick));
+            ctx.fillStyle = '#ced5dc'; ctx.fillText(number.format(tick), left - 6, y(tick) + 4);
         }
         ctx.textAlign = 'center';
-        xs.forEach((v, i) => {
-            const px = x(v);
+        const ticks = timed ? dayTicks(end, right - first) : xs;
+        for (const tick of ticks) {
+            ctx.strokeStyle = '#344451'; line(x(tick), top, x(tick), bottom + 3);
+            ctx.fillStyle = '#ced5dc'; ctx.fillText(timed ? String(tick) : 'F' + tick, x(tick), bottom + 19);
+        }
+        if (hasBaseline) {
+            const bx = left + 13;
+            ctx.save(); ctx.strokeStyle = '#778592'; ctx.setLineDash([3, 4]);
+            line(first - 13, top, first - 13, bottom); ctx.restore();
+            point(bx, baseline);
+            ctx.fillStyle = '#ced5dc'; ctx.fillText(preLabel, bx, bottom + 19);
+        }
+        if (trend) {
+            ctx.save(); ctx.beginPath(); ctx.rect(first - 1, top, right - first + 2, bottom - top); ctx.clip();
+            ctx.strokeStyle = '#8cd7dc'; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
+            line(x(xs[0]), y(trend.at(xs[0])), x(xs.at(-1)), y(trend.at(xs.at(-1))));
+            ctx.restore();
+        }
+        if (!percent) {
+            ctx.strokeStyle = '#95804f'; ctx.lineWidth = 1.5;
+            for (let i = 1; i < xs.length; i++) line(x(xs[i - 1]), y(ys[i - 1]), x(xs[i]), y(ys[i]));
+        }
+        xs.forEach((day, i) => {
+            const px = x(day);
             if (intervals) {
-                const [low, high] = intervals[i];
-                ctx.strokeStyle = '#a8b7c3'; ctx.lineWidth = 1.2;
-                segment(px, y(low), px, y(high));
-                segment(px - 4, y(low), px + 4, y(low)); segment(px - 4, y(high), px + 4, y(high));
+                const [lo, hi] = intervals[i].map(y);
+                ctx.strokeStyle = '#a8b7c3'; ctx.lineWidth = 1.25;
+                line(px, lo, px, hi); line(px - 4, lo, px + 4, lo); line(px - 4, hi, px + 4, hi);
             }
-            ctx.fillStyle = '#f7c950'; ctx.beginPath(); ctx.arc(px, y(ys[i]), 4, 0, 2 * Math.PI); ctx.fill();
-            // Closely spaced visit days remain available in the exact table.
-            if (i === 0 || i === xs.length - 1 || (px - x(xs[i - 1]) > 28 && x(xs[i + 1]) - px > 28)) {
-                ctx.fillStyle = '#ced5dc'; ctx.fillText(axisLabels[i], px, bottom + 19);
-            }
+            point(px, ys[i]);
         });
     }
 
@@ -110,12 +143,10 @@
                     'Эта проба взята после планового срока, указанного в карточке In-Flight. Плановый срок можно уточнить в первом полётном замере.', "本次采样日晚于记录的计划任务时长。请核对首次飞行测量中的计划时长。"), 'series-note'));
             }
         }
-        block.append(node('h4', tr('Human literature reference intervals','Сравнение с данными исследований на людях', "人体研究文献中的参考区间")));
-        if (!info || !Array.isArray(info.markers)) {
-            block.append(node('p', tr('Reference comparison is unavailable for this calculation.',
-                'Для этого расчёта сравнение с референсами недоступно.', "本次计算没有可用的参考区间比较结果。"), 'series-note'));
-            return block;
+        if (!info?.assessed || !Array.isArray(info.markers)) {
+            return block.childElementCount ? block : document.createDocumentFragment();
         }
+        block.append(node('h4', tr('Human literature reference intervals','Сравнение с данными исследований на людях', "人体研究文献中的参考区间")));
         const routes = {
             human_only: tr('Model 1 · human data', 'Модель 1 · данные людей', "模型 1 · 人体数据"),
             human_plus_animal: tr('Model 2 · human and animal data', 'Модель 2 · данные людей и животных', "模型 2 · 人体与动物数据"),
@@ -178,9 +209,47 @@
             cards.append(card);
         }
         host.append(cards);
-        const title = node('h4', tr('In-flight risk over time','Динамика оценки In-Flight', "飞行期间的风险估计变化"));
+        const planned = Number(last.inputs.days);
+        const riskTitle = tr('In-flight risk over time', 'Динамика оценки In-Flight', '飞行期间的风险估计变化');
+        const markerTitle = tr('Measured values', 'Введённые показатели', '实测数值');
+        const missionAxis = timed ? axis + ' · ' + tr('planned duration', 'плановая длительность', '计划任务时长') +
+            ' ' + fmt(planned) + tr(' days', ' сут.', '天') : axis;
+        const riskAxis = missionAxis + ' · ' + tr('estimate (%) and 90% interval', 'оценка (%) и 90% интервал', '估计值（%）与 90% 区间');
+        const riskSeries = {xs, ys: risk, intervals, trend, planned, timed, percent: true};
+        let markerSeries, expanded = null;
+        const dialog = node('dialog', null, 'series-chart-dialog');
+        const modalTitle = node('h4');
+        modalTitle.id = 'expanded-chart-title';
+        dialog.setAttribute('aria-labelledby', modalTitle.id);
+        const modalAxis = node('p', null, 'series-note');
+        const modalChart = node('canvas');
+        const dismiss = node('button', tr('Close', 'Закрыть', '关闭'), 'series-chart-button');
+        dismiss.type = 'button';
+        dismiss.onclick = () => dialog.close();
+        const modalHeader = node('div', null, 'series-chart-heading');
+        modalHeader.append(modalTitle, dismiss);
+        dialog.append(modalHeader, modalAxis, modalChart);
+        dialog.addEventListener('close', () => { expanded = null; });
+        host.append(dialog);
+        function chartHeader(title, id) {
+            const box = node('div', null, 'series-chart-heading');
+            const expand = node('button', tr('Enlarge', 'Развернуть', '放大'), 'series-chart-button');
+            expand.type = 'button'; expand.setAttribute('aria-haspopup', 'dialog');
+            expand.setAttribute('aria-label', expand.textContent + ' · ' + title);
+            expand.dataset.chart = id;
+            expand.onclick = () => {
+                expanded = id;
+                modalTitle.textContent = id === 'risk' ? title : title + ' · ' + markerChoice.selectedOptions[0].text;
+                modalAxis.textContent = id === 'risk' ? riskAxis : markerAxis.textContent;
+                modalChart.setAttribute('aria-label', modalTitle.textContent + ' · ' + modalAxis.textContent);
+                dialog.showModal();
+                draw();
+            };
+            box.append(node('h4', title), expand);
+            return box;
+        }
         const chart = node('canvas'); chart.setAttribute('aria-hidden', 'true');
-        host.append(title, node('p', axis + ' · ' + tr('estimate (%) and 90% interval', 'оценка (%) и 90% интервал', "估计值（%）与 90% 区间"), 'series-note'), chart);
+        host.append(chartHeader(riskTitle, 'risk'), node('p', riskAxis, 'series-note'), chart);
         if (trend) {
             const unit = timed ? tr('pp/day','п.п./сут', "个百分点/天") : tr('pp/visit','п.п./замер', "个百分点/次");
             const caption = flights.length === 2 ? tr('Change between two visits', 'Изменение между двумя замерами', "两次测量之间的变化") : tr('Linear trend across three visits', 'Линейный тренд по трём замерам', "三次测量的线性趋势");
@@ -211,22 +280,21 @@
         const fieldBox = node('div', null, 'series-select'); fieldBox.append(markerLabel, markerChoice);
         const markerChart = node('canvas'); markerChart.setAttribute('aria-hidden', 'true');
         const markerData = node('div'), markerAxis = node('p',null,'series-note');
-        host.append(node('h4',tr('Measured values','Введённые показатели', "实测数值")), fieldBox, markerAxis, markerChart, markerData);
-        let markerX, markerValues, markerTicks;
+        host.append(chartHeader(markerTitle, 'marker'), fieldBox, markerAxis, markerChart, markerData);
         function draw() {
-            plot(chart, xs, risk, intervals, trend, xs.map(String), true);
-            plot(markerChart, markerX, markerValues, null, null, markerTicks, false);
+            plot(chart, riskSeries, lang);
+            if (markerSeries) plot(markerChart, markerSeries, lang);
+            if (dialog.open && expanded) plot(modalChart, expanded === 'risk' ? riskSeries : markerSeries, lang);
         }
         function showMarker() {
             const m = markers.find(v => v.key === markerChoice.value);
             const baseline = m.before ? flights[0].result.inputs[m.before] : null;
             const values = flights.map(r => r.result.inputs[m.key]);
-            const hasBaseline = Number.isFinite(baseline);
-            markerX = hasBaseline ? [0, ...flights.map((_, i) => i + 1)] : xs;
-            markerTicks = hasBaseline ? [tr('Pre','До', "飞行前"), ...flights.map((_, i) => 'F' + (i + 1))] : xs.map(String);
-            markerValues = hasBaseline ? [baseline, ...values] : values;
-            markerAxis.textContent = hasBaseline ? tr('Sample order · pre-flight sample and flight visits', 'Порядок проб · до полёта и полётные замеры', "样本顺序 · 飞行前与飞行期间") : axis;
-            const rows = [[tr('Pre-flight baseline','Предполётная проба', "飞行前基线"), '—', val(baseline), '—']];
+            const preLabel = tr('Pre', 'До', '飞行前');
+            markerSeries = {xs, ys: values, planned, timed, baseline, preLabel};
+            markerAxis.textContent = Number.isFinite(baseline) ? missionAxis + ' · ' +
+                tr('Pre-flight sample shown separately', 'предполётная проба показана отдельно', '飞行前样本单列') : missionAxis;
+            const rows = Number.isFinite(baseline) ? [[tr('Pre-flight baseline','Предполётная проба', "飞行前基线"), '—', val(baseline), '—']] : [];
             values.forEach((v, i) => {
                 const before = i ? values[i - 1] : baseline;
                 const d = Number.isFinite(before) ? v - before : null;
@@ -244,12 +312,17 @@
                       'Изменение NLR у крыс в SLS-2 даёт ориентир для сравнения направления и сроков. Полёт и синхронный контроль сопоставляются внутри вида.', "SLS-2 任务的大鼠 NLR 可用于比较变化方向与时间。飞行与同步对照数据均在同一物种内比较。")));
         const ref = node('a',tr('Paul et al. · Figure 1A','Paul et al. · рисунок 1A', "Paul 等 · 图 1A")); ref.href = 'https://doi.org/10.3389/fimmu.2020.564950'; ref.target='_blank'; ref.rel='noopener';
         evidence.append(ref);host.append(evidence);
+        let observer;
         if (typeof ResizeObserver === 'function') {
-            const observer = new ResizeObserver(draw);
-            observer.observe(host);
-            return () => observer.disconnect();
+            observer = new ResizeObserver(draw);
+            observer.observe(chart); observer.observe(markerChart); observer.observe(modalChart);
+        } else {
+            window.addEventListener('resize', draw);
         }
-        window.addEventListener('resize',draw);
-        return () => window.removeEventListener('resize',draw);
+        return () => {
+            if (dialog.open) dialog.close();
+            observer?.disconnect();
+            window.removeEventListener('resize', draw);
+        };
     };
 })();

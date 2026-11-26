@@ -11,10 +11,12 @@ Locally: python app.py. API only on a host: gunicorn app:app.
 from __future__ import annotations
 
 import logging
+import math
 import os
+from io import BytesIO
 from pathlib import Path
 
-from flask import Flask, abort, jsonify, request, send_from_directory
+from flask import Flask, abort, jsonify, request, send_file, send_from_directory
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
@@ -134,6 +136,48 @@ def create_app(site_dir: str | Path | None = None) -> Flask:
         question = (payload or {}).get("question")
         packages = {n: build_consultant_request(p, p["interpretation"], lang, question) for n, p in results.items()}
         return jsonify(next(iter(packages.values())) if len(packages) == 1 else packages)
+
+    @app.post("/api/report.pdf")
+    def report():
+        from immoonity_core.measurement_report import measurement_pdf
+
+        payload = read_payload()
+        results, error, lang = run(payload)
+        if error:
+            return error
+        if len(results) != 1:
+            return fail(400, "single_measurement", {
+                "ru": "Выберите один замер для отчёта.", "en": "Select one measurement for the report.",
+                "zh": "请选择一项测量生成报告。",
+            }[lang])
+        name, prediction = next(iter(results.items()))
+        if payload.get("expected_model_version", prediction["model_version"]) != prediction["model_version"]:
+            return fail(409, "model_version_changed", {
+                "ru": "Версия модели изменилась. Пересчитайте замер, чтобы скачать отчёт.",
+                "en": "The model version changed. Recalculate this measurement before downloading the report.",
+                "zh": "模型版本已更新。请重新计算本次测量后再下载报告。",
+            }[lang])
+        counts = payload.get("cell_counts")
+        if counts is not None:
+            try:
+                if name != "flight" or not isinstance(counts, dict):
+                    raise ValueError
+                counts = {key: V.parse_number(counts[key]) for key in ("anc", "alc")}
+                if (counts["anc"] < 0 or counts["alc"] <= 0 or not math.isclose(
+                        counts["anc"] / counts["alc"], prediction["inputs"]["nlr_a"], rel_tol=1e-9)):
+                    raise ValueError
+            except (KeyError, TypeError, ValueError, OverflowError):
+                return fail(400, "cell_counts", {
+                    "ru": "Проверьте абсолютные числа нейтрофилов и лимфоцитов и их отношение.",
+                    "en": "Check the absolute neutrophil and lymphocyte counts and their ratio.",
+                    "zh": "请核对中性粒细胞和淋巴细胞的绝对计数及其比值。",
+                }[lang])
+        day = prediction.get("series_assessment", {}).get("composite", {}).get("as_of_flight_day")
+        pdf = measurement_pdf(prediction, models[name], day=day, counts=counts)
+        filename = f"IMMOONITY-{name}{'-day-' + str(day) if day is not None else ''}-{lang}.pdf"
+        response = send_file(BytesIO(pdf), mimetype="application/pdf", as_attachment=True, download_name=filename)
+        response.headers["Cache-Control"] = "private, no-store"
+        return response
 
     if site:
         @app.get("/<path:filename>")

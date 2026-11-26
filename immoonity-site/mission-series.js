@@ -9,6 +9,7 @@ window.initMissionSeries = function (options) {
     const dialog = root.querySelector('#mission-loading');
     const first = root.querySelector('#flight-form'), earth = root.querySelector('#earth-form');
     const originalFlight = first.cloneNode(true);
+    const downloads = new Map();
     const forms = [earth, first];
     const beforeAfter = {il6_b:'il6_a', nlr_b:'nlr_a', cortb:'corta'};
     const visitName = i => i ? tr('In-Flight ', 'В полёте ', "飞行测量 ") + i : tr('Earth Model', 'До полёта', "地面模型");
@@ -164,6 +165,17 @@ window.initMissionSeries = function (options) {
         }
         const box = form.querySelector('.result-display');
         box.querySelector('.series-endpoint')?.remove();
+        box.querySelector('.series-baseline-note')?.remove();
+        let note = result.interpretation.baseline_note;
+        if (result.model === 'flight' && note === undefined &&
+            Object.keys(beforeAfter).some(field => !(result.inputs[field] > 0))) {
+            note = tr('Markers without a positive pre-flight sample were assessed using current levels and absolute thresholds.',
+                'Если положительной предполётной пробы нет, маркер оценён по текущему значению и абсолютному порогу.',
+                '缺少正值飞行前基线的指标，按本次测量值和绝对阈值评估。');
+        }
+        if (note) {
+            box.querySelector('.consultant-hint').before(node('p', 'series-baseline-note', note));
+        }
         const record = state.slots[Number(form.dataset.step)];
         box.append(window.renderVisitEvidence(result, record?.day, lang));
         if (result.input_warnings?.length) showMessage(form,labels.check,result.input_warnings,'warn');
@@ -223,6 +235,7 @@ window.initMissionSeries = function (options) {
         const caption = form.querySelector('.desc > p');
         const download = form.querySelector('.pdf-download-btn');
         download.lastChild.textContent = ' ' + options.copy.pdfBtn;
+        download.addEventListener('click', () => downloadReport(form, i, download));
         if (i === 0) {
             h.textContent = options.copy.earthDescTitle;
             caption.textContent = tr('Estimated risk of herpesvirus reactivation during the mission, based on pre-flight fitness.', 'Оценка риска реактивации герпесвирусов в ходе миссии по физической подготовке перед полётом.', '根据飞行前体能估计任务期间疱疹病毒再激活的风险。');
@@ -261,6 +274,7 @@ window.initMissionSeries = function (options) {
             const restoreCounts=addCounts(form,i); restoreCounts(saved?.counts);
         }
         form.addEventListener('input', e => {
+            downloads.get(i)?.abort();
             form.dataset.dirty = 'true';
             e.target.classList.remove('input-error');
             if (state.slots[i]?.result) {
@@ -319,6 +333,19 @@ window.initMissionSeries = function (options) {
         moons(dialog.querySelector('.loading-moons'),i);
         if (typeof dialog.showModal==='function') dialog.showModal(); else dialog.setAttribute('open','');
     }
+    function finishAnimation(start, signal) {
+        const remaining = 2700 - (performance.now() - start);
+        if (remaining <= 0 || signal.aborted) return Promise.resolve();
+        return new Promise(resolve => {
+            const finish = () => {
+                clearTimeout(timer);
+                signal.removeEventListener('abort', finish);
+                resolve();
+            };
+            const timer = setTimeout(finish, remaining);
+            signal.addEventListener('abort', finish, {once: true});
+        });
+    }
     function cancel() { if (busy) busy.abort(); }
     dialog.addEventListener('cancel',e=>{e.preventDefault();cancel();});
     dialog.querySelector('.series-cancel').addEventListener('click',cancel);
@@ -368,13 +395,15 @@ window.initMissionSeries = function (options) {
         }
         const controller=new AbortController(); let timedOut=false, focusAfter=null;
         startLoading(i,controller); btn.disabled=true; btn.textContent=labels.processing;
+        const shownAt = performance.now();
         const slow=setTimeout(()=>{dialog.querySelector('h3').textContent=labels.waking;},4000);
         const timeout=setTimeout(()=>{timedOut=true;controller.abort();},90000);
         try {
             const base=await resolveApiBase();
             const response=await request(base+'/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),signal:controller.signal});
             const body=await response.json();
-            if (controller.signal.aborted) return;
+            await finishAnimation(shownAt, controller.signal);
+            controller.signal.throwIfAborted();
             if (!response.ok || !validResult(body,data.model)) {
                 const details=Array.isArray(body?.details)?body.details:[];
                 for (const d of details) {
@@ -388,6 +417,7 @@ window.initMissionSeries = function (options) {
             }
             commit(i,body,day,counts);
         } catch (_) {
+            await finishAnimation(shownAt, controller.signal);
             if (timedOut || !controller.signal.aborted) showMessage(form,labels.network);
             else showMessage(form,tr('Calculation cancelled.','Расчёт отменён.', "已取消计算。"),[],'warn');
         } finally {
@@ -395,6 +425,46 @@ window.initMissionSeries = function (options) {
             if (dialog.open) {if (typeof dialog.close==='function') dialog.close(); else dialog.removeAttribute('open');}
             btn.disabled=false;btn.textContent=labels.calc[i===0?'earth-form':'flight-form'];
             if (focusAfter) focusAfter.focus();
+        }
+    }
+
+    async function downloadReport(form, i, button) {
+        const slot = state.slots[i];
+        if (!slot?.result || form.dataset.dirty || downloads.has(i)) return;
+        const controller = new AbortController();
+        downloads.set(i, controller);
+        button.disabled = true;
+        button.setAttribute('aria-busy', 'true');
+        const payload = {...slot.values, model: i ? 'flight' : 'earth', lang,
+            expected_model_version: slot.result.model_version};
+        if (i === 0 || Number.isInteger(slot.day)) payload.series_visit = i ? {day: slot.day} : {};
+        if (slot.counts) payload.cell_counts = slot.counts;
+        let timedOut = false;
+        const timeout = setTimeout(() => { timedOut = true; controller.abort(); }, 90000);
+        try {
+            const base = await resolveApiBase();
+            const response = await request(base + '/api/report.pdf', {method: 'POST',
+                headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload), signal: controller.signal});
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw Error(error.message || labels.network);
+            }
+            if (!response.headers.get('Content-Type')?.startsWith('application/pdf')) throw Error(labels.network);
+            const blob = await response.blob();
+            if (controller.signal.aborted || !form.isConnected || form.dataset.dirty || !slot.result || state.slots[i] !== slot) return;
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'IMMOONITY-' + (i ? 'F' + i + (slot.day ? '-day-' + slot.day : '') : 'Earth') + '-' + lang + '.pdf';
+            document.body.append(link); link.click(); link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 15000);
+        } catch (error) {
+            if (!controller.signal.aborted || timedOut) showMessage(form, timedOut ? labels.network : error.message || labels.network);
+        } finally {
+            clearTimeout(timeout);
+            downloads.delete(i);
+            button.disabled = false;
+            button.removeAttribute('aria-busy');
         }
     }
 
@@ -407,6 +477,7 @@ window.initMissionSeries = function (options) {
         location.reload();
     });
     function takeSnapshot() {
+        downloads.forEach(controller => controller.abort());
         if (busy) busy.abort();
         if (closeChart) closeChart();
         const drafts = forms.map(form => {

@@ -7,13 +7,13 @@
 }
 .mission-track, .loading-moons { display: grid; grid-template-columns: repeat(4, 1fr); }
 .mission-track { grid-column: 2 / -1; grid-row: 1; }
-.moon-cell { display: grid; place-items: center; position: relative; min-height: 29px; }
+.moon-cell { display: grid; place-items: center; position: relative; min-height: 38px; }
 .moon-cell:not(:last-child)::after {
-    content: ""; position: absolute; top: calc(50% - 1px); left: 50%;
-    height: 2px; width: 100%; background: #c3cad0;
+    content: ""; position: absolute; top: 50%; transform: translateY(-50%); left: 50%;
+    height: 3px; width: 100%; background: #c3cad0;
 }
 .moon-cell.moon-linked::after { background: #edc45c; }
-.moon-disc { z-index: 1; width: 23px; height: 23px; border-radius: 50%; border: 2px solid #dce0e4; background: #09131d; }
+.moon-disc { z-index: 1; width: 30px; height: 30px; border-radius: 50%; border: 2px solid #dce0e4; background: #09131d; }
 .moon-done .moon-disc { border-color: #ffe6a7; background: #dfb240; box-shadow: inset -4px -2px 0 #ae8730; }
 .mission-nav .tab-btn {
     grid-column: var(--nav-column); grid-row: 2; min-width: 0; margin: 0; padding: 9px 4px; line-height: 1.25;
@@ -24,7 +24,11 @@
 .mission-nav .add-tab { border-style: dashed; }
 .mission-nav .summary-tab { border-color: #dce0e4; color: #e6ebef; }
 .mission-nav .summary-tab.active { color: #151719; }
-.mission-nav .unread { animation: mission-attention 1.8s ease-in-out 3; }
+.mission-nav .summary-tab.unread { animation: summary-glow 2.8s ease-in-out infinite; }
+@keyframes summary-glow {
+    0%, 100% { border-color: #cfb672; box-shadow: 0 0 3px #ffd46524; }
+    50% { border-color: #ffe5a6; box-shadow: 0 0 14px #ffd46570; }
+}
 @keyframes mission-attention { 50% { border-color: #ffd465; box-shadow: 0 0 12px #f9c54c80; } }
 #demo .tab-btn:focus-visible, #demo .calc-btn:focus-visible, #demo select:focus-visible,
 #demo .series-footer button:focus-visible { outline: 2px solid #fff3bc; outline-offset: 3px; }
@@ -49,7 +53,16 @@
 .series-summary-cards h4 { margin: 0; }
 .series-summary-cards .series-value { font-size: 1.8rem; line-height: 1.2; font-variant-numeric: tabular-nums; }
 .series-summary-cards small { color: #b7c2cb; }
-.mission-summary canvas { display: block; width: 100%; height: 172px; }
+.series-chart-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .8rem; margin-top: 22px; }
+.series-chart-heading h4 { margin: 0; }
+.series-chart-button { font: inherit; font-size: .82rem; color: #f5ce68; cursor: pointer; border: 1px solid #917946; border-radius: 5px; padding: 7px 12px; background: #101c28; }
+.series-chart-button:focus-visible, .pdf-download-btn:focus-visible { outline: 2px solid #fff3bc; outline-offset: 2px; }
+.mission-summary canvas { display: block; width: 100%; height: clamp(240px, 38vw, 440px); }
+.series-chart-dialog { width: min(1200px, 96vw); max-width: 96vw; max-height: 94vh; overflow: auto; padding: clamp(12px, 2vw, 28px); margin: auto; color: #e2e9ef; background: #0a1520; border: 1px solid #ac914e; border-radius: 9px; }
+.series-chart-dialog::backdrop { background: #04080ee6; }
+.series-chart-dialog .series-chart-heading { margin-top: 0; }
+.series-chart-dialog canvas { height: clamp(140px, 65vh, 760px); }
+.series-baseline-note { margin: 12px 0; color: #d2dce5; text-align: left; font-size: .88rem; line-height: 1.5; }
 .series-trend { color: #9ad9da; font-size: .88rem; }
 .series-table-scroll { max-width: 100%; overflow-x: auto; }
 .mission-summary table { width: 100%; border-collapse: collapse; font-size: .85rem; font-variant-numeric: tabular-nums; }
@@ -80,6 +93,6 @@
     .mission-summary table { font-size: .78rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-    #demo .unread, #demo .moon-pending .moon-disc, #demo .result-display.active { animation: none; }
-    #demo .unread { border-color: #ffd465; }
+    #demo .summary-tab.unread, #demo .moon-pending .moon-disc, #demo .result-display.active { animation: none; }
+    #demo .summary-tab.unread { border-color: #ffd465; box-shadow: 0 0 5px #ffd46555; }
 }

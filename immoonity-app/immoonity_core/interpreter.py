@@ -477,6 +477,26 @@ def _marker_text(name: str, info: dict, tm: dict, lang: str) -> tuple[str, str |
     return measured, reason
 
 
+def baseline_note(values: dict, lang: str) -> str | None:
+    cortisol = {"en": "cortisol", "ru": "кортизол", "zh": "皮质醇"}[lang]
+    fields = {"il6_b": "IL-6", "nlr_b": "NLR", "cortb": cortisol}
+    unavailable = [name for field, name in fields.items() if (values.get(field) or 0) <= 0]
+    if not unavailable:
+        return None
+    if len(unavailable) == len(fields):
+        return {
+            "en": "The marker assessment uses current levels and the model’s absolute thresholds. Change from pre-flight baseline could not be calculated.",
+            "ru": "Маркеры оценены по текущим значениям и абсолютным порогам модели. Изменение относительно предполётной пробы рассчитать не удалось.",
+            "zh": "指标按本次测量值和模型的绝对阈值评估。无法计算相对飞行前基线的变化。",
+        }[lang]
+    names = ("、" if lang == "zh" else ", ").join(unavailable)
+    return {
+        "en": "Only current levels were used for {names}. Change from baseline was included for markers with a positive pre-flight value.",
+        "ru": "Для {names} использованы только текущие значения. Сдвиг от предполётной пробы учтён для показателей с положительной базой.",
+        "zh": "{names} 仅按本次测量值评估；其他有正值飞行前基线的指标同时参考了相对变化。",
+    }[lang].format(names=names)
+
+
 def interpret_flight(pred: dict, model: FlightModel, lang: str) -> dict:
     t = T[lang]
     tm = t["flight"]
@@ -573,6 +593,7 @@ def interpret_flight(pred: dict, model: FlightModel, lang: str) -> dict:
         refs.append("kim2024")
     out.update({
         "markers": marker_list,
+        "baseline_note": baseline_note(pred["inputs"], lang),
         "pattern": pattern,
         "duration": duration,
         "what_if": what_if,

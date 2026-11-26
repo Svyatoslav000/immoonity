@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version-file: .python-version
-      - run: pip install -r requirements.txt pytest
+      - run: pip install -r requirements.txt pytest "selenium>=4.11,<5"
       - run: python -m pytest -q
         working-directory: immoonity-app
       - name: Smoke test
